@@ -1,7 +1,4 @@
-/**
- * search.js — Entry point for search.html
- * Handles donor search with Firebase data.
- */
+
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -33,7 +30,6 @@ const database = getDatabase(app);
 const donorsRef = ref(database, 'donors');
 const feedbackRef = ref(database, 'feedback');
 
-// Listen for donor data
 onValue(donorsRef, (snapshot) => {
     const data = snapshot.val();
     state.donorsList = [];
@@ -74,7 +70,7 @@ window.onload = function () {
 
     window.addEventListener('languageChanged', () => callUpdateLogin());
 
-    // Modals
+    
     const successModal = document.getElementById('success-modal');
     const loginModal = document.getElementById('login-modal');
     document.getElementById('success-close')?.addEventListener('click', () => closeModal(successModal));
@@ -85,10 +81,10 @@ window.onload = function () {
         if (ev.key === 'Escape') [successModal, loginModal].forEach(m => closeModal(m));
     });
 
-    // Feedback
+    
     initFeedback(feedbackRef, push);
 
-    // Auth
+    
     initAuth({
         auth, database, ref, onValue,
         signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged,

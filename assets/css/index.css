@@ -2172,8 +2172,6 @@ body.admin-mode .admin-tabs {
     backdrop-filter: blur(10px);
 }
 
-/* Footer Quick Links always visible for admin (uses full page URLs) */
-
 @media (max-width: 768px) {
     body.admin-mode .header-logo {
         filter: brightness(0) saturate(100%) invert(19%) sepia(96%) saturate(5765%) hue-rotate(350deg) brightness(93%) contrast(93%);
@@ -3340,7 +3338,6 @@ canvas {
     }
 }
 
-/* Pulse animation for online indicator */
 @keyframes pulse-dot {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: .5; transform: scale(1.35); }

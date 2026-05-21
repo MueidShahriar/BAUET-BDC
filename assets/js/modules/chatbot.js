@@ -1,10 +1,4 @@
-/**
- * Blood Donation AI Chatbot Module
- * Trilingual (Bangla + English + Banglish) RAG-style chatbot
- * Two-path architecture:
- *   PATH 1 — Donor Finder: blood group + donor intent → query state.donorsList → eligible donors
- *   PATH 2 — Knowledge Base: keyword-scored website knowledge → live-agent fallback
- */
+
 
 import state from './state.js';
 import { isDonorEligible, normalizeBloodGroup } from './utils.js';
@@ -22,16 +16,13 @@ function getSearchHref() {
     return getPageHref('search.html');
 }
 
-/* ══════════════════════════════════════════════
-   SECTION 1 — Language Detection
-   ══════════════════════════════════════════════ */
 function isBangla(text) {
     const banglaChars = (text.match(/[\u0980-\u09FF]/g) || []).length;
     return banglaChars > text.length * 0.15;
 }
 
 function isBanglish(text) {
-    const banglishWords = ['ami', 'amr', 'amar', 'tumi', 'tomar', 'apni', 'apnar', 'kemon', 'kothay', 'keno', 'ki', 'holo', 'hobe', 'hoy', 'kore', 'korbo', 'korte', 'korlam', 'korsi', 'chai', 'ache', 'achen', 'thik', 'bhai', 'vai', 'bol', 'bolo', 'bolun', 'rokte', 'rokto', 'rokter', 'blood', 'daan', 'dan', 'parbo', 'parbe', 'parben', 'jodi', 'tahole', 'amader', 'oder', 'tader', 'shob', 'sob', 'keu', 'karo', 'jano', 'janen', 'bujhi', 'bujhen', 'dite', 'nite', 'lagbe', 'dorkar', 'sahajjo', 'help', 'poribar', 'poribarer', 'shastho', 'shasthyo', 'rog', 'rogi', 'hospital', 'daktar', 'doctor', 'oshudh', 'kivabe', 'kemne', 'onek', 'ektu', 'aktu', 'please', 'plz', 'doya', 'janaben', 'janao', 'group', 'grp', 'donate', 'dibo', 'dibi', 'debe', 'nibo', 'nebo', 'hae', 'haa', 'na', 'nah', 'aro', 'ar', 'ba', 'ebong', 'kintu', 'tobe', 'je', 'jar', 'eta', 'ota', 'sheta', 'kota', 'kothai', 'weak', 'durbol', 'problem', 'somossa', 'shomossa', 'jabe', 'dewa', 'deya', 'deowa', 'rakte', 'din', 'dilen', 'dilam', 'pari', 'paro', 'paren', 'possible', 'age', 'boyosh', 'ojon', 'weight', 'kg', 'hemoglobin', 'iron', 'tablet', 'medicine', 'oshudh', 'khete', 'khabo', 'khaben', 'khawar', 'pore', 'agey', 'age', 'shomoy', 'somoy', 'time', 'koto', 'kokhon', 'kobe', 'theke', 'jonno', 'jonne', 'dhoroner', 'type', 'negative', 'positive', 'thalassemia', 'cancer', 'diabetes', 'sugar', 'pressure', 'bp', 'anemia', 'infection', 'fever', 'jor', 'gaye', 'matha', 'ghora', 'byatha', 'betha', 'lage', 'lagche', 'shurjo', 'safe', 'nirapod', 'khatarnak', 'risk', 'bhoy', 'bhoi', 'test', 'poriksha', 'report', 'normal', 'abnormal', 'donor', 'donner', 'donar', 'khuje', 'khujte', 'khuji', 'paoa', 'pawa', 'contact', 'number', 'phone', 'call'];
+    const banglishWords = ['ami', 'amr', 'amar', 'tumi', 'tomar', 'apni', 'apnar', 'kemon', 'kothay', 'keno', 'ki', 'holo', 'hobe', 'hoy', 'kore', 'korbo', 'korte', 'korlam', 'korsi', 'chai', 'ache', 'achen', 'thik', 'bhai', 'vai', 'bol', 'bolo', 'bolun', 'rokte', 'rokto', 'rokter', 'blood', 'daan', 'dan', 'parbo', 'parbe', 'parben', 'jodi', 'tahole', 'amader', 'oder', 'tader', 'shob', 'sob', 'keu', 'karo', 'jano', 'janen', 'bujhi', 'bujhen', 'dite', 'nite', 'lagbe', 'dorkar', 'sahajjo', 'help', 'poribar', 'poribarer', 'shastho', 'shasthyo', 'rog', 'rogi', 'hospital', 'daktar', 'doctor', 'oshudh', 'kivabe', 'kemne', 'onek', 'ektu', 'aktu', 'please', 'plz', 'doya', 'janaben', 'janao', 'group', 'grp', 'donate', 'dibo', 'dibi', 'debe', 'nibo', 'nebo', 'hae', 'haa', 'na', 'nah', 'aro', 'ar', 'ba', 'ebong', 'kintu', 'tobe', 'je', 'jar', 'eta', 'ota', 'sheta', 'kota', 'kothai', 'weak', 'durbol', 'problem', 'somossa', 'shomossa', 'jabe', 'dewa', 'deya', 'deowa', 'rakte', 'din', 'dilen', 'dilam', 'pari', 'paro', 'paren', 'possible', 'age', 'boyosh', 'ojon', 'weight', 'kg', 'hemoglobin', 'iron', 'tablet', 'medicine', 'oshudh', 'khete', 'khabo', 'khaben', 'khawar', 'pore', 'agey', 'age', 'shomoy', 'somoy', 'time', 'koto', 'kokhon', 'kobe', 'theke', 'jonno', 'jonne', 'dhoroner', 'type', 'negative', 'positive', 'thalassemia', 'cancer', 'diabetes', 'sugar', 'pressure', 'bp', 'anemia', 'infection', 'fever', 'jor', 'gaye', 'matha', 'ghora', 'byatha', 'betha', 'lage', 'lagche', 'shurjo', 'safe', 'nirapod', 'khatarnak', 'risk', 'bhoy', 'bhoi', 'test', 'poriksha', 'report', 'normal', 'abnormal', 'donor', 'donner', 'donar', 'khuje', 'khujte', 'khuji', 'paoa', 'pawa', 'contact', 'number', 'phone', 'call', 'akjon', 'ekjon', 'jon', 'er', 'dao', 'daw', 'den', 'name', 'koi', 'koy', 'kobe', 'kotha'];
     const words = text.toLowerCase().split(/\s+/);
     const matched = words.filter(w => banglishWords.includes(w)).length;
     return matched >= 2 || (matched >= 1 && words.length <= 5);
@@ -43,15 +34,10 @@ function detectLang(text) {
     return 'english';
 }
 
-/* ══════════════════════════════════════════════
-   SECTION 2 — Blood Group Extraction & Donor Intent
-   ══════════════════════════════════════════════ */
-
-/** Extract blood group from user text (A+, B-, AB+, O- etc.) in English/Bangla/Banglish */
 function extractBloodGroup(text) {
     const t = text.toLowerCase().replace(/\s+/g, ' ').trim();
 
-    // Direct patterns: "A+", "b+", "AB-", "o positive", "ab negative" etc.
+    
     const directMap = {
         'a+': 'A+', 'a plus': 'A+', 'a positive': 'A+', 'a pos': 'A+',
         'a-': 'A-', 'a minus': 'A-', 'a negative': 'A-', 'a neg': 'A-',
@@ -66,7 +52,7 @@ function extractBloodGroup(text) {
         if (t.includes(pattern)) return group;
     }
 
-    // Regex for formats like "B +", "AB -"
+    
     const rgx = /\b(ab|a|b|o)\s*(\+|-|pos(?:itive)?|neg(?:ative)?|plus|minus)\b/i;
     const m = t.match(rgx);
     if (m) {
@@ -75,7 +61,7 @@ function extractBloodGroup(text) {
         return letter + sign;
     }
 
-    // Bangla patterns: এ পজিটিভ, বি নেগেটিভ, ও পজিটিভ, এবি পজিটিভ
+    
     const banglaMap = [
         { patterns: ['এবি পজিটিভ', 'এবি পজেটিভ', 'এবি প্লাস'], group: 'AB+' },
         { patterns: ['এবি নেগেটিভ', 'এবি নেগেটিভ', 'এবি মাইনাস'], group: 'AB-' },
@@ -92,7 +78,7 @@ function extractBloodGroup(text) {
         }
     }
 
-    // Banglish: "bi positive", "o negative", "ab plus"
+    
     const banglishMap = {
         'bi positive': 'B+', 'bi pos': 'B+', 'bi plus': 'B+', 'bi +': 'B+',
         'bi negative': 'B-', 'bi neg': 'B-', 'bi minus': 'B-', 'bi -': 'B-',
@@ -106,18 +92,17 @@ function extractBloodGroup(text) {
     return null;
 }
 
-/** Detect if user wants to FIND a donor / needs blood */
 function isDonorIntent(text) {
     const t = text.toLowerCase();
     const intentPhrases = [
-        // English
+        
         'need blood', 'need donor', 'find donor', 'search donor', 'looking for donor',
         'looking for blood', 'blood needed', 'donor needed', 'urgent blood',
         'emergency blood', 'want blood', 'require blood', 'get blood',
         'any donor', 'available donor', 'donor available', 'donor list',
         'show donor', 'donor contact', 'donor number', 'donor phone',
         'who can give', 'give blood', 'donor khuje', 'donor khuji',
-        // Banglish
+        
         'rokto dorkar', 'rokto lagbe', 'blood dorkar', 'blood lagbe',
         'donor lagbe', 'donor dorkar', 'donor khujte', 'donor chai',
         'rokto chai', 'blood chai', 'rokto paoa', 'rokto pawa',
@@ -125,7 +110,7 @@ function isDonorIntent(text) {
         'donor dekhao', 'donor dao', 'rokto dao', 'rokte dorkar',
         'rokter dorkar', 'donor paben', 'donor paoa jabe',
         'emergency rokto', 'jruri rokto', 'urgent rokto',
-        // Bangla
+        
         'রক্ত দরকার', 'রক্ত লাগবে', 'রক্ত চাই', 'ডোনার দরকার',
         'ডোনার লাগবে', 'ডোনার চাই', 'ডোনার খুঁজ', 'রক্তদাতা খুঁজ',
         'রক্তদাতা দরকার', 'রক্তদাতা চাই', 'রক্তদাতা লাগবে',
@@ -134,7 +119,13 @@ function isDonorIntent(text) {
     return intentPhrases.some(phrase => t.includes(phrase));
 }
 
-/** Find eligible donors from state.donorsList by blood group */
+function wantsNameOnly(text) {
+    const t = text.toLowerCase();
+    const hasName = ['name', 'naam', 'nam', 'নাম'].some(w => t.includes(w));
+    const hasDonor = ['donor', 'rokto', 'blood', 'রক্ত', 'দাতা', 'ডোনার'].some(w => t.includes(w));
+    return hasName && hasDonor;
+}
+
 function findEligibleDonors(bloodGroup) {
     if (!state.donorsList || state.donorsList.length === 0) return [];
     const normalized = normalizeBloodGroup(bloodGroup);
@@ -153,7 +144,6 @@ function findDonorsByGroup(bloodGroup) {
     });
 }
 
-/** Format donor results into a pretty chat message */
 function formatDonorResults(donors, bloodGroup, lang) {
     const searchHref = getSearchHref();
     if (!donors || donors.length === 0) {
@@ -172,7 +162,7 @@ function formatDonorResults(donors, bloodGroup, lang) {
         header = `🩸 Found <strong>${count}</strong> eligible <strong>${bloodGroup}</strong> donor${count > 1 ? 's' : ''}:`;
     }
 
-    const maxShow = 5;
+    const maxShow = 120;
     const list = donors.slice(0, maxShow).map((d, i) => {
         const name = d.fullName || d.name || 'Unknown';
         const phone = d.phone || d.contact || 'N/A';
@@ -196,9 +186,9 @@ function formatDonorResults(donors, bloodGroup, lang) {
     }
 
     let tip;
-    if (lang === 'bangla') tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ সকল দাতা যোগ্য (শেষ রক্তদানের পর ৯০+ দিন পার হয়েছে)</div>`;
-    else if (lang === 'banglish') tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ Sob donor eligible (last donation theke 90+ din hoyeche)</div>`;
-    else tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ All donors are eligible (90+ days since last donation)</div>`;
+    if (lang === 'bangla') tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ সকল দাতা যোগ্য (শেষ রক্তদানের পর ১২০+ দিন পার হয়েছে)</div>`;
+    else if (lang === 'banglish') tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ Sob donor eligible (last donation theke 120+ din hoyeche)</div>`;
+    else tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ All donors are eligible (120+ days since last donation)</div>`;
 
     return header + list + footer + tip;
 }
@@ -212,7 +202,8 @@ function formatFallbackDonorResults(donors, bloodGroup, lang) {
             ? `⚠️ Ekhon <strong>${bloodGroup}</strong> group e eligible donor nai. Kintu ${count} jon donor paoa gese (waiting period thakte pare):`
             : `⚠️ No eligible <strong>${bloodGroup}</strong> donors right now, but ${count} donors were found (they may be in the waiting period):`;
 
-    const list = donors.slice(0, 5).map((d, i) => {
+    const maxShow = 120;
+    const list = donors.slice(0, maxShow).map((d, i) => {
         const name = d.fullName || d.name || 'Unknown';
         const phone = d.phone || d.contact || 'N/A';
         const loc = d.location || d.area || '';
@@ -233,6 +224,52 @@ function formatFallbackDonorResults(donors, bloodGroup, lang) {
     return header + list + footer;
 }
 
+function formatDonorNameResults(donors, bloodGroup, lang) {
+    const maxShow = 120;
+    const count = donors.length;
+    let header;
+    if (lang === 'bangla') {
+        header = `🩸 <strong>${bloodGroup}</strong> গ্রুপে <strong>${count}</strong> জন দাতার নাম:`;
+    } else if (lang === 'banglish') {
+        header = `🩸 <strong>${bloodGroup}</strong> group e <strong>${count}</strong> jon donor er naam:`;
+    } else {
+        header = `🩸 <strong>${count}</strong> <strong>${bloodGroup}</strong> donor name(s):`;
+    }
+
+    const list = donors.slice(0, maxShow).map((d, i) => {
+        const name = d.fullName || d.name || 'Unknown';
+        return `<div style="background:#f9fafb;border-radius:0.5rem;padding:0.5rem 0.65rem;margin-top:0.35rem;border-left:3px solid #dc2626">${i + 1}. ${name}</div>`;
+    }).join('');
+
+    let footer = '';
+    if (count > maxShow) {
+        const remaining = count - maxShow;
+        if (lang === 'bangla') footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...এবং আরও ${remaining} জন দাতা আছেন।</div>`;
+        else if (lang === 'banglish') footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...ar o ${remaining} jon donor achen.</div>`;
+        else footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...and ${remaining} more.</div>`;
+    }
+    return header + list + footer;
+}
+
+function buildDonorContext(question) {
+    const lang = detectLang(question);
+    const bloodGroup = extractBloodGroup(question);
+    const wantsDonor = isDonorIntent(question);
+    const softDonor = bloodGroup && ['donor', 'rokto', 'blood', 'lagbe', 'dorkar', 'chai', 'রক্ত', 'দাতা', 'ডোনার'].some(w => question.toLowerCase().includes(w));
+    if (!bloodGroup || (!wantsDonor && !softDonor)) return '';
+    if (!state.donorsList || state.donorsList.length === 0) return '';
+
+    const eligible = findEligibleDonors(bloodGroup);
+    if (eligible.length) {
+        return `\n\n--- DONOR RESULTS (include in reply if user asked for donors) ---\n${formatDonorResults(eligible, bloodGroup, lang)}\n--- END DONOR RESULTS ---`;
+    }
+    const fallback = findDonorsByGroup(bloodGroup);
+    if (fallback.length) {
+        return `\n\n--- DONOR RESULTS (include in reply if user asked for donors) ---\n${formatFallbackDonorResults(fallback, bloodGroup, lang)}\n--- END DONOR RESULTS ---`;
+    }
+    return '';
+}
+
 function getDonorListLoadingMessage(lang) {
     const searchHref = getSearchHref();
     if (lang === 'bangla') {
@@ -244,7 +281,6 @@ function getDonorListLoadingMessage(lang) {
     return `Donor list is loading... please try again in a moment. 📋 You can also check the <a href="${searchHref}" style="color:#dc2626;font-weight:600">Donor Search page</a>.`;
 }
 
-/* ── Knowledge Base (bilingual) ── */
 const SITE_LINKS = {
     about: getPageHref('about.html'),
     guide: getPageHref('donationGuide.html'),
@@ -255,208 +291,235 @@ const SITE_LINKS = {
     contact: getContactHref()
 };
 const KNOWLEDGE_BASE = [
-    // Greetings
+    
     { keywords: ['hello', 'hi', 'hey', 'good morning', 'good evening', 'good night', 'howdy', 'sup', 'yo'],
       answer: 'Hello! 👋 I\'m your Blood Donation Assistant. I can help you with blood donation info — eligibility, blood types, preparation tips, health advice, and much more. Ask me anything!',
-      answerBn: 'হ্যালো! 👋 আমি আপনার রক্তদান সহকারী। আমি রক্তদান সম্পর্কে সাহায্য করতে পারি — যোগ্যতা, রক্তের গ্রুপ, প্রস্তুতির টিপস, স্বাস্থ্য পরামর্শ এবং আরও অনেক কিছু। যেকোনো প্রশ্ন করুন!' },
+            answerBn: 'হ্যালো! 👋 আমি আপনার রক্তদান সহকারী। আমি রক্তদান সম্পর্কে সাহায্য করতে পারি — যোগ্যতা, রক্তের গ্রুপ, প্রস্তুতির টিপস, স্বাস্থ্য পরামর্শ এবং আরও অনেক কিছু। যেকোনো প্রশ্ন করুন!',
+            answerBl: 'Hi! 👋 Ami Blood Donation Assistant. Blood donation info, eligibility, blood group, preparation tips, health advice—sob niye help korte pari. Je kono question korun!' },
     { keywords: ['assalamu', 'salam', 'আসসালামু', 'সালাম', 'ওয়ালাইকুম'],
       answer: 'Wa Alaikum Assalam! 🙏 I\'m your Blood Donation Assistant. How can I help you today?',
-      answerBn: 'ওয়ালাইকুম আসসালাম! 🙏 আমি আপনার রক্তদান সহকারী। আজ কীভাবে সাহায্য করতে পারি?' },
+            answerBn: 'ওয়ালাইকুম আসসালাম! 🙏 আমি আপনার রক্তদান সহকারী। আজ কীভাবে সাহায্য করতে পারি?',
+            answerBl: 'Walaikum assalam! 🙏 Ami Blood Donation Assistant. Aj kivabe help korte pari?' },
     { keywords: ['হ্যালো', 'হাই', 'হেই', 'শুভ সকাল', 'শুভ সন্ধ্যা', 'কেমন আছ', 'কেমন আছেন', 'কি খবর', 'কি অবস্থা'],
       answer: 'Hello! 👋 I\'m your Blood Donation Assistant. How can I assist you?',
-      answerBn: 'হ্যালো! 👋 আমি আপনার রক্তদান সহকারী। কীভাবে সাহায্য করতে পারি?' },
+            answerBn: 'হ্যালো! 👋 আমি আপনার রক্তদান সহকারী। কীভাবে সাহায্য করতে পারি?',
+            answerBl: 'Hello! 👋 Ami Blood Donation Assistant. Kivabe help korte pari?' },
     { keywords: ['how are you', 'how r u', 'hows it going', 'whats up'],
       answer: 'I\'m doing great, thanks for asking! 😊 I\'m always ready to help with blood donation questions. What would you like to know?',
-      answerBn: 'আমি ভালো আছি, ধন্যবাদ! 😊 রক্তদান সম্পর্কে যেকোনো প্রশ্ন করুন।' },
+            answerBn: 'আমি ভালো আছি, ধন্যবাদ! 😊 রক্তদান সম্পর্কে যেকোনো প্রশ্ন করুন।',
+            answerBl: 'Bhalo achi, thanks! 😊 Blood donation niye je kono question thakle bolun.' },
     { keywords: ['ভালো আছি', 'ভাল আছি', 'আলহামদুলিল্লাহ'],
       answer: 'Great to hear! How can I help you with blood donation today?',
-      answerBn: 'শুনে ভালো লাগলো! আজ রক্তদান নিয়ে কী জানতে চান?' },
+            answerBn: 'শুনে ভালো লাগলো! আজ রক্তদান নিয়ে কী জানতে চান?',
+            answerBl: 'Shune bhalo laglo! Aj blood donation niye ki jante chan?' },
 
-    // Thanks
+        
+        { keywords: ['who are you', 'who r u', 'who are u', 'আপনি কে', 'তুমি কে', 'কে তুমি'],
+            answer: 'I am BAUET Blood Donation Assistant.',
+            answerBn: 'আমি BAUET Blood Donation Assistant।',
+            answerBl: 'Ami BAUET Blood Donation Assistant.' },
+        { keywords: ['what can you do', 'what do you do', 'can you do', 'আপনি কি করতে পারেন', 'তুমি কি করতে পারো'],
+            answer: 'I can help with donor search, blood donation information, and website guidance.',
+            answerBn: 'আমি ডোনার খোঁজা, রক্তদান সম্পর্কিত তথ্য এবং ওয়েবসাইট নির্দেশনায় সাহায্য করতে পারি।',
+            answerBl: 'Ami donor search, blood donation info ebong website guidance e help korte pari.' },
+
+    
     { keywords: ['thank', 'thanks', 'thx', 'ty', 'appreciate'],
       answer: 'You\'re welcome! 😊 If you have more questions about blood donation, feel free to ask. Remember — every donation can save up to 3 lives! ❤️',
-      answerBn: 'স্বাগতম! 😊 রক্তদান নিয়ে আরও প্রশ্ন থাকলে জিজ্ঞাসা করুন। মনে রাখবেন — একটি রক্তদানে ৩টি জীবন বাঁচতে পারে! ❤️' },
+            answerBn: 'স্বাগতম! 😊 রক্তদান নিয়ে আরও প্রশ্ন থাকলে জিজ্ঞাসা করুন। মনে রাখবেন — একটি রক্তদানে ৩টি জীবন বাঁচতে পারে! ❤️',
+            answerBl: 'Welcome! 😊 Blood donation niye aro question thakle bolun. Mone rakhben—ekta donation diye 3 ta jibon bachte pare! ❤️' },
     { keywords: ['ধন্যবাদ', 'ধন্যবাদ', 'শুক্রিয়া', 'জাযাকাল্লাহ'],
       answer: 'You\'re welcome! ❤️',
-      answerBn: 'আপনাকেও ধন্যবাদ! 😊 রক্তদান নিয়ে আরও কিছু জানতে চাইলে নির্দ্বিধায় জিজ্ঞাসা করুন। ❤️' },
+            answerBn: 'আপনাকেও ধন্যবাদ! 😊 রক্তদান নিয়ে আরও কিছু জানতে চাইলে নির্দ্বিধায় জিজ্ঞাসা করুন। ❤️',
+            answerBl: 'Apnakeo thanks! 😊 Blood donation niye aro kichu jante chaile nirdidhay bolun. ❤️' },
 
-    // Who can donate / Eligibility
+    
     { keywords: ['who can donate', 'eligible', 'eligibility', 'can i donate', 'requirements', 'criteria', 'qualify'],
-      answer: 'Generally, anyone aged 18–65, weighing at least 50 kg (110 lbs), and in good health can donate blood. You must not have donated in the last 90 days (12 weeks). Conditions like recent surgery, pregnancy, certain medications, or chronic illnesses may temporarily or permanently defer you.',
-      answerBn: 'সাধারণত ১৮-৬৫ বছর বয়সী, কমপক্ষে ৫০ কেজি ওজনের এবং সুস্থ যেকোনো ব্যক্তি রক্তদান করতে পারেন। শেষ রক্তদানের পর কমপক্ষে ৯০ দিন (১২ সপ্তাহ) অপেক্ষা করতে হবে। সাম্প্রতিক অস্ত্রোপচার, গর্ভাবস্থা, কিছু ওষুধ বা দীর্ঘস্থায়ী রোগ সাময়িক বা স্থায়ীভাবে বাধা হতে পারে।' },
+    answer: 'Generally, anyone aged 18–65, weighing at least 50 kg (110 lbs), and in good health can donate blood. You must not have donated in the last 120 days (about 4 months). Conditions like recent surgery, pregnancy, certain medications, or chronic illnesses may temporarily or permanently defer you.',
+    answerBn: 'সাধারণত ১৮-৬৫ বছর বয়সী, কমপক্ষে ৫০ কেজি ওজনের এবং সুস্থ যেকোনো ব্যক্তি রক্তদান করতে পারেন। শেষ রক্তদানের পর কমপক্ষে ১২০ দিন (প্রায় ৪ মাস) অপেক্ষা করতে হবে। সাম্প্রতিক অস্ত্রোপচার, গর্ভাবস্থা, কিছু ওষুধ বা দীর্ঘস্থায়ী রোগ সাময়িক বা স্থায়ীভাবে বাধা হতে পারে।',
+    answerBl: 'Generally 18-65 age, weight 50kg+, ebong healthy hole blood donate kora jay. Last donation theke 120 din gap lagbe. Surgery/pregnancy/medication/long-term illness thakle temporarily wait korte hoy.' },
     { keywords: ['কে দিতে পারে', 'যোগ্যতা', 'রক্তদান করতে পারব', 'রক্ত দিতে পারবো', 'আমি কি দিতে পারি', 'কি কি লাগে', 'শর্ত'],
-      answer: 'Anyone aged 18-65, at least 50 kg, and in good health can donate. Must wait 90 days between donations.',
-      answerBn: '১৮-৬৫ বছর বয়সী, কমপক্ষে ৫০ কেজি ওজনের এবং সুস্থ যেকোনো ব্যক্তি রক্তদান করতে পারেন। দুটি রক্তদানের মধ্যে কমপক্ষে ৯০ দিন (৩ মাস) বিরতি থাকতে হবে।' },
+    answer: 'Anyone aged 18-65, at least 50 kg, and in good health can donate. Must wait 120 days between donations.',
+    answerBn: '১৮-৬৫ বছর বয়সী, কমপক্ষে ৫০ কেজি ওজনের এবং সুস্থ যেকোনো ব্যক্তি রক্তদান করতে পারেন। দুটি রক্তদানের মধ্যে কমপক্ষে ১২০ দিন (প্রায় ৪ মাস) বিরতি থাকতে হবে।' },
 
-    // Blood types
+    
     { keywords: ['blood type', 'blood group', 'types of blood', 'how many blood groups', 'blood groups list'],
       answer: 'There are 8 main blood types: A+, A-, B+, B-, O+, O-, AB+, AB-. These are determined by the ABO system and the Rh factor. O- is the universal donor (can give to all), and AB+ is the universal recipient (can receive from all).',
-      answerBn: '৮টি প্রধান রক্তের গ্রুপ আছে: A+, A-, B+, B-, O+, O-, AB+, AB-। এগুলো ABO সিস্টেম এবং Rh ফ্যাক্টর দ্বারা নির্ধারিত হয়। O- হলো সার্বজনীন দাতা (সবাইকে দিতে পারে) এবং AB+ হলো সার্বজনীন গ্রহীতা (সবার থেকে নিতে পারে)।' },
+            answerBn: '৮টি প্রধান রক্তের গ্রুপ আছে: A+, A-, B+, B-, O+, O-, AB+, AB-। এগুলো ABO সিস্টেম এবং Rh ফ্যাক্টর দ্বারা নির্ধারিত হয়। O- হলো সার্বজনীন দাতা (সবাইকে দিতে পারে) এবং AB+ হলো সার্বজনীন গ্রহীতা (সবার থেকে নিতে পারে)।',
+            answerBl: '8 ta main blood group: A+, A-, B+, B-, O+, O-, AB+, AB-. O- universal donor, AB+ universal recipient.' },
     { keywords: ['রক্তের গ্রুপ', 'ব্লাড গ্রুপ', 'কত ধরনের রক্ত', 'গ্রুপ কয়টি', 'রক্তের প্রকার'],
       answer: 'There are 8 blood types: A+, A-, B+, B-, O+, O-, AB+, AB-.',
       answerBn: '৮টি প্রধান রক্তের গ্রুপ: A+, A-, B+, B-, O+, O-, AB+, AB-। O- সার্বজনীন দাতা এবং AB+ সার্বজনীন গ্রহীতা।' },
 
-    // How often
+    
     { keywords: ['how often', 'frequency', 'how many times', 'gap between', 'interval', 'কতদিন পর', 'কতবার', 'বিরতি'],
-      answer: 'You can donate whole blood every 90 days (about 12 weeks). Platelet donations can be made every 7 days, up to 24 times a year. Double red cell donations can be made every 168 days.',
-      answerBn: 'প্রতি ৯০ দিন (প্রায় ১২ সপ্তাহ) পর পর সম্পূর্ণ রক্তদান করা যায়। প্লেটলেট দান প্রতি ৭ দিনে করা যায়, বছরে সর্বোচ্চ ২৪ বার। ডাবল রেড সেল দান প্রতি ১৬৮ দিনে করা যায়।' },
+    answer: 'You can donate whole blood every 120 days (about 4 months). Platelet donations can be made every 7 days, up to 24 times a year. Double red cell donations can be made every 168 days.',
+    answerBn: 'প্রতি ১২০ দিন (প্রায় ৪ মাস) পর পর সম্পূর্ণ রক্তদান করা যায়। প্লেটলেট দান প্রতি ৭ দিনে করা যায়, বছরে সর্বোচ্চ ২৪ বার। ডাবল রেড সেল দান প্রতি ১৬৮ দিনে করা যায়।' },
 
-    // Benefits
+    
     { keywords: ['benefits', 'why donate', 'advantage', 'good for health', 'healthy', 'কেন দেব', 'উপকারিতা', 'সুবিধা', 'লাভ'],
       answer: 'Blood donation has many benefits: saves up to 3 lives per donation, stimulates new blood cell production, reduces iron overload, provides a free health checkup, may lower heart disease risk, and gives a great sense of fulfillment! 💪',
       answerBn: 'রক্তদানের অনেক উপকারিতা রয়েছে: একটি দানে ৩টি জীবন বাঁচে, নতুন রক্তকোষ তৈরি হয়, অতিরিক্ত আয়রন কমে, বিনামূল্যে স্বাস্থ্য পরীক্ষা হয়, হৃদরোগের ঝুঁকি কমতে পারে এবং মানসিক প্রশান্তি পাওয়া যায়! 💪' },
 
-    // Preparation
+    
     { keywords: ['prepare', 'before donat', 'preparation', 'what to do before', 'tips before', 'প্রস্তুতি', 'কি করব আগে', 'দানের আগে'],
       answer: 'Before donating: 1) Eat a healthy meal 2-3 hours before, 2) Drink plenty of water (at least 500ml extra), 3) Avoid fatty foods, 4) Get good sleep, 5) Bring a valid ID, 6) Wear comfortable clothing. Avoid alcohol for 24 hours.',
-      answerBn: 'রক্তদানের আগে: ১) ২-৩ ঘণ্টা আগে পুষ্টিকর খাবার খান, ২) প্রচুর পানি পান করুন (কমপক্ষে ৫০০মিলি অতিরিক্ত), ৩) চর্বিযুক্ত খাবার এড়িয়ে চলুন, ৪) ভালো ঘুম নিন, ৫) বৈধ পরিচয়পত্র নিন, ৬) আরামদায়ক পোশাক পরুন। ২৪ ঘণ্টা আগে মদ্যপান এড়িয়ে চলুন।' },
+            answerBn: 'রক্তদানের আগে: ১) ২-৩ ঘণ্টা আগে পুষ্টিকর খাবার খান, ২) প্রচুর পানি পান করুন (কমপক্ষে ৫০০মিলি অতিরিক্ত), ৩) চর্বিযুক্ত খাবার এড়িয়ে চলুন, ৪) ভালো ঘুম নিন, ৫) বৈধ পরিচয়পত্র নিন, ৬) আরামদায়ক পোশাক পরুন। ২৪ ঘণ্টা আগে মদ্যপান এড়িয়ে চলুন।',
+            answerBl: 'Donation er age: 2-3 ghonta age bhalo khabar, extra pani, fatty food avoid, bhalo ghum, valid ID, comfortable dress. Alcohol 24 ghonta avoid.' },
 
-    // After donation
+    
     { keywords: ['after donat', 'post donation', 'after giving blood', 'side effects', 'what to do after', 'দানের পরে', 'পরে কি করব', 'পার্শ্বপ্রতিক্রিয়া'],
       answer: 'After donating: 1) Rest 10-15 minutes, 2) Drink extra fluids for 24-48 hours, 3) Avoid heavy lifting for 24 hours, 4) Keep bandage on for 4+ hours, 5) Eat iron-rich foods. Minor dizziness is normal and temporary.',
-      answerBn: 'রক্তদানের পরে: ১) ১০-১৫ মিনিট বিশ্রাম নিন, ২) ২৪-৪৮ ঘণ্টা বেশি তরল পান করুন, ৩) ২৪ ঘণ্টা ভারী কাজ এড়িয়ে চলুন, ৪) ব্যান্ডেজ ৪+ ঘণ্টা রাখুন, ৫) আয়রন সমৃদ্ধ খাবার খান। হালকা মাথা ঘোরা স্বাভাবিক এবং সাময়িক।' },
+            answerBn: 'রক্তদানের পরে: ১) ১০-১৫ মিনিট বিশ্রাম নিন, ২) ২৪-৪৮ ঘণ্টা বেশি তরল পান করুন, ৩) ২৪ ঘণ্টা ভারী কাজ এড়িয়ে চলুন, ৪) ব্যান্ডেজ ৪+ ঘণ্টা রাখুন, ৫) আয়রন সমৃদ্ধ খাবার খান। হালকা মাথা ঘোরা স্বাভাবিক এবং সাময়িক।',
+            answerBl: 'Donation er pore 10-15 min rest, 24-48 ghonta beshi pani, 24 ghonta heavy lifting avoid, bandage 4+ hour, iron-rich food. Halka dizziness normal.' },
 
-    // Duration
+    
     { keywords: ['how long', 'duration', 'time take', 'how much time', 'কতক্ষণ', 'সময় লাগে'],
       answer: 'The actual blood draw takes about 8-10 minutes. Including registration, screening, and rest, the whole process takes about 45-60 minutes.',
       answerBn: 'প্রকৃত রক্ত নেওয়া হয় ৮-১০ মিনিটে। নিবন্ধন, পরীক্ষা এবং বিশ্রামসহ পুরো প্রক্রিয়ায় প্রায় ৪৫-৬০ মিনিট সময় লাগে।' },
 
-    // Pain
+    
     { keywords: ['pain', 'hurt', 'painful', 'needle', 'does it hurt', 'ব্যথা', 'কষ্ট', 'সুই', 'ব্যথা হয়'],
       answer: 'You\'ll feel a brief pinch when the needle is inserted, but it\'s generally not painful. Most donors say it\'s much easier than expected! If you feel discomfort, let the staff know immediately.',
       answerBn: 'সুই ঢোকানোর সময় সামান্য চিমটির মতো লাগবে, কিন্তু সাধারণত ব্যথা হয় না। বেশিরভাগ দাতা বলেন এটি তাদের ধারণার চেয়ে অনেক সহজ! অস্বস্তি হলে কর্মীদের জানান।' },
 
-    // Universal donor/recipient
+    
     { keywords: ['universal donor', 'universal recipient', 'O negative', 'AB positive', 'সার্বজনীন দাতা', 'সার্বজনীন গ্রহীতা'],
       answer: 'O- (O negative) is the universal donor — can give red blood cells to anyone. AB+ (AB positive) is the universal recipient — can receive from any blood type. In emergencies, O- is used when the patient\'s blood type is unknown.',
       answerBn: 'O- (ও নেগেটিভ) হলো সার্বজনীন দাতা — যেকোনো রক্তের গ্রুপকে দিতে পারে। AB+ (এবি পজিটিভ) হলো সার্বজনীন গ্রহীতা — যেকোনো গ্রুপ থেকে নিতে পারে। জরুরি অবস্থায় রোগীর গ্রুপ অজানা থাকলে O- ব্যবহার হয়।' },
 
-    // Compatibility
+    
     { keywords: ['compatible', 'compatibility', 'who can receive', 'who can give', 'matching', 'সামঞ্জস্য', 'কে কাকে দিতে পারে', 'ম্যাচিং'],
       answer: 'O- can give to all; O+ to A+, B+, AB+, O+; A- to A+, A-, AB+, AB-; A+ to A+, AB+; B- to B+, B-, AB+, AB-; B+ to B+, AB+; AB- to AB+, AB-; AB+ to AB+ only.',
       answerBn: 'O- সবাইকে দিতে পারে; O+ দিতে পারে A+, B+, AB+, O+ কে; A- দিতে পারে A+, A-, AB+, AB- কে; A+ দিতে পারে A+, AB+ কে; B- দিতে পারে B+, B-, AB+, AB- কে; B+ দিতে পারে B+, AB+ কে; AB- দিতে পারে AB+, AB- কে; AB+ শুধু AB+ কে।' },
 
-    // Platelet/Plasma
+    
     { keywords: ['platelet', 'plasma', 'types of donation', 'donation types', 'component', 'প্লেটলেট', 'প্লাজমা', 'দানের ধরন'],
       answer: 'Types: 1) Whole Blood — most common, 8-10 min. 2) Platelets (Apheresis) — for cancer patients, ~2 hours. 3) Plasma — for burn/trauma patients. 4) Double Red Cells — collects twice the red cells.',
       answerBn: 'প্রকারভেদ: ১) সম্পূর্ণ রক্ত — সবচেয়ে সাধারণ, ৮-১০ মিনিট। ২) প্লেটলেট — ক্যান্সার রোগীদের জন্য, ~২ ঘণ্টা। ৩) প্লাজমা — পোড়া/ট্রমা রোগীদের জন্য। ৪) ডাবল রেড সেল — দ্বিগুণ লোহিত কণিকা সংগ্রহ।' },
 
-    // Iron/Hemoglobin
+    
     { keywords: ['iron', 'hemoglobin', 'anemia', 'low iron', 'আয়রন', 'হিমোগ্লোবিন', 'রক্তস্বল্পতা'],
       answer: 'Hemoglobin is checked before every donation. Men need at least 13 g/dL; women 12.5 g/dL. Eat iron-rich foods (red meat, spinach, beans, fortified cereals) and vitamin C to maintain levels.',
       answerBn: 'প্রতিবার দানের আগে হিমোগ্লোবিন পরীক্ষা করা হয়। পুরুষদের কমপক্ষে ১৩ g/dL এবং মহিলাদের ১২.৫ g/dL প্রয়োজন। আয়রন সমৃদ্ধ খাবার (মাংস, পালং শাক, ডাল) এবং ভিটামিন সি খান।' },
 
-    // Tattoo
+    
     { keywords: ['tattoo', 'piercing', 'can i donate with tattoo', 'ট্যাটু', 'পিয়ার্সিং'],
       answer: 'You can donate if your tattoo/piercing was done at a regulated facility with sterile equipment. Some banks require a 3-12 month wait. Check with your local blood bank.',
       answerBn: 'জীবাণুমুক্ত সরঞ্জাম দিয়ে নিয়ন্ত্রিত জায়গায় ট্যাটু/পিয়ার্সিং করা হলে রক্তদান করতে পারবেন। কিছু রক্ত ব্যাংক ৩-১২ মাস অপেক্ষা চায়। স্থানীয় রক্ত ব্যাংকে জিজ্ঞাসা করুন।' },
 
-    // Medication
+    
     { keywords: ['medication', 'medicine', 'drugs', 'on medication', 'ওষুধ', 'মেডিসিন', 'ঔষধ খেলে'],
       answer: 'Many medications are fine. Blood thinners (aspirin — wait 48 hrs), antibiotics (wait till course ends), Accutane (1 month wait) may require deferral. Always disclose all medications.',
       answerBn: 'অনেক ওষুধ চলাকালীন দান করা যায়। রক্ত পাতলা করার ওষুধ (অ্যাসপিরিন — ৪৮ ঘণ্টা অপেক্ষা), অ্যান্টিবায়োটিক (কোর্স শেষ হওয়া পর্যন্ত অপেক্ষা) বাধা হতে পারে। সব ওষুধের কথা জানান।' },
 
-        // Blood pressure
+        
         { keywords: ['blood pressure', 'high bp', 'low bp', 'hypertension', 'hypotension', 'pressure', 'bp', 'রক্তচাপ', 'প্রেশার', 'উচ্চ রক্তচাপ', 'লো রক্তচাপ', 'হাই প্রেসার', 'লো প্রেসার'],
             answer: 'If your blood pressure is well controlled and you feel fine, you can usually donate. Very high or very low BP, dizziness, or recent medication changes mean you should wait. Always tell the staff about your BP history and medicines.',
             answerBn: 'রক্তচাপ নিয়ন্ত্রণে থাকলে এবং আপনি ভালো বোধ করলে সাধারণত রক্তদান করা যায়। খুব বেশি বা খুব কম চাপ, মাথা ঘোরা বা নতুন ওষুধ শুরু করলে অপেক্ষা করা ভালো। স্টাফকে অবশ্যই BP ইতিহাস ও ওষুধ জানান।' },
 
-        // Menstruation
+        
         { keywords: ['period', 'menstruation', 'mens', 'monthly cycle', 'মাসিক', 'পিরিয়ড', 'মাসিক চলছে', 'মেনস্ট্রুয়েশন'],
             answer: 'You can donate during your period if you feel well and your hemoglobin is okay. If you have heavy bleeding, severe pain, or feel weak, wait until you recover.',
             answerBn: 'মাসিক চলাকালীন ভালো লাগলে এবং হিমোগ্লোবিন ঠিক থাকলে রক্তদান করা যায়। বেশি রক্তপাত, তীব্র ব্যথা বা দুর্বলতা থাকলে সেরে ওঠার পরে দিন।' },
 
-        // Fever / infection
+        
         { keywords: ['fever', 'infection', 'flu', 'cold', 'viral', 'dengue', 'typhoid', 'malaria', 'hepatitis', 'jaundice', 'জ্বর', 'ইনফেকশন', 'ডেঙ্গু', 'টাইফয়েড', 'ম্যালেরিয়া', 'হেপাটাইটিস', 'জন্ডিস', 'ভাইরাল'],
             answer: 'Do not donate while you have fever or infection. Donate only after you are fully recovered and off antibiotics. For dengue, typhoid, malaria, or hepatitis, blood banks often require a longer wait — check with your local blood bank.',
             answerBn: 'জ্বর/ইনফেকশন থাকলে রক্তদান করবেন না। সম্পূর্ণ সুস্থ হয়ে এবং অ্যান্টিবায়োটিক শেষ হওয়ার পরে দান করুন। ডেঙ্গু/টাইফয়েড/ম্যালেরিয়া/হেপাটাইটিস হলে অনেক ক্ষেত্রে দীর্ঘ বিরতি লাগে — স্থানীয় ব্লাড ব্যাংকের নিয়ম জেনে নিন।' },
 
-        // Surgery / dental procedures
+        
         { keywords: ['surgery', 'operation', 'dental', 'tooth extraction', 'procedure', 'অপারেশন', 'সার্জারি', 'ডেন্টাল', 'দাঁত তোলা', 'প্রসিডিউর'],
             answer: 'After surgery or dental procedures, wait until the wound is fully healed and you are off antibiotics or pain medicines. The waiting period depends on the procedure — ask your doctor or blood bank.',
             answerBn: 'অপারেশন বা ডেন্টাল কাজের পরে ক্ষত সম্পূর্ণ শুকানো এবং অ্যান্টিবায়োটিক/পেইনকিলার শেষ হলে দান করুন। অপেক্ষার সময় অপারেশনের ধরন অনুযায়ী ভিন্ন — ডাক্তার বা ব্লাড ব্যাংকে জেনে নিন।' },
 
-        // Amount of blood taken
+        
         { keywords: ['how much blood', 'how many ml', 'amount of blood', 'blood volume', 'কত মিলি', 'কত রক্ত', 'পরিমাণ', 'রক্তের পরিমাণ'],
             answer: 'A typical donation is about 350–450 ml depending on your weight and local guidelines. It is safe for healthy donors, and your body replaces the volume quickly.',
             answerBn: 'সাধারণত ৩৫০–৪৫০ মি.লি. রক্ত নেওয়া হয় (ওজন ও নিয়ম অনুযায়ী)। সুস্থ দাতার জন্য এটি নিরাপদ এবং শরীর দ্রুত পূরণ করে।' },
 
-        // Safety / infection risk
+        
         { keywords: ['safe', 'risk', 'infection risk', 'needle safety', 'sterile', 'নিরাপদ', 'ঝুঁকি', 'ইনফেকশন ঝুঁকি', 'সুই', 'নিডল'],
             answer: 'Blood donation is very safe. Single-use sterile needles are used and cannot be reused. Most people feel fine; minor dizziness can happen and goes away with rest and fluids.',
             answerBn: 'রক্তদান অত্যন্ত নিরাপদ। একবার ব্যবহারযোগ্য জীবাণুমুক্ত সূঁচ ব্যবহার করা হয় এবং পুনঃব্যবহার হয় না। বেশিরভাগ মানুষ ঠিক থাকেন; সামান্য মাথা ঘোরা হলে বিশ্রাম ও পানি পান করলে ঠিক হয়ে যায়।' },
 
-    // Diabetes
+    
     { keywords: ['diabetes', 'diabetic', 'sugar', 'ডায়াবেটিস', 'সুগার', 'বহুমূত্র'],
       answer: 'Diabetics can usually donate if their condition is well-controlled. Both Type 1 and Type 2 may be eligible. Blood sugar should be normal at donation time. Insulin alone doesn\'t disqualify.',
       answerBn: 'ডায়াবেটিস নিয়ন্ত্রণে থাকলে সাধারণত রক্তদান করা যায়। টাইপ ১ ও টাইপ ২ উভয়ই যোগ্য হতে পারেন। দানের সময় রক্তের সুগার স্বাভাবিক থাকতে হবে। ইনসুলিন নেওয়া বাধা নয়।' },
 
-    // Pregnancy
+    
     { keywords: ['pregnancy', 'pregnant', 'breastfeeding', 'nursing', 'গর্ভবতী', 'গর্ভাবস্থা', 'বুকের দুধ', 'স্তন্যদান'],
       answer: 'Pregnant women cannot donate. Wait at least 6 weeks after giving birth. Breastfeeding mothers are generally eligible, but best to wait until baby is 6 months old.',
       answerBn: 'গর্ভবতী মহিলারা রক্তদান করতে পারবেন না। প্রসবের পর কমপক্ষে ৬ সপ্তাহ অপেক্ষা করুন। স্তন্যদানকারী মায়েরা সাধারণত যোগ্য, তবে শিশুর ৬ মাস বয়স পর্যন্ত অপেক্ষা করা ভালো।' },
 
-    // Storage
+    
     { keywords: ['storage', 'shelf life', 'how long blood stored', 'expiry', 'সংরক্ষণ', 'কতদিন রাখা যায়', 'মেয়াদ'],
       answer: 'Whole blood: 42 days refrigerated. Platelets: 5 days (room temp). Plasma: up to 1 year frozen. Red blood cells: up to 10 years frozen.',
       answerBn: 'সম্পূর্ণ রক্ত: ফ্রিজে ৪২ দিন। প্লেটলেট: ৫ দিন (ঘরের তাপমাত্রায়)। প্লাজমা: হিমায়িত অবস্থায় ১ বছর পর্যন্ত। লোহিত কণিকা: হিমায়িত অবস্থায় ১০ বছর পর্যন্ত।' },
 
-    // COVID
+    
     { keywords: ['covid', 'coronavirus', 'vaccination', 'vaccine', 'কোভিড', 'করোনা', 'টিকা', 'ভ্যাকসিন'],
       answer: 'You can donate after most COVID-19 vaccines with no waiting period (Pfizer, Moderna, AstraZeneca). After COVID infection, wait 14 days after symptoms fully resolve.',
       answerBn: 'বেশিরভাগ কোভিড-১৯ টিকা নেওয়ার পর অপেক্ষা ছাড়াই রক্তদান করা যায়। কোভিড সংক্রমণের পর লক্ষণ সম্পূর্ণ সেরে যাওয়ার ১৪ দিন পর দান করতে পারবেন।' },
 
-    // Weight
+    
     { keywords: ['weight', 'minimum weight', 'how heavy', 'ওজন', 'কত কেজি', 'ন্যূনতম ওজন'],
       answer: 'Minimum weight is typically 50 kg (110 lbs). This ensures enough blood volume to safely donate ~450-500 ml.',
-      answerBn: 'ন্যূনতম ওজন সাধারণত ৫০ কেজি (১১০ পাউন্ড)। এটি নিরাপদে ~৪৫০-৫০০ মিলি রক্তদানের জন্য পর্যাপ্ত রক্তের পরিমাণ নিশ্চিত করে।' },
+            answerBn: 'ন্যূনতম ওজন সাধারণত ৫০ কেজি (১১০ পাউন্ড)। এটি নিরাপদে ~৪৫০-৫০০ মিলি রক্তদানের জন্য পর্যাপ্ত রক্তের পরিমাণ নিশ্চিত করে।',
+            answerBl: 'Minimum weight typically 50kg. Eta safe bhabe ~450-500ml blood donate korar jonno enough volume ensure kore.' },
 
-    // Age
+    
     { keywords: ['age', 'minimum age', 'maximum age', 'how old', 'age limit', 'বয়স', 'কত বছর', 'বয়সসীমা'],
       answer: 'Minimum age: 18 years (16-17 with parental consent in some places). Upper limit: usually 65, some places have no upper limit if healthy.',
-      answerBn: 'ন্যূনতম বয়স: ১৮ বছর (কিছু জায়গায় ১৬-১৭ অভিভাবকের সম্মতিতে)। সর্বোচ্চ বয়স: সাধারণত ৬৫, কিছু জায়গায় সুস্থ থাকলে সীমা নেই।' },
+            answerBn: 'ন্যূনতম বয়স: ১৮ বছর (কিছু জায়গায় ১৬-১৭ অভিভাবকের সম্মতিতে)। সর্বোচ্চ বয়স: সাধারণত ৬৫, কিছু জায়গায় সুস্থ থাকলে সীমা নেই।',
+            answerBl: 'Minimum age 18 (kichu jaygay 16-17 parental consent). Upper limit usually 65, healthy hole kichu place e limit nai.' },
 
-    // Emergency
+    
     { keywords: ['emergency', 'urgent', 'need blood', 'blood needed', 'জরুরি', 'রক্ত দরকার', 'রক্ত লাগবে', 'রক্ত প্রয়োজন'],
       answer: 'In emergencies: 1) Contact nearest hospital blood bank, 2) Use our "Search Donors" page to find donors by blood group, 3) Share on social media, 4) Contact local blood donation organizations.',
-      answerBn: 'জরুরি অবস্থায়: ১) নিকটস্থ হাসপাতালের ব্লাড ব্যাংকে যোগাযোগ করুন, ২) আমাদের "ডোনার খুঁজুন" পেজে রক্তের গ্রুপ অনুযায়ী দাতা খুঁজুন, ৩) সোশ্যাল মিডিয়ায় শেয়ার করুন, ৪) স্থানীয় রক্তদান সংগঠনে যোগাযোগ করুন।' },
+            answerBn: 'জরুরি অবস্থায়: ১) নিকটস্থ হাসপাতালের ব্লাড ব্যাংকে যোগাযোগ করুন, ২) আমাদের "ডোনার খুঁজুন" পেজে রক্তের গ্রুপ অনুযায়ী দাতা খুঁজুন, ৩) সোশ্যাল মিডিয়ায় শেয়ার করুন, ৪) স্থানীয় রক্তদান সংগঠনে যোগাযোগ করুন।',
+            answerBl: 'Emergency hole: 1) Nearest hospital blood bank e contact, 2) "Search Donors" page diye donor khujen, 3) Social media te share, 4) Local blood donation org e contact.' },
 
-    // Motivation
+    
     { keywords: ['motivation', 'inspire', 'why should i', 'scared', 'nervous', 'fear', 'ভয়', 'উৎসাহ', 'অনুপ্রেরণা', 'কেন করব', 'ভয় লাগে'],
       answer: 'Every 2 seconds, someone needs blood. One donation saves up to 3 lives! 🩸 There\'s no substitute for human blood. By donating, you become a hero to a patient waiting for a chance to live. Your small act of courage creates a huge impact. Be brave, be a donor! 💪❤️',
       answerBn: 'প্রতি ২ সেকেন্ডে কারো রক্তের প্রয়োজন হয়। একটি দানে ৩টি জীবন বাঁচে! 🩸 মানুষের রক্তের কোনো বিকল্প নেই। রক্তদান করে আপনি একজন রোগীর জন্য আশার আলো হয়ে উঠবেন। আপনার ছোট সাহসী পদক্ষেপ বিশাল প্রভাব ফেলে। সাহসী হোন, রক্তদাতা হোন! 💪❤️' },
 
-    // Smoking
+    
     { keywords: ['smoke', 'smoking', 'cigarette', 'ধূমপান', 'সিগারেট'],
       answer: 'Smokers can donate blood! Just avoid smoking for at least 1 hour before and after donation. This helps your body recover better.',
       answerBn: 'ধূমপায়ীরা রক্তদান করতে পারেন! শুধু দানের কমপক্ষে ১ ঘণ্টা আগে ও পরে ধূমপান এড়িয়ে চলুন। এটি শরীরের পুনরুদ্ধারে সাহায্য করে।' },
 
-    // Food / Diet
+    
     { keywords: ['food', 'diet', 'eat', 'nutrition', 'what to eat', 'খাবার', 'কি খাব', 'খাদ্য', 'পুষ্টি'],
       answer: 'Before donation: eat iron-rich foods (red meat, spinach, lentils, beans). After: drink juice, eat snacks, have iron-rich meals. Avoid fatty foods before donating. Stay hydrated! 🥤',
       answerBn: 'দানের আগে: আয়রন সমৃদ্ধ খাবার খান (মাংস, পালং শাক, ডাল, শিম)। পরে: জুস পান করুন, স্ন্যাকস খান, আয়রন সমৃদ্ধ খাবার খান। দানের আগে চর্বিযুক্ত খাবার এড়িয়ে চলুন। পানি বেশি পান করুন! 🥤' },
 
-    // What is blood donation
+    
     { keywords: ['what is blood donation', 'blood donation meaning', 'define', 'রক্তদান কি', 'রক্তদান কী', 'রক্তদান মানে'],
       answer: 'Blood donation is the voluntary act of giving your blood to help save others\' lives. The donated blood is used for transfusions, surgeries, accident victims, cancer patients, and people with blood disorders. It\'s one of the greatest gifts you can give! 🩸',
       answerBn: 'রক্তদান হলো অন্যের জীবন বাঁচাতে স্বেচ্ছায় নিজের রক্ত দেওয়ার মহৎ কাজ। দান করা রক্ত রক্ত সংযোজন, অস্ত্রোপচার, দুর্ঘটনার শিকার, ক্যান্সার রোগী এবং রক্তের রোগে আক্রান্তদের জন্য ব্যবহার হয়। এটি সবচেয়ে মূল্যবান উপহারগুলোর একটি! 🩸' },
 
-    // This website / community
+    
         { keywords: ['this website', 'this site', 'blood donation community', 'your community', 'এই ওয়েবসাইট', 'এই সাইট', 'তোমাদের কমিউনিটি'],
             answer: 'BAUET BDC is a volunteer-driven platform that connects blood donors with patients in need. You can join as a donor, search for donors by blood group, view events, and get your donor card! Visit our Search page to find donors near you.',
       answerBn: 'ব্লাড ডোনেশন কমিউনিটি একটি স্বেচ্ছাসেবী প্ল্যাটফর্ম যা রক্তদাতা ও রোগীদের সংযুক্ত করে। আপনি দাতা হিসেবে যোগ দিতে পারেন, রক্তের গ্রুপ অনুযায়ী দাতা খুঁজতে পারেন, ইভেন্ট দেখতে পারেন এবং ডোনার কার্ড পেতে পারেন! আমাদের সার্চ পেজে দাতা খুঁজুন।' },
 
         { keywords: ['contact', 'email', 'phone', 'whatsapp', 'contact info', 'যোগাযোগ', 'ইমেইল', 'ফোন', 'হোয়াটসঅ্যাপ'],
             answer: `You can contact us via email: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> or phone: <a href="tel:+8801712460423">+8801712460423</a>. WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>. You can also use the Contact section: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>.`,
-            answerBn: `আপনি ইমেইল করতে পারেন: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> অথবা ফোন করুন: <a href="tel:+8801712460423">+8801712460423</a>। WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>। চাইলে Contact সেকশনও দেখতে পারেন: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>।` },
+            answerBn: `আপনি ইমেইল করতে পারেন: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> অথবা ফোন করুন: <a href="tel:+8801712460423">+8801712460423</a>। WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>। চাইলে Contact সেকশনও দেখতে পারেন: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>।`,
+            answerBl: `Email: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a>, phone: <a href="tel:+8801712460423">+8801712460423</a>. WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>. Contact section: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>.` },
 
         { keywords: ['join', 'register', 'sign up', 'become donor', 'join donor', 'register donor', 'নিবন্ধন', 'রেজিস্টার', 'ডোনার হব', 'যোগ দিতে', 'দাতা হব'],
             answer: `To join as a donor, fill out the registration form here: <a href="${SITE_LINKS.join}" style="color:#dc2626;font-weight:600">Join as Donor</a>. After signup, you can manage your profile anytime.`,
-            answerBn: `ডোনার হিসেবে যোগ দিতে এই ফর্মটি পূরণ করুন: <a href="${SITE_LINKS.join}" style="color:#dc2626;font-weight:600">Join as Donor</a>। রেজিস্ট্রেশনের পর প্রোফাইল সহজেই ম্যানেজ করতে পারবেন।` },
+            answerBn: `ডোনার হিসেবে যোগ দিতে এই ফর্মটি পূরণ করুন: <a href="${SITE_LINKS.join}" style="color:#dc2626;font-weight:600">Join as Donor</a>। রেজিস্ট্রেশনের পর প্রোফাইল সহজেই ম্যানেজ করতে পারবেন।`,
+            answerBl: `Donor hote form fill korun: <a href="${SITE_LINKS.join}" style="color:#dc2626;font-weight:600">Join as Donor</a>. Signup er por profile manage korte parben.` },
 
         { keywords: ['search donor', 'find donor', 'donor search', 'donor list', 'ডোনার খুঁজ', 'রক্ত খুঁজ', 'সার্চ ডোনার'],
             answer: `You can search donors by blood group here: <a href="${SITE_LINKS.search}" style="color:#dc2626;font-weight:600">Search Donors</a>.`,
-            answerBn: `রক্তের গ্রুপ অনুযায়ী ডোনার খুঁজতে এখানে যান: <a href="${SITE_LINKS.search}" style="color:#dc2626;font-weight:600">Search Donors</a>।` },
+            answerBn: `রক্তের গ্রুপ অনুযায়ী ডোনার খুঁজতে এখানে যান: <a href="${SITE_LINKS.search}" style="color:#dc2626;font-weight:600">Search Donors</a>।`,
+            answerBl: `Blood group diye donor search korte: <a href="${SITE_LINKS.search}" style="color:#dc2626;font-weight:600">Search Donors</a>.` },
 
         { keywords: ['events', 'blood camp', 'campaign', 'program', 'ইভেন্ট', 'ক্যাম্প', 'অনুষ্ঠান'],
             answer: `Upcoming donation events are listed here: <a href="${SITE_LINKS.events}" style="color:#dc2626;font-weight:600">Events</a>.`,
@@ -464,7 +527,8 @@ const KNOWLEDGE_BASE = [
 
         { keywords: ['donation guide', 'how to donate', 'guideline', 'guide', 'নির্দেশনা', 'গাইড', 'কিভাবে রক্ত দিব'],
             answer: `See the full donation guide here: <a href="${SITE_LINKS.guide}" style="color:#dc2626;font-weight:600">Donation Guide</a>.`,
-            answerBn: `রক্তদান সম্পর্কিত নির্দেশনা এখানে: <a href="${SITE_LINKS.guide}" style="color:#dc2626;font-weight:600">Donation Guide</a>।` },
+            answerBn: `রক্তদান সম্পর্কিত নির্দেশনা এখানে: <a href="${SITE_LINKS.guide}" style="color:#dc2626;font-weight:600">Donation Guide</a>।`,
+            answerBl: `Donation guide er jonno: <a href="${SITE_LINKS.guide}" style="color:#dc2626;font-weight:600">Donation Guide</a>.` },
 
         { keywords: ['profile', 'update profile', 'edit profile', 'change info', 'প্রোফাইল', 'প্রোফাইল আপডেট', 'তথ্য পরিবর্তন'],
             answer: `You can update your donor profile after login here: <a href="${SITE_LINKS.profile}" style="color:#dc2626;font-weight:600">My Profile</a>.`,
@@ -482,45 +546,43 @@ const KNOWLEDGE_BASE = [
             answer: 'Click the Login button in the header and use “Forgot Password?” if needed. A reset link will be sent to your email.',
             answerBn: 'হেডারের Login বাটনে ক্লিক করুন এবং দরকার হলে “Forgot Password?” ব্যবহার করুন। আপনার ইমেইলে রিসেট লিংক পাঠানো হবে।' },
 
-    // Bye
+    
     { keywords: ['bye', 'goodbye', 'see you', 'বিদায়', 'আবার দেখা হবে', 'যাই'],
       answer: 'Goodbye! Take care and remember — donating blood saves lives! See you soon! 👋❤️',
       answerBn: 'বিদায়! ভালো থাকবেন এবং মনে রাখবেন — রক্তদান জীবন বাঁচায়! আবার দেখা হবে! 👋❤️' },
 ];
 
-/* ══════════════════════════════════════════════
-   SECTION 4 — Knowledge Base Scorer (pseudo-RAG)
-   ══════════════════════════════════════════════ */
-
-/** Score a KB entry against the user query (higher = better match) */
 function scoreKBEntry(entry, queryWords) {
     let score = 0;
     let matchCount = 0;
     for (const kw of entry.keywords) {
         const kwLower = kw.toLowerCase();
-        // Exact word match in query words
+        
         if (queryWords.includes(kwLower)) {
             score += kw.length * 2;
             matchCount++;
         }
-        // Substring match in full query
+        
         else if (queryWords.join(' ').includes(kwLower)) {
             score += kw.length;
             matchCount++;
         }
     }
-    // Bonus for multiple keyword matches (relevance boost)
+    
     if (matchCount >= 2) score *= 1.3;
     if (matchCount >= 3) score *= 1.5;
     return { score, matchCount };
 }
 
-/**
- * Search knowledge base with scoring. Returns:
- * - { answer, score, isGreeting } for direct greetings/bye/thanks (instant reply)
- * - { answer, score, isGreeting: false } for strong KB match
- * - null if no match above threshold
- */
+function getKBAnswer(entry, lang) {
+    if (lang === 'bangla') return entry.answerBn || entry.answer;
+    if (lang === 'banglish') {
+        if (entry.answerBl) return entry.answerBl;
+        return `Choto kore bolchi: ${entry.answer} (jodi specific kichu janar thake, bole din)`;
+    }
+    return entry.answer;
+}
+
 function searchKnowledgeBase(question) {
     const q = question.toLowerCase().trim();
     const lang = detectLang(question);
@@ -541,14 +603,10 @@ function searchKnowledgeBase(question) {
 
     if (!bestMatch || bestScore < 3) return null;
 
-    const answer = lang === 'bangla' ? (bestMatch.answerBn || bestMatch.answer) : bestMatch.answer;
+    const answer = getKBAnswer(bestMatch, lang);
     return { answer, score: bestScore, isGreeting };
 }
 
-/**
- * Build RAG context from knowledge base for Gemini.
- * Collects top-scoring KB entries as context for the LLM.
- */
 function buildKBContext(question) {
     const qWords = question.toLowerCase().trim().split(/\s+/).filter(w => w.length > 0);
     const scored = KNOWLEDGE_BASE.map(entry => ({
@@ -564,17 +622,8 @@ function buildKBContext(question) {
         '\n--- END CONTEXT ---\n\nUse the above context to inform your answer if relevant. You may expand on it with your own knowledge.';
 }
 
-const GEMINI_API_KEY = 'AIzaSyDa1OeSnJKLmVlPi9MNsAqfKDWEgxW-Vuk';
-const GEMINI_MODELS = [
-    'gemini-2.0-flash',
-    'gemini-1.5-flash',
-    'gemini-1.5-pro'
-];
-function getGeminiUrl(model) {
-    return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
-}
+const CHAT_API_URL = '/chat';
 
-/* ── Conversation history for context ── */
 let conversationHistory = [];
 const MAX_HISTORY = 10;
 
@@ -599,116 +648,38 @@ Do NOT use Bengali script. Do NOT reply in pure English. Reply in casual, natura
         langInstruction = `LANGUAGE: The user is communicating in English. Reply in clear, well-structured English.`;
     }
 
-    // Build conversation contents with system context + RAG
-    const systemPrompt = {
-        role: 'user',
-        parts: [{
-            text: `You are "Blood Donation Assistant" — a highly intelligent, deeply knowledgeable medical AI assistant for the "BAUET BDC" website. You have extensive expertise in:
+    try {
+        const response = await fetch(CHAT_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: question,
+                lang,
+                context: ragContext,
+                history: conversationHistory.slice(-MAX_HISTORY),
+                langInstruction
+            })
+        });
 
-🩸 BLOOD DONATION (your primary domain):
-- All aspects of blood donation: eligibility, types (whole blood, platelets, plasma, double red cells), preparation, aftercare, frequency, safety
-- Blood types & compatibility (ABO system, Rh factor, universal donor/recipient, cross-matching)
-- Donation process step-by-step, what to expect, pain management
-- Special conditions: can diabetics donate? smokers? people with tattoos? pregnant women? people on medications?
-
-🏥 MEDICAL & HEALTH KNOWLEDGE:
-- Blood disorders: thalassemia, sickle cell disease, hemophilia, anemia (iron deficiency, B12, folate), polycythemia, leukemia
-- Hemoglobin levels, iron levels, ferritin, CBC interpretation basics
-- Transfusion medicine: reactions, compatibility testing, component therapy
-- General health questions related to blood: weakness, fatigue, dizziness, iron deficiency symptoms
-- Diet and nutrition for blood health: iron-rich foods, vitamin C, folic acid
-- Medication interactions with blood donation
-- Chronic conditions and eligibility: diabetes, hypertension, thyroid, heart disease, HIV/Hepatitis screening
-- Post-surgery blood needs, accident/emergency blood requirements
-- Pregnancy and blood: Rh incompatibility, gestational anemia
-- Cancer patients and blood product needs
-
-🧠 REASONING APPROACH:
-- For complex medical questions, THINK STEP-BY-STEP before answering
-- Consider multiple angles: medical facts, safety, individual conditions
-- Provide well-reasoned, evidence-based answers
-- Always mention "consult a doctor" for personalized medical decisions
-- Use numbered points or bullet structure for detailed answers
-- For simple questions, be concise (2-4 sentences)
-- For complex questions, be thorough and detailed
-
-${langInstruction}
-
-PERSONALITY:
-- Warm, friendly, encouraging — like a knowledgeable doctor friend
-- Use emojis occasionally (🩸💪❤️🏥) for warmth
-- Never refuse to answer health/blood-related questions
-- If a question is about general health that could relate to blood donation eligibility, ANSWER IT
-- Only redirect if the question is completely unrelated to health (e.g., cooking recipes, politics, sports scores)
-- If someone says they feel weak/sick and asks about blood donation, give medical advice about their condition AND donation eligibility
-
-CRITICAL: You must NEVER say "I can only help with blood donation questions" for ANY health-related query. Health queries about weakness, fatigue, anemia, medications, diseases, diet — ALL relate to blood donation eligibility and health. ANSWER THEM.${ragContext}`
-        }]
-    };
-
-    const systemResponse = {
-        role: 'model',
-        parts: [{
-            text: 'Understood! I am the Blood Donation Assistant with deep medical expertise. I will answer all blood donation and health-related questions thoroughly, think step-by-step for complex questions, and respond in the user\'s language (English/Bengali/Banglish). I will never refuse health-related questions. Ready to help! 🩸'
-        }]
-    };
-
-    // Build full conversation
-    const contents = [systemPrompt, systemResponse, ...conversationHistory, { role: 'user', parts: [{ text: question }] }];
-
-    const requestBody = {
-        contents,
-        generationConfig: {
-            temperature: 0.75,
-            topP: 0.95,
-            topK: 40,
-            maxOutputTokens: 2000
-        },
-        safetySettings: [
-            { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-            { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-            { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
-            { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' }
-        ]
-    };
-
-    // Try each model in order until one works
-    for (const model of GEMINI_MODELS) {
-        try {
-            const response = await fetch(getGeminiUrl(model), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody)
-            });
-
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                console.warn(`Gemini model ${model} failed (${response.status}):`, errData?.error?.message || 'Unknown error');
-                continue; // Try next model
-            }
-
-            const data = await response.json();
-            const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (answer) {
-                addToHistory('user', question);
-                addToHistory('model', answer);
-                return answer;
-            }
-            // If no answer text but no error, try next model
-            console.warn(`Gemini model ${model} returned empty answer`);
-            continue;
-        } catch (err) {
-            console.warn(`Gemini model ${model} network error:`, err.message);
-            continue; // Try next model
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            console.warn('Chat API failed:', errData?.reply || errData?.error || response.statusText);
+            return null;
         }
-    }
-    console.error('All Gemini models failed');
-    return null;
-}
 
-/* ══════════════════════════════════════════════
-   SECTION 6 — Main Answer Router (2-path RAG architecture)
-   ══════════════════════════════════════════════ */
+        const data = await response.json();
+        const answer = data?.reply;
+        if (answer) {
+            addToHistory('user', question);
+            addToHistory('model', answer);
+            return answer;
+        }
+        return null;
+    } catch (err) {
+        console.warn('Chat API network error:', err.message);
+        return null;
+    }
+}
 
 function getLiveAgentFallback(lang) {
     if (lang === 'bangla') {
@@ -720,52 +691,57 @@ function getLiveAgentFallback(lang) {
     return 'I could not find a specific match. 👨‍💬 Please contact a <strong>Live agent</strong> at <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> or call <a href="tel:+8801712460423">+8801712460423</a>. If it is urgent, contact your nearest hospital.';
 }
 
+function getClarifyFallback(lang) {
+    if (lang === 'bangla') {
+        return 'বিষয়টা একটু স্পষ্ট করলে আমি দ্রুত সাহায্য করতে পারি। 🙏 কী বিষয়ে জানতে চান—রক্তদান, ডোনার খোঁজা, নাকি অন্য কিছু? প্রয়োজনে ২–৩টা বিস্তারিত বলুন।';
+    }
+    if (lang === 'banglish') {
+        return 'Ektu details dile ami bhalo help korte parbo. 🙏 Apni ki blood donation, donor search, naki onno kichu niye jiggesh korchen? 2–3 ta detail din.';
+    }
+    return 'Please share a bit more detail so I can help you quickly. 🙏 Is it about blood donation, donor search, or something else? A couple of details will help.';
+}
+
 async function getAnswer(question) {
     const lang = detectLang(question);
-
-    // ── PATH 1: Donor Finder ──
-    // If user mentions a blood group AND wants to find a donor → search donorsList
     const bloodGroup = extractBloodGroup(question);
     const wantsDonor = isDonorIntent(question);
+    const softDonor = bloodGroup && ['donor', 'rokto', 'blood', 'lagbe', 'dorkar', 'chai', 'রক্ত', 'দাতা', 'ডোনার'].some(w => question.toLowerCase().includes(w));
 
-    if (bloodGroup && wantsDonor) {
+    
+    if (bloodGroup && (wantsDonor || softDonor)) {
         if (!state.donorsList || state.donorsList.length === 0) {
             return getDonorListLoadingMessage(lang);
         }
         const eligible = findEligibleDonors(bloodGroup);
         if (!eligible.length) {
             const fallback = findDonorsByGroup(bloodGroup);
-            if (fallback.length) return formatFallbackDonorResults(fallback, bloodGroup, lang);
+            if (fallback.length) {
+                return wantsNameOnly(question)
+                    ? formatDonorNameResults(fallback, bloodGroup, lang)
+                    : formatFallbackDonorResults(fallback, bloodGroup, lang);
+            }
         }
-        return formatDonorResults(eligible, bloodGroup, lang);
+        return wantsNameOnly(question)
+            ? formatDonorNameResults(eligible, bloodGroup, lang)
+            : formatDonorResults(eligible, bloodGroup, lang);
     }
 
-    // If they mention a blood group but no clear donor intent,
-    // still check — maybe they asked "B+ donor ache?" or "B+ rokto dorkar"
-    if (bloodGroup && !wantsDonor) {
-        // Soft check: if it contains "donor", "rokto", "blood", "lagbe", "dorkar", "chai"
-        const t = question.toLowerCase();
-        const softDonor = ['donor', 'rokto', 'blood', 'lagbe', 'dorkar', 'chai', 'রক্ত', 'দাতা', 'ডোনার'].some(w => t.includes(w));
-        if (softDonor) {
-            if (!state.donorsList || state.donorsList.length === 0) {
-                return getDonorListLoadingMessage(lang);
-            }
-            const eligible = findEligibleDonors(bloodGroup);
-            if (!eligible.length) {
-                const fallback = findDonorsByGroup(bloodGroup);
-                if (fallback.length) return formatFallbackDonorResults(fallback, bloodGroup, lang);
-            }
-            return formatDonorResults(eligible, bloodGroup, lang);
-        }
+    
+    const ragContext = buildKBContext(question) + buildDonorContext(question);
+    const geminiAnswer = await askGemini(question, ragContext);
+    if (geminiAnswer) {
+        return geminiAnswer;
     }
 
-    // ── PATH 2A: Knowledge Base (instant for greetings, strong matches) ──
+    
     const kbResult = searchKnowledgeBase(question);
     if (kbResult) {
         return kbResult.answer;
     }
 
-    // ── Live agent fallback ──
+    
+    const clarify = getClarifyFallback(lang);
+    if (clarify) return clarify;
     return getLiveAgentFallback(lang);
 }
 
@@ -774,7 +750,7 @@ function escapeHtml(str) {
 }
 
 export function initChatbot() {
-    // Create chat FAB button
+    
     const fab = document.createElement('div');
     fab.id = 'chatbot-fab';
     fab.innerHTML = `<button id="chatbot-toggle" aria-label="Blood Donation Assistant" title="Blood Donation Assistant" style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border:none;cursor:pointer;box-shadow:0 6px 24px rgba(220,38,38,0.35);display:flex;align-items:center;justify-content:center;transition:all 0.3s;font-size:1.2rem;position:relative">
@@ -783,7 +759,7 @@ export function initChatbot() {
     </button>`;
     fab.style.cssText = 'position:fixed;bottom:80px;right:24px;z-index:45;transition:bottom 0.3s ease;';
 
-    // Create chat window
+    
     const chatWindow = document.createElement('div');
     chatWindow.id = 'chatbot-window';
     chatWindow.style.cssText = 'position:fixed;bottom:136px;right:24px;width:360px;max-width:calc(100vw - 32px);height:480px;max-height:calc(100vh - 180px);background:#fff;border-radius:1.25rem;box-shadow:0 20px 60px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.05);z-index:46;display:none;flex-direction:column;overflow:hidden;font-family:Inter,sans-serif;';
@@ -820,7 +796,7 @@ export function initChatbot() {
                 </button>
             </form>
             <div style="text-align:center;margin-top:0.4rem">
-                <span style="font-size:0.62rem;color:#9ca3af">Powered by Knowledge Base • Donor Finder + Website Guide</span>
+                <span style="font-size:0.62rem;color:#9ca3af">Powered by Gemini AI • Donor Finder + Website Guide</span>
             </div>
         </div>
     `;
@@ -890,7 +866,7 @@ export function initChatbot() {
         messagesDiv.appendChild(wrapper);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-        // Phase 2: After 1.5s, switch to "Analyzing" 
+        
         setTimeout(() => {
             const phase1 = document.getElementById('think-phase-1');
             if (phase1) {
@@ -902,7 +878,7 @@ export function initChatbot() {
             }
         }, 1800);
 
-        // Phase 3: After 3.5s, switch to "Writing response"
+        
         setTimeout(() => {
             const phase1 = document.getElementById('think-phase-1');
             if (phase1) {
@@ -925,7 +901,7 @@ export function initChatbot() {
         if (!question) return;
         chatInput.value = '';
         addMessage(question, true);
-        // Detect if this is a donor search to show appropriate indicator
+        
         const bg = extractBloodGroup(question);
         const di = isDonorIntent(question);
         const softDonor = bg && ['donor', 'rokto', 'blood', 'lagbe', 'dorkar', 'chai', 'রক্ত', 'দাতা', 'ডোনার'].some(w => question.toLowerCase().includes(w));
@@ -935,11 +911,11 @@ export function initChatbot() {
         const startTime = Date.now();
         try {
             const answer = await getAnswer(question);
-            // Ensure minimum "thinking" time of 0.8s for instant answers to feel natural
+            
             const elapsed = Date.now() - startTime;
             const kbResult = searchKnowledgeBase(question);
             const isInstant = kbResult && kbResult.isGreeting;
-            const minDelay = isInstant ? 800 : 0;
+            const minDelay = isInstant ? 1000 : 0;
             if (elapsed < minDelay) {
                 await new Promise(r => setTimeout(r, minDelay - elapsed));
             }
@@ -959,7 +935,7 @@ export function initChatbot() {
         chatInput.focus();
     });
 
-    // Add typing/thinking animation styles
+    
     const style = document.createElement('style');
     style.textContent = `
         .chatbot-dots span, .chatbot-think-dots span { animation: chatbot-blink 1.4s infinite both; font-size: 1.5rem; line-height: 0.5; }

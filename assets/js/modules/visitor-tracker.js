@@ -1,21 +1,10 @@
-/**
- * Visitor Tracking Module
- * - Total page views (incremented only on home page, once per session)
- * - Real-time online user presence using Firebase Realtime Database
- *
- * Database structure:
- *   visitorTracking/
- *     totalViews: <number>
- *     presence/
- *       <sessionId>: true
- */
+
 
 import {
     ref, onValue, set, runTransaction,
     onDisconnect
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* ---------- Session ID (unique per browser tab session) ---------- */
 function getSessionId() {
     let sid = sessionStorage.getItem('bdc_session_id');
     if (!sid) {
@@ -25,23 +14,16 @@ function getSessionId() {
     return sid;
 }
 
-/* ---------- Public API ---------- */
-
-/**
- * Initialize visitor tracking.
- * @param {import("firebase/database").Database} database  – Firebase Realtime Database instance
- * @param {boolean} isHomePage – Pass `true` only on index.html
- */
 export function initVisitorTracker(database, isHomePage = false) {
     const sessionId = getSessionId();
 
-    /* ── Cache DOM elements once ── */
+    
     const onlineEls = document.querySelectorAll('.online-users-count');
     const onlineSingle = document.getElementById('online-users-count');
     const viewEls = document.querySelectorAll('.total-views-count');
     const viewSingle = document.getElementById('total-views-count');
 
-    /* ── Presence System ── */
+    
     const myPresenceRef = ref(database, `visitorTracking/presence/${sessionId}`);
     const connectedRef = ref(database, '.info/connected');
 
@@ -60,7 +42,7 @@ export function initVisitorTracker(database, isHomePage = false) {
         if (onlineSingle) onlineSingle.textContent = count;
     });
 
-    /* ── Total Views (Home page only) ── */
+    
     if (viewEls.length || viewSingle) {
         const VIEW_FLAG = 'bdc_home_view_counted';
         const viewsRef = ref(database, 'visitorTracking/totalViews');

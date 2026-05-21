@@ -193,10 +193,12 @@ export function sortEventsByDate(list, order = 'asc') {
 
 export function isDonorEligible(lastDonationDate) {
     if (!lastDonationDate) return true;
-    const today = new Date();
     const lastDonation = new Date(lastDonationDate);
-    const fourMonthsAgo = new Date(new Date().setMonth(today.getMonth() - 4));
-    return lastDonation <= fourMonthsAgo;
+    if (Number.isNaN(lastDonation.getTime())) return true;
+    const waitDays = 120;
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const daysSince = Math.floor((Date.now() - lastDonation.getTime()) / msPerDay);
+    return daysSince >= waitDays;
 }
 
 function getNumeric(value) {

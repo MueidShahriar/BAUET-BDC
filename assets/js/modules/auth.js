@@ -64,7 +64,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
     const leaderboardSection = document.getElementById('donor-leaderboard');
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
     const mobileProfileBtn = document.getElementById('mobile-profile-btn');
-    // All regular nav link IDs (desktop + mobile) to hide for admin
+    
     const navLinkIds = ['nav-home-link','nav-about-link','nav-how-link','nav-events-link','nav-join-link','nav-search-link','nav-contact-link'];
     const mobileNavIds = ['mobile-home-link','mobile-about-link','mobile-how-link','mobile-events-link','mobile-join-link','mobile-search-link','mobile-contact-link'];
     if (!loginBtn && !mobileLoginBtn) return;
@@ -74,16 +74,16 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         const userRef = ref(database, `donors/${state.currentUser.uid}`);
         onValue(userRef, (snapshot) => {
             const userData = snapshot.val() || {};
-            // authoritative admin flag comes from /admins/{uid}
+            
             const adminRef = ref(database, `admins/${state.currentUser.uid}`);
             onValue(adminRef, (adminSnap) => {
                 const isAdminFlag = !!adminSnap.val();
                 state.currentUserRole = isAdminFlag ? 'admin' : (userData.role || 'member');
 
-                // proceed with UI updates after role resolution
+                
                 applyUserUiUpdates(userData);
             }, { onlyOnce: true });
-            // fallback UI update if admin check delayed
+            
             function applyUserUiUpdates(resolvedUserData) {
                 const photoUrl = resolvedUserData.profilePhoto || '';
                 const displayName = getTextValue(resolvedUserData.fullName || resolvedUserData.name, 'User');
@@ -168,7 +168,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 mobileProfileBtn.setAttribute('aria-label', t('btnProfile'));
                 mobileProfileBtn.setAttribute('title', t('btnProfile'));
             }
-            // Handled by admin check callback (applyUserUiUpdates)
+            
         }, { onlyOnce: true });
     } else {
         if (loginBtn) {
@@ -194,7 +194,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         adminBadge?.classList.add('hidden');
         adminMobileLink?.classList.add('hidden');
         if (adminDesktopLink) { adminDesktopLink.classList.add('hidden'); }
-        // Restore ALL regular nav links for public/logged-out view
+        
         navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
         mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
         hideAuthRedirectOverlay();

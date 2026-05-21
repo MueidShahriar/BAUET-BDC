@@ -1,7 +1,4 @@
-/**
- * visitor-stats.js — Lightweight entry point for visitor-stats.html
- * Only imports modules actually needed by this page.
- */
+
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -68,7 +65,7 @@ window.onload = function () {
         updateLoginFn: callUpdateLogin
     });
 
-    /* ── Listen for visitor stats ── */
+    
     const viewsRef = ref(database, 'visitorTracking/totalViews');
     const presenceRef = ref(database, 'visitorTracking/presence');
 

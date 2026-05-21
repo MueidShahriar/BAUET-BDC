@@ -36,7 +36,7 @@ window.onload = function () {
     initFloatObserver();
     initBackToTop();
     initLanguageSystem();
-    initVisitorTracker(database, false); // Non-home page — online users only
+    initVisitorTracker(database, false); 
 
     window.addEventListener('languageChanged', () => callUpdateLogin());
 

@@ -1,4 +1,4 @@
-/* ===== Inline Icon (for login/logout PNG icons) ===== */
+
 .inline-icon {
     width: 20px;
     height: 20px;
@@ -31,7 +31,6 @@
     background: transparent !important;
 }
 
-/* ===== Logo Fill Preloader ===== */
 #page-loader {
     position: fixed;
     top: 0;
@@ -62,7 +61,6 @@ body.loading {
     overflow: hidden;
 }
 
-/* ── Auth redirect overlay ────────────────────────── */
 .auth-redirect-overlay {
     position: fixed;
     inset: 0;
@@ -287,7 +285,6 @@ main {
     }
 }
 
-/* Force full-width layout for pages using Tailwind max-width utilities */
 .max-w-4xl,
 .max-w-5xl,
 .max-w-6xl,
@@ -317,7 +314,6 @@ body::-webkit-scrollbar-thumb:hover {
     background-clip: content-box;
 }
 
-/* ── Smooth touch & tap behavior ────────────────── */
 a, button, [role="button"], input, select, textarea, label[for] {
     -webkit-tap-highlight-color: rgba(220, 38, 38, 0.08);
     touch-action: manipulation;
@@ -328,7 +324,6 @@ img {
     user-select: none;
 }
 
-/* ── Smooth page transitions ────────────────────── */
 @media (prefers-reduced-motion: no-preference) {
     body > main,
     body > footer {
@@ -453,7 +448,6 @@ img {
     transform: translateY(-2px) translateZ(0);
 }
 
-/* Mobile: align back-to-top with chatbot FAB, bigger buttons for better touch */
 @media (max-width: 640px) {
     #fab-wrap {
         right: 16px !important;
@@ -643,8 +637,6 @@ footer .social-link i {
         transform: translateY(0) scale(1.0) translateZ(0);
     }
 }
-
-
 
 @media (prefers-reduced-motion: reduce) {
     .float-in {
@@ -918,7 +910,6 @@ header.scrolled {
     backdrop-filter: blur(12px);
 }
 
-/* ── Admin-mode header (shared across all pages) ── */
 body.admin-mode header {
     background: linear-gradient(90deg, rgba(99, 102, 241, 0.95), rgba(79, 70, 229, 0.95)) !important;
     color: #fff;
@@ -1058,7 +1049,6 @@ body.admin-mode #mobile-menu a:hover {
     resize: vertical;
 }
 
-/* ── Footer glow accent ────────────────────────── */
 .footer-glow {
     position: absolute;
     top: -80px;
@@ -1071,7 +1061,6 @@ body.admin-mode #mobile-menu a:hover {
     z-index: 0;
 }
 
-/* ── Footer reveal animation ──────────────────── */
 #app-footer {
     opacity: 0;
     transform: translateY(20px);
@@ -1334,7 +1323,6 @@ body.admin-mode #mobile-menu a:hover {
     }
 }
 
-/* ── Desktop-only utility ─────────────────────────────────── */
 .desktop-only {
     display: none !important;
 }
@@ -1344,7 +1332,6 @@ body.admin-mode #mobile-menu a:hover {
     }
 }
 
-/* ── Login modal shared styles ────────────────────────────── */
 .icon-circle-sm {
     width: 40px;
     height: 40px;
@@ -1392,7 +1379,6 @@ body.admin-mode #mobile-menu a:hover {
     color: var(--red-600);
 }
 
-/* ── Smooth modal & overlay (all modals) ──────────── */
 #login-modal.flex,
 #success-modal.flex,
 #delete-confirm-modal.flex,
@@ -1420,7 +1406,6 @@ body.admin-mode #mobile-menu a:hover {
     to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* ── Safe areas for mobile (notch / bottom bar) ───── */
 @supports (padding-top: env(safe-area-inset-top)) {
     .profile-header,
     header {
@@ -1428,7 +1413,6 @@ body.admin-mode #mobile-menu a:hover {
     }
 }
 
-/* ── Global mobile refinements ────────────────────── */
 @media (max-width: 640px) {
     .how-card,
     .search-card,
@@ -1447,7 +1431,6 @@ body.admin-mode #mobile-menu a:hover {
     }
 }
 
-/* ── Reduced motion ───────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -1458,7 +1441,6 @@ body.admin-mode #mobile-menu a:hover {
     }
 }
 
-/* ── Visitor Stats Bar (above footer) ────────────── */
 .visitor-stats-bar {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     border-top: 1px solid #e2e8f0;

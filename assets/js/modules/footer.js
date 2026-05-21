@@ -1,9 +1,4 @@
-/**
- * footer.js — Reusable footer component
- * Single source of truth for the footer HTML across all pages.
- * Import and call initFooter() to inject the footer into any page
- * that has a <footer id="app-footer"></footer> placeholder.
- */
+
 
 const FOOTER_HTML = (isHomePage, inPagesDir) => {
     const assetPrefix = inPagesDir ? '../' : '';
@@ -85,10 +80,6 @@ const FOOTER_HTML = (isHomePage, inPagesDir) => {
     </div>`;
 };
 
-/**
- * Injects the footer HTML into the <footer id="app-footer"> placeholder.
- * Automatically detects if the current page is the home page.
- */
 export function initFooter() {
     const footerEl = document.getElementById('app-footer');
     if (!footerEl) return;
@@ -99,7 +90,7 @@ export function initFooter() {
 
     footerEl.innerHTML = FOOTER_HTML(isHomePage, inPagesDir);
 
-    // Smooth reveal animation when footer enters viewport
+    
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {

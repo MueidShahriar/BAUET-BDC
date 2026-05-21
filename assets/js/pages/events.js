@@ -1,7 +1,4 @@
-/**
- * events.js — Lightweight entry point for events.html
- * Only loads modules needed for the Events page.
- */
+
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -32,7 +29,6 @@ const database = getDatabase(app);
 const eventsRef = ref(database, 'events');
 const feedbackRef = ref(database, 'feedback');
 
-// Listen for events data
 onValue(eventsRef, (snapshot) => {
     const data = snapshot.val();
     state.eventsList = [];
@@ -63,7 +59,7 @@ window.onload = function () {
 
     window.addEventListener('languageChanged', () => callUpdateLogin());
 
-    // Modals
+    
     const successModal = document.getElementById('success-modal');
     const loginModal = document.getElementById('login-modal');
     document.getElementById('success-close')?.addEventListener('click', () => closeModal(successModal));
@@ -74,10 +70,10 @@ window.onload = function () {
         if (ev.key === 'Escape') [successModal, loginModal].forEach(m => closeModal(m));
     });
 
-    // Feedback
+    
     initFeedback(feedbackRef, push);
 
-    // Auth
+    
     initAuth({
         auth, database, ref, onValue,
         signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged,

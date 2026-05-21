@@ -26,9 +26,9 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
       return fetch(event.request).then((networkResponse) => {
-        // Try to cache the fetched response (best-effort)
+        
         caches.open(CACHE_NAME).then((cache) => {
-          try { cache.put(event.request, networkResponse.clone()); } catch (e) { /* ignore */ }
+          try { cache.put(event.request, networkResponse.clone()); } catch (e) {  }
         });
         return networkResponse;
       }).catch(() => caches.match('/index.html'));

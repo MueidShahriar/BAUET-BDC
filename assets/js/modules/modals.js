@@ -1,4 +1,4 @@
-/** Focusable selectors inside a modal */
+
 const FOCUSABLE = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
 export function openModal(modal) {
@@ -6,18 +6,18 @@ export function openModal(modal) {
     modal.classList.remove('hidden');
     modal.classList.add('flex');
 
-    /* Accessibility */
+    
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
     document.body.style.overflow = 'hidden';
 
-    /* Focus first interactive element */
+    
     requestAnimationFrame(() => {
         const first = modal.querySelector(FOCUSABLE);
         if (first) first.focus();
     });
 
-    /* Trap focus inside the modal */
+    
     modal._trapFocus = (e) => {
         if (e.key !== 'Tab') return;
         const focusables = [...modal.querySelectorAll(FOCUSABLE)];
@@ -37,7 +37,7 @@ export function closeModal(modal) {
     modal.removeAttribute('aria-modal');
     document.body.style.overflow = '';
 
-    /* Cleanup focus trap */
+    
     if (modal._trapFocus) {
         modal.removeEventListener('keydown', modal._trapFocus);
         delete modal._trapFocus;

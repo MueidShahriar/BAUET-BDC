@@ -12,7 +12,7 @@ export function generateCertificate(donorData) {
         canvas.height = 850;
         const ctx = canvas.getContext('2d');
 
-        // Ensure Dancing Script font is loaded for stylish donor name
+        
         const fontPromise = document.fonts.load('bold 48px "Dancing Script"').catch(() => {});
 
         const signImg = new Image();
@@ -398,10 +398,10 @@ export function showDonorCardModal(donorData, containerEl) {
         ? (() => { const _d = new Date(donorData.lastDonateDate + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })()
         : 'Not recorded';
 
-    // Total donations count
+    
     const totalDonations = donorData.totalDonations || 0;
 
-    // Next eligible date (last donation + 90 days)
+    
     let nextEligible = '—';
     if (donorData.lastDonateDate) {
         const last = new Date(donorData.lastDonateDate + 'T00:00:00');
@@ -414,7 +414,7 @@ export function showDonorCardModal(donorData, containerEl) {
         }
     }
 
-    // Age from DOB
+    
     let ageDisplay = '—';
     if (donorData.dateOfBirth) {
         const dob = new Date(donorData.dateOfBirth + 'T00:00:00');
@@ -424,7 +424,7 @@ export function showDonorCardModal(donorData, containerEl) {
         ageDisplay = `${age} years`;
     }
 
-    // Member Since (with Firebase Auth metadata fallback)
+    
     let memberSince = '—';
     const memberSinceSource = donorData.createdAt || donorData.memberSince;
     if (memberSinceSource) {
@@ -435,7 +435,7 @@ export function showDonorCardModal(donorData, containerEl) {
         }
     }
 
-    // Badge/Rank based on donation count
+    
     let badgeLabel = 'New Donor';
     let badgeColor = '#6b7280';
     let badgeIcon = 'fa-seedling';
@@ -526,16 +526,14 @@ export function showDonorCardModal(donorData, containerEl) {
         </div>
     `;
 
-
-
-    // Render: inline into container or in modal
+    
     if (containerEl) {
         containerEl.innerHTML = cardHtml;
     } else {
         showModal('Your Donor Card', cardHtml);
     }
 
-    // Wire up photo upload
+    
     setTimeout(() => {
         const fileInput = document.getElementById('donor-card-photo-input');
         const photoArea = document.getElementById('donor-card-photo-area');
@@ -543,7 +541,7 @@ export function showDonorCardModal(donorData, containerEl) {
         const initialsEl = document.getElementById('donor-card-initials');
         const uploadText = document.getElementById('donor-card-upload-text');
 
-        // Auto-load saved profile photo from DB
+        
         if (donorData.profilePhoto) {
             if (photoImg) {
                 photoImg.src = donorData.profilePhoto;
@@ -578,7 +576,7 @@ export function showDonorCardModal(donorData, containerEl) {
                 }
                 if (initialsEl) initialsEl.style.display = 'none';
                 if (uploadText) uploadText.textContent = 'Change Photo';
-                // Enable download button
+                
                 const dlBtn = document.getElementById('donor-card-download-btn');
                 if (dlBtn) {
                     dlBtn.disabled = false;
@@ -595,7 +593,7 @@ export function showDonorCardModal(donorData, containerEl) {
             reader.readAsDataURL(file);
         });
 
-        // Download handler
+        
         window.__downloadDonorCard = function() {
             const preview = document.getElementById('donor-card-preview');
             if (!preview) return;
@@ -625,16 +623,16 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
         const ctx = canvas.getContext('2d');
         ctx.scale(SCALE, SCALE);
 
-        // ── Background ──
+        
         ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
-        // Subtle warm gradient overlay on body
+        
         const bodyGrad = ctx.createLinearGradient(0, 0, 0, H);
         bodyGrad.addColorStop(0, 'rgba(255,255,255,0)');
         bodyGrad.addColorStop(0.6, 'rgba(255,251,251,0.5)');
         bodyGrad.addColorStop(1, 'rgba(254,248,248,0.8)');
         ctx.fillStyle = bodyGrad; ctx.fillRect(0, 0, W, H);
 
-        // ── Photo geometry (computed first) ──
+        
         const headerH = 120;
         const photoS = 160;
         const photoX = (W - photoS) / 2;
@@ -643,28 +641,28 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
         const photoCY = photoY + photoS / 2;
         const photoR = photoS / 2;
 
-        // 1) Draw outer decorative ring & white backing (BELOW header in z-order)
+        
         ctx.strokeStyle = 'rgba(220,38,38,0.06)'; ctx.lineWidth = 8;
         ctx.beginPath(); ctx.arc(photoCX, photoCY, photoR + 12, 0, Math.PI * 2); ctx.stroke();
         ctx.fillStyle = '#ffffff';
         ctx.beginPath(); ctx.arc(photoCX, photoCY, photoR + 6, 0, Math.PI * 2); ctx.fill();
 
-        // 2) Draw header band ON TOP — covers the white backing inside header area
+        
         const hGrad = ctx.createLinearGradient(0, 0, W, 0);
         hGrad.addColorStop(0, '#b91c1c'); hGrad.addColorStop(0.35, '#dc2626'); hGrad.addColorStop(0.65, '#ef4444'); hGrad.addColorStop(1, '#f97316');
         ctx.fillStyle = hGrad; ctx.fillRect(0, 0, W, headerH);
 
-        // Decorative circles on header
+        
         ctx.fillStyle = 'rgba(255,255,255,0.05)';
         ctx.beginPath(); ctx.arc(W - 35, -15, 90, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = 'rgba(255,255,255,0.03)';
         ctx.beginPath(); ctx.arc(40, headerH + 10, 60, 0, Math.PI * 2); ctx.fill();
 
-        // 3) Draw photo border ring & gradient circle ON TOP of header
+        
         ctx.strokeStyle = 'rgba(220,38,38,0.15)'; ctx.lineWidth = 3;
         ctx.beginPath(); ctx.arc(photoCX, photoCY, photoR + 3, 0, Math.PI * 2); ctx.stroke();
 
-        // Photo circle gradient background
+        
         ctx.save();
         ctx.beginPath(); ctx.arc(photoCX, photoCY, photoR, 0, Math.PI * 2); ctx.clip();
         const circGrad = ctx.createLinearGradient(photoX, photoY, photoX + photoS, photoY + photoS);
@@ -673,7 +671,7 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
         ctx.fillRect(photoX, photoY, photoS, photoS);
         ctx.restore();
 
-        // 4) Header text (drawn LAST so it's on top of everything)
+        
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
 
         ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = '700 9px Arial, sans-serif';
@@ -683,7 +681,7 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
         ctx.fillText('DONOR CARD', W / 2, 46);
         ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
 
-        // ── Computed values ──
+        
         let nextEligible = '--';
         if (donorData.lastDonateDate) {
             const last = new Date(donorData.lastDonateDate + 'T00:00:00');
@@ -704,7 +702,7 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
             : 'Not recorded';
         const donorName = donorData.fullName || 'Donor';
 
-        // ── Icon drawing helpers ──
+        
         const drawLocationPin = (cx, cy, color) => {
             ctx.fillStyle = color;
             ctx.beginPath();
@@ -712,7 +710,7 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
             ctx.lineTo(cx, cy + 7);
             ctx.closePath();
             ctx.fill();
-            // Inner circle
+            
             ctx.fillStyle = '#fff';
             ctx.beginPath(); ctx.arc(cx, cy - 2, 2, 0, Math.PI * 2); ctx.fill();
         };
@@ -730,14 +728,14 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
         const drawCalendarIcon = (cx, cy, color) => {
             ctx.fillStyle = color;
             ctx.beginPath(); ctx.roundRect(cx - 5.5, cy - 4, 11, 10, 1.5); ctx.fill();
-            // Top bar
+            
             ctx.fillStyle = color;
             ctx.fillRect(cx - 5.5, cy - 4, 11, 3.5);
-            // Handles
+            
             ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
             ctx.beginPath(); ctx.moveTo(cx - 2.5, cy - 5.5); ctx.lineTo(cx - 2.5, cy - 3); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(cx + 2.5, cy - 5.5); ctx.lineTo(cx + 2.5, cy - 3); ctx.stroke();
-            // Grid dots
+            
             ctx.fillStyle = '#fff';
             ctx.fillRect(cx - 3.5, cy + 0.5, 2, 1.5);
             ctx.fillRect(cx - 0.5, cy + 0.5, 2, 1.5);
@@ -753,7 +751,7 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
             ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
             ctx.beginPath(); ctx.moveTo(cx - 2.5, cy - 5.5); ctx.lineTo(cx - 2.5, cy - 3); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(cx + 2.5, cy - 5.5); ctx.lineTo(cx + 2.5, cy - 3); ctx.stroke();
-            // Checkmark
+            
             ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.8; ctx.lineJoin = 'round';
             ctx.beginPath(); ctx.moveTo(cx - 2.5, cy + 2); ctx.lineTo(cx - 0.5, cy + 4); ctx.lineTo(cx + 3, cy + 0.5); ctx.stroke();
         };
@@ -771,19 +769,19 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
         };
 
         const drawRest = () => {
-            // ── Name ──
+            
             const nameY = photoY + photoS + 40;
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillStyle = '#1f2937';
             ctx.font = '800 22px Arial, Helvetica, sans-serif';
             ctx.fillText(String(donorName), W / 2, nameY);
 
-            // ── Email ──
+            
             ctx.fillStyle = '#6b7280';
             ctx.font = '400 11.5px Arial, Helvetica, sans-serif';
             ctx.fillText(String(donorData.email || '--'), W / 2, nameY + 20);
 
-            // ── Gender & Age ──
+            
             let subLine = '';
             const genderVal = donorData.gender || '';
             if (genderVal && genderVal !== '--' && genderVal !== '\u2014') subLine += genderVal;
@@ -794,14 +792,14 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
                 ctx.fillText(subLine, W / 2, nameY + 36);
             }
 
-            // ── Blood group badge ──
+            
             const badgeW = 84, badgeH = 36;
             const badgeX = (W - badgeW) / 2, badgeY = nameY + 50;
             const bGrad = ctx.createLinearGradient(badgeX, badgeY, badgeX + badgeW, badgeY + badgeH);
             bGrad.addColorStop(0, '#b91c1c'); bGrad.addColorStop(0.5, '#dc2626'); bGrad.addColorStop(1, '#ef4444');
             ctx.fillStyle = bGrad;
             ctx.beginPath(); ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 9); ctx.fill();
-            // Subtle inner highlight
+            
             ctx.fillStyle = 'rgba(255,255,255,0.1)';
             ctx.fillRect(badgeX, badgeY, badgeW, badgeH / 2);
             ctx.fillStyle = '#ffffff';
@@ -809,13 +807,13 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
             ctx.fillText(String(donorData.bloodGroup || '--'), W / 2, badgeY + badgeH / 2);
             ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
 
-            // ── Divider ──
+            
             const divY = badgeY + badgeH + 14;
             const divGrad = ctx.createLinearGradient(50, 0, W - 50, 0);
             divGrad.addColorStop(0, 'rgba(220,38,38,0)'); divGrad.addColorStop(0.5, 'rgba(220,38,38,0.1)'); divGrad.addColorStop(1, 'rgba(220,38,38,0)');
             ctx.fillStyle = divGrad; ctx.fillRect(50, divY, W - 100, 1);
 
-            // ── Info rows with proper icons ──
+            
             const rowX = 28, rowW = W - 56;
             const rowH = 44;
             const rowGap = 5;
@@ -823,25 +821,25 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
             const iconBoxS = 30;
 
             const drawInfoRow = (label, value, y, bgColor, iconColor, drawIcon) => {
-                // Row background
+                
                 ctx.fillStyle = bgColor;
                 ctx.beginPath(); ctx.roundRect(rowX, y, rowW, rowH, 9); ctx.fill();
 
-                // Icon background box
+                
                 const iconBgX = rowX + 10, iconBgY = y + (rowH - iconBoxS) / 2;
                 ctx.fillStyle = 'rgba(255,255,255,0.7)';
                 ctx.beginPath(); ctx.roundRect(iconBgX, iconBgY, iconBoxS, iconBoxS, 8); ctx.fill();
 
-                // Icon
+                
                 drawIcon(iconBgX + iconBoxS / 2, iconBgY + iconBoxS / 2, iconColor);
 
-                // Label text
+                
                 ctx.fillStyle = '#b0b0b0';
                 ctx.font = '700 7.5px Arial, Helvetica, sans-serif';
                 ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
                 ctx.fillText(label, rowX + iconBoxS + 18, y + 16);
 
-                // Value text
+                
                 ctx.fillStyle = '#1f2937';
                 ctx.font = '700 14px Arial, Helvetica, sans-serif';
                 ctx.fillText(String(value), rowX + iconBoxS + 18, y + 33);
@@ -856,7 +854,7 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
             drawInfoRow('NEXT ELIGIBLE', nextEligible, rY, 'rgba(252,231,243,0.3)', '#059669', drawCalendarCheckIcon);
             rY += rowH + rowGap;
 
-            // Member Since (with Firebase Auth metadata fallback)
+            
             let memberSinceCanvas = '--';
             const memberSinceSrcCanvas = donorData.createdAt || donorData.memberSince;
             if (memberSinceSrcCanvas) {
@@ -870,25 +868,25 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
                 ctx.strokeStyle = color; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
                 ctx.beginPath(); ctx.arc(cx, cy, 5.5, 0, Math.PI * 2); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(cx, cy - 3); ctx.lineTo(cx, cy); ctx.lineTo(cx + 2.5, cy + 1.5); ctx.stroke();
-                // Small user silhouette
+                
                 ctx.fillStyle = color;
                 ctx.beginPath(); ctx.arc(cx - 4, cy - 4, 1.5, 0, Math.PI * 2); ctx.fill();
                 ctx.beginPath(); ctx.arc(cx - 4, cy - 1.5, 2, Math.PI, 0); ctx.fill();
             };
             drawInfoRow('MEMBER SINCE', memberSinceCanvas, rY, 'rgba(238,242,255,0.5)', '#6366f1', drawClockIcon);
 
-            // ── Footer ──
+            
             const footH = 36;
             const footY = H - footH;
-            // Footer background with gradient
+            
             const footGrad = ctx.createLinearGradient(0, footY, 0, H);
             footGrad.addColorStop(0, 'rgba(254,242,242,0.6)');
             footGrad.addColorStop(1, 'rgba(252,231,243,0.4)');
             ctx.fillStyle = footGrad; ctx.fillRect(0, footY, W, footH);
-            // Top border line
+            
             ctx.fillStyle = 'rgba(220,38,38,0.06)'; ctx.fillRect(0, footY, W, 1);
 
-            // Heart icon in footer (small, clean)
+            
             const heartX = W / 2 - 72, heartY = footY + footH / 2;
             ctx.fillStyle = '#dc2626';
             ctx.beginPath();
@@ -898,14 +896,14 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
             ctx.bezierCurveTo(heartX + 5, heartY - 6, heartX + 9, heartY - 2, heartX, heartY + 5);
             ctx.fill();
 
-            // Footer text
+            
             ctx.fillStyle = '#b91c1c';
             ctx.font = '700 11px Arial, Helvetica, sans-serif';
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillText('Donate Blood, Save Life', W / 2 + 6, footY + footH / 2);
             ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
 
-            // ── Outer border ──
+            
             ctx.strokeStyle = 'rgba(220,38,38,0.08)'; ctx.lineWidth = 2;
             ctx.beginPath(); ctx.roundRect(1, 1, W - 2, H - 2, 14); ctx.stroke();
 

@@ -271,7 +271,7 @@ function deleteRecentDonation(donationId) {
         const modal = document.getElementById('delete-confirm-modal');
         remove(ref(database, 'recentDonations/' + donationId))
             .then(() => {
-                // Decrement lives helped
+                
                 onValue(statsRef, snapshot => {
                     const sd = snapshot.val();
                     const cur = (sd && sd.livesHelped) ? Number(sd.livesHelped) : 0;
@@ -614,7 +614,7 @@ window.onload = function () {
 
     runInitStep('feedback', () => initFeedback(feedbackRef, push));
     const isHomePage = /\/(index\.html)?(\?.*)?(\#.*)?$/i.test(window.location.pathname);
-    runInitStep('visitor tracker', () => initVisitorTracker(database, isHomePage)); // track total views only on home page
+    runInitStep('visitor tracker', () => initVisitorTracker(database, isHomePage)); 
     runInitStep('join form', () => initJoinForm({ auth, database, ref, set, runTransaction, createUserWithEmailAndPassword }));
     runInitStep('auth', () => initAuth({
         auth, database, ref, onValue,
@@ -687,7 +687,7 @@ window.onload = function () {
             }
         } : null;
         if (editId) {
-            // Update existing recent donation
+            
             update(ref(database, 'recentDonations/' + editId), donorData)
                 .then(() => {
                     if (matchedDonor && donorProfileUpdates) {
@@ -699,7 +699,7 @@ window.onload = function () {
                 })
                 .catch(error => showModalMessage('success-modal', `Failed to update donation: ${error.message}`, 'Error'));
         } else {
-            // Add new recent donation
+            
             onValue(statsRef, snapshot => {
                 const sd = snapshot.val();
                 const cur = (sd && sd.livesHelped) ? Number(sd.livesHelped) : 0;

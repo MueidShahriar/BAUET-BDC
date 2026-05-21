@@ -93,7 +93,7 @@ const feedbackRef = ref(database, 'feedback');
 initHeader();
 initMobileMenu();
 initBackToTop();
-initVisitorTracker(database, false); // Profile page — online users only
+initVisitorTracker(database, false); 
 initFeedback(feedbackRef, push);
 initChatbot();
 
@@ -162,7 +162,7 @@ function populateProfile(data, email) {
     const role = data.role || 'member';
 
     if (avatarText) avatarText.textContent = getInitials(name);
-    // Show profile photo if available
+    
     if (profileAvatarImg && data.profilePhoto) {
         profileAvatarImg.src = data.profilePhoto;
         profileAvatarImg.style.display = 'block';
@@ -260,7 +260,6 @@ let currentDonorData = {};
 let authStateResolved = false;
 let recentDonationsList = [];
 
-// Fallback for slow mobile networks: never keep the page loader forever.
 setTimeout(() => {
     if (!authStateResolved) {
         hideLoader();
@@ -294,23 +293,23 @@ onAuthStateChanged(auth, (user) => {
         notLoggedIn?.classList.add('hidden');
         profileContent?.classList.remove('hidden');
 
-        // Admin vs Member navbar differentiation
+        
         const role = data.role || 'member';
         const adminBadge = document.getElementById('admin-badge');
         const adminMobileLink = document.getElementById('admin-mobile-link');
         const adminDesktopLink = document.getElementById('nav-dashboard-link');
-        // All regular nav links (desktop + mobile)
+        
         const navLinkIds = ['nav-home-link','nav-about-link','nav-how-link','nav-events-link','nav-join-link','nav-search-link','nav-contact-link'];
         const mobileNavIds = ['mobile-home-link','mobile-about-link','mobile-how-link','mobile-events-link','mobile-join-link','mobile-search-link','mobile-contact-link'];
 
         if (role === 'admin') {
             document.body.classList.add('admin-mode');
-            // Admin badge hidden from navbar (admin text removed)
+            
             if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
-            // Show Dashboard in mobile menu for admin
+            
             adminMobileLink?.classList.remove('hidden');
             if (adminDesktopLink) { adminDesktopLink.classList.remove('hidden'); }
-            // Admin sees only Profile + Dashboard — hide all other nav links
+            
             navLinkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
             mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
         } else {
@@ -322,7 +321,7 @@ onAuthStateChanged(auth, (user) => {
             mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
         }
     }, () => {
-        // If donor record read fails, still unlock UI and show a safe empty state.
+        
         hideLoader();
         notLoggedIn?.classList.remove('hidden');
         profileContent?.classList.add('hidden');
@@ -345,10 +344,8 @@ onValue(recentDonationsRef, (snapshot) => {
     refreshDonationCount();
 });
 
-// Gmail-only regex (same as join form)
 const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i;
 
-// ── Email Change Modal elements ──
 const emailChangeModal = document.getElementById('email-change-modal');
 const emailChangeForm = document.getElementById('email-change-form');
 const ecNewEmailDisplay = document.getElementById('ec-new-email');
@@ -356,14 +353,10 @@ const ecPassword = document.getElementById('ec-password');
 const ecError = document.getElementById('ec-error');
 const ecCancel = document.getElementById('ec-cancel');
 
-// Pending profile data when email change is in progress
 let pendingProfileUpdate = null;
 
 ecCancel?.addEventListener('click', () => closeModal(emailChangeModal));
 emailChangeModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(emailChangeModal));
-
-// Email update is handled directly in the profile form submit handler below.
-// No re-authentication modal needed — email is saved to the database only.
 
 profileForm?.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -373,7 +366,7 @@ profileForm?.addEventListener('submit', (e) => {
     const newEmail = fd.get('email')?.toString().trim() || '';
     const emailChanged = newEmail && newEmail !== currentUser.email;
 
-    // Validate Gmail if email changed
+    
     if (emailChanged && !gmailRegex.test(newEmail)) {
         showToast('Only @gmail.com email addresses are accepted.', 'error');
         return;
@@ -394,13 +387,13 @@ profileForm?.addEventListener('submit', (e) => {
         email: emailChanged ? newEmail : currentUser.email,
         role: fd.get('role')?.toString().trim() || 'member'
     };
-    // Preserve profile photo if it exists
+    
     if (currentDonorData.profilePhoto) {
         updatedData.profilePhoto = currentDonorData.profilePhoto;
     }
     delete updatedData.uid;
 
-    // Save directly (email stored in DB only, Firebase Auth login email unchanged)
+    
     const userRef = ref(database, 'donors/' + currentUser.uid);
     set(userRef, updatedData)
         .then(() => {
@@ -413,12 +406,11 @@ profileForm?.addEventListener('submit', (e) => {
         });
 });
 
-// ── Photo upload handler ──
 profilePhotoInput?.addEventListener('change', async (e) => {
     const file = e.target.files?.[0];
     if (!file || !currentUser) return;
 
-    // Validate file type
+    
     if (!['image/png', 'image/jpeg'].includes(file.type)) {
         showToast('Only PNG or JPEG images are allowed.', 'error');
         profilePhotoInput.value = '';
@@ -476,7 +468,7 @@ function resizeAndCompressPhoto(file, maxW, maxH, targetBytes) {
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                // Center-crop to square
+                
                 const side = Math.min(img.width, img.height);
                 const sx = (img.width - side) / 2;
                 const sy = (img.height - side) / 2;
@@ -567,7 +559,7 @@ donorCardBtn?.addEventListener('click', async () => {
             phone: fPhone?.value || '',
             uid: currentUser?.uid || ''
         };
-        // Ensure memberSince fallback from Firebase Auth metadata
+        
         if (!donorData.createdAt && currentUser.metadata?.creationTime) {
             donorData.memberSince = currentUser.metadata.creationTime;
         }
@@ -620,7 +612,6 @@ document.addEventListener('keydown', (ev) => {
     }
 });
 
-/* ── Change Password ── */
 const changePasswordModal = document.getElementById('change-password-modal');
 const changePasswordForm = document.getElementById('change-password-form');
 const changePasswordBtn = document.getElementById('pf-change-password');
@@ -632,7 +623,7 @@ changePasswordBtn?.addEventListener('click', () => {
         showToast('You must be logged in.', 'error');
         return;
     }
-    // Reset form
+    
     changePasswordForm?.reset();
     if (cpError) { cpError.textContent = ''; cpError.classList.add('hidden'); }
     openModal(changePasswordModal);
@@ -649,7 +640,7 @@ changePasswordForm?.addEventListener('submit', async (e) => {
     const newPwd = document.getElementById('cp-new')?.value;
     const confirmPwd = document.getElementById('cp-confirm')?.value;
 
-    // Reset error
+    
     if (cpError) { cpError.textContent = ''; cpError.classList.add('hidden'); }
 
     if (!currentPwd || !newPwd || !confirmPwd) {
@@ -676,11 +667,11 @@ changePasswordForm?.addEventListener('submit', async (e) => {
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Updating...'; }
 
     try {
-        // Re-authenticate first
+        
         const credential = EmailAuthProvider.credential(currentUser.email, currentPwd);
         await reauthenticateWithCredential(currentUser, credential);
 
-        // Update password
+        
         await updatePassword(currentUser, newPwd);
 
         closeModal(changePasswordModal);

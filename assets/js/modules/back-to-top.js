@@ -5,7 +5,7 @@ export function initBackToTop() {
     const footerEl = document.querySelector('footer');
     let footerIsVisible = false;
 
-    /* Use IntersectionObserver for footer detection (no layout thrashing) */
+    
     if ('IntersectionObserver' in window && footerEl) {
         const fabFooterIO = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -21,7 +21,7 @@ export function initBackToTop() {
         backToTopBtn.classList.toggle('show', beyond && !footerIsVisible);
     }
 
-    /* rAF-throttled scroll listener */
+    
     let ticking = false;
     window.addEventListener('scroll', () => {
         if (ticking) return;

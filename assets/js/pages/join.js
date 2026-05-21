@@ -1,7 +1,4 @@
-/**
- * join.js — Lightweight entry point for join.html
- * Only loads modules needed for the Join/Registration page.
- */
+
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -47,7 +44,7 @@ window.onload = function () {
 
     window.addEventListener('languageChanged', () => callUpdateLogin());
 
-    // Modals
+    
     const successModal = document.getElementById('success-modal');
     const loginModal = document.getElementById('login-modal');
     document.getElementById('success-close')?.addEventListener('click', () => closeModal(successModal));
@@ -58,13 +55,13 @@ window.onload = function () {
         if (ev.key === 'Escape') [successModal, loginModal].forEach(m => closeModal(m));
     });
 
-    // Feedback
+    
     initFeedback(feedbackRef, push);
 
-    // Join form
+    
     initJoinForm({ auth, database, ref, set, runTransaction, createUserWithEmailAndPassword });
 
-    // Auth
+    
     initAuth({
         auth, database, ref, onValue,
         signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged,

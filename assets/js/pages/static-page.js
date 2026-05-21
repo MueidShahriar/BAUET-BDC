@@ -1,8 +1,4 @@
-/**
- * static-page.js — Lightweight entry point for static content pages
- * (about.html, donationGuide.html, etc.)
- * Imports only the modules needed: common UI, footer, feedback, auth.
- */
+
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {

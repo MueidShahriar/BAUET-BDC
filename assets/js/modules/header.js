@@ -16,7 +16,7 @@ export function initHeader() {
     }
     setHeaderOffset();
 
-    /* Debounced resize offset recalc */
+    
     let resizeTimer;
     const debouncedOffset = () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(setHeaderOffset, 100); };
     window.addEventListener('resize', debouncedOffset);
@@ -24,7 +24,7 @@ export function initHeader() {
         new ResizeObserver(debouncedOffset).observe(document.body);
     }
 
-    /* rAF-throttled scroll for header shadow */
+    
     let ticking = false;
     window.addEventListener('scroll', () => {
         if (ticking) return;
