@@ -148,12 +148,27 @@ function formatDate(dateStr) {
 
 function isDonorEligible(lastDonateDate) {
     if (!lastDonateDate) return 'Unknown';
+
     const last = new Date(lastDonateDate + 'T00:00:00');
     const now = new Date();
+
     const diffDays = Math.floor((now - last) / (1000 * 60 * 60 * 24));
-    if (diffDays >= 90) return 'Eligible';
-    return `${90 - diffDays} days left`;
+
+    if (diffDays >= 120) return 'Eligible';
+
+    return `${120 - diffDays} days left`;
 }
+
+function getEligibleDate(lastDonateDate) {
+    if (!lastDonateDate) return 'No donation date';
+
+    const date = new Date(lastDonateDate + 'T00:00:00');
+
+    date.setDate(date.getDate() + 120);
+
+    return date.toLocaleDateString('en-GB');
+}
+
 
 function populateProfile(data, email) {
     const name = data.fullName || 'Donor';
@@ -179,11 +194,20 @@ function populateProfile(data, email) {
     if (displayEmail) displayEmail.textContent = email || '';
     if (displayDonorId) displayDonorId.textContent = normalizeDonorId(data.donorId) || data.donorId || '—';
     if (statLast) statLast.textContent = formatDate(data.lastDonateDate);
+
     if (statEligible) {
         const elig = isDonorEligible(data.lastDonateDate);
         statEligible.textContent = elig;
         statEligible.style.color = elig === 'Eligible' ? '#059669' : elig === 'Unknown' ? '#6b7280' : '#d97706';
     }
+
+    const eligibleDateEl = document.getElementById('profile-stat-eligible-date');
+
+    if (eligibleDateEl) {
+        eligibleDateEl.textContent =
+        `ELIGIBLE ON: ${getEligibleDate(data.lastDonateDate)}`;
+    }
+
     if (statDonations) {
         const count = getDonationCountForDonor({ ...data, donorId: data.donorId || data.rawDonorId }, recentDonationsList);
         statDonations.textContent = String(count);
