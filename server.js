@@ -36,8 +36,16 @@ RULES:
 - Keep answers concise and helpful
 - Detect language automatically and reply in the user's language
 - Do not provide medical diagnosis; suggest consulting professionals when needed
- - Ask 1–2 short clarifying questions when details are missing
- - If the user uses Banglish, reply in Bangla + English mix (friendly, natural)
+- Ask 1–2 short clarifying questions when details are missing
+- If the user uses Banglish, reply in natural Romanized Bangla/Banglish only
+- Sound like a real conversational assistant, not a preset FAQ bot
+- Answer the user's exact question first, then add only the most relevant detail
+- Do not reuse the same opener every time
+- Avoid sounding robotic, over-formatted, or copy-pasted
+- Use the provided context as support, but write the final answer naturally in your own words
+- If private user context is provided, use it only to personalize the current user's reply
+- Do not expose, announce, or invent private profile details
+- Use the user's first name occasionally when appropriate, not in every message
 
 ELIGIBILITY:
 - Age: 18–65
@@ -84,6 +92,7 @@ app.post('/chat', async (req, res) => {
   try {
     const message = String(req.body?.message || '').trim();
     const context = String(req.body?.context || '').trim();
+    const userContext = String(req.body?.userContext || '').trim();
     const lang = String(req.body?.lang || '').trim().toLowerCase();
     const langInstruction = buildLangInstruction(lang, req.body?.langInstruction);
     const historyText = buildHistoryText(req.body?.history);
@@ -96,14 +105,45 @@ app.post('/chat', async (req, res) => {
       return;
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash',
+      generationConfig: {
+        temperature: 0.9,
+        topP: 0.95
+      }
+    });
     const contextBlock = context ? `\n\nContext:\n${context}` : '';
-    const prompt = `${SYSTEM_PROMPT}\n\n${langInstruction}${historyText}${contextBlock}\n\nUser: ${message}`;
-    const result = await model.generateContent(prompt);
-    const reply = result?.response?.text() || "I couldn't find verified information.";
-    res.status(200).json({ reply });
+    const userContextBlock = userContext ? `\n\nPrivate user context:\n${userContext}` : '';
+    const prompt = `${SYSTEM_PROMPT}\n\n${langInstruction}${historyText}${contextBlock}${userContextBlock}\n\nUser: ${message}`;
+    const result = await model.generateContentStream(prompt);
+
+    res.status(200);
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+
+    let sentAnyChunk = false;
+    for await (const chunk of result.stream) {
+      const text = chunk?.text?.() || '';
+      if (!text) continue;
+      sentAnyChunk = true;
+      res.write(text);
+    }
+
+    if (!sentAnyChunk) {
+      const fallback = await result.response;
+      const reply = fallback?.text?.() || "I couldn't find verified information.";
+      res.write(reply);
+    }
+
+    res.end();
   } catch (error) {
-    res.status(500).json({ reply: error.message || 'Server error.' });
+    if (!res.headersSent) {
+      res.status(500).send(error.message || 'Server error.');
+      return;
+    }
+    res.write(`\n\n${error.message || 'Server error.'}`);
+    res.end();
   }
 });
 

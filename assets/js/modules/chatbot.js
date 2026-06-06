@@ -34,6 +34,19 @@ function detectLang(text) {
     return 'english';
 }
 
+function normalizeQuestionForKB(text) {
+    return text
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}\s+-]/gu, ' ')
+        .replace(/\btrips\b/g, 'tips')
+        .replace(/\bdonat\b/g, 'donation')
+        .replace(/\bdonateing\b/g, 'donating')
+        .replace(/\bblud\b/g, 'blood')
+        .replace(/\brokter\b/g, 'rokto')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
 function extractBloodGroup(text) {
     const t = text.toLowerCase().replace(/\s+/g, ' ').trim();
 
@@ -366,6 +379,10 @@ const KNOWLEDGE_BASE = [
       answer: 'Before donating: 1) Eat a healthy meal 2-3 hours before, 2) Drink plenty of water (at least 500ml extra), 3) Avoid fatty foods, 4) Get good sleep, 5) Bring a valid ID, 6) Wear comfortable clothing. Avoid alcohol for 24 hours.',
             answerBn: 'রক্তদানের আগে: ১) ২-৩ ঘণ্টা আগে পুষ্টিকর খাবার খান, ২) প্রচুর পানি পান করুন (কমপক্ষে ৫০০মিলি অতিরিক্ত), ৩) চর্বিযুক্ত খাবার এড়িয়ে চলুন, ৪) ভালো ঘুম নিন, ৫) বৈধ পরিচয়পত্র নিন, ৬) আরামদায়ক পোশাক পরুন। ২৪ ঘণ্টা আগে মদ্যপান এড়িয়ে চলুন।',
             answerBl: 'Donation er age: 2-3 ghonta age bhalo khabar, extra pani, fatty food avoid, bhalo ghum, valid ID, comfortable dress. Alcohol 24 ghonta avoid.' },
+    { keywords: ['donation tips', 'blood donation tips', 'donation advice', 'give me tips', 'tips for donation', 'tips', 'রক্তদানের টিপস', 'পরামর্শ'],
+      answer: 'Here are some practical donation tips: 1) Sleep well the night before, 2) Eat a balanced meal 2-3 hours before donating, 3) Drink extra water, 4) Avoid oily food and alcohol, 5) Wear a shirt with sleeves that roll up easily, 6) Rest for 10-15 minutes after donating, 7) Drink fluids and avoid heavy exercise for the rest of the day.',
+            answerBn: 'রক্তদানের জন্য কিছু দরকারি টিপস: ১) আগের রাতে ভালো ঘুমান, ২) দানের ২-৩ ঘণ্টা আগে হালকা ও পুষ্টিকর খাবার খান, ৩) বেশি পানি পান করুন, ৪) তেলযুক্ত খাবার ও অ্যালকোহল এড়িয়ে চলুন, ৫) সহজে গোটানো যায় এমন জামা পরুন, ৬) দানের পর ১০-১৫ মিনিট বিশ্রাম নিন, ৭) সারা দিন বেশি তরল পান করুন এবং ভারী ব্যায়াম এড়িয়ে চলুন।',
+            answerBl: 'Donation er jonno kichu useful tips: 1) Age raat e bhalo ghum, 2) 2-3 ghonta age healthy khabar, 3) Beshi pani, 4) Oily food ar alcohol avoid, 5) Easy sleeve er dress porun, 6) Donation er por 10-15 min rest, 7) Sara din fluid nin ar heavy exercise avoid korun.' },
 
     
     { keywords: ['after donat', 'post donation', 'after giving blood', 'side effects', 'what to do after', 'দানের পরে', 'পরে কি করব', 'পার্শ্বপ্রতিক্রিয়া'],
@@ -552,20 +569,29 @@ const KNOWLEDGE_BASE = [
       answerBn: 'বিদায়! ভালো থাকবেন এবং মনে রাখবেন — রক্তদান জীবন বাঁচায়! আবার দেখা হবে! 👋❤️' },
 ];
 
-function scoreKBEntry(entry, queryWords) {
+function scoreKBEntry(entry, queryWords, normalizedQuestion) {
     let score = 0;
     let matchCount = 0;
     for (const kw of entry.keywords) {
         const kwLower = kw.toLowerCase();
+        const kwWords = kwLower.split(/\s+/).filter(Boolean);
         
         if (queryWords.includes(kwLower)) {
             score += kw.length * 2;
             matchCount++;
         }
         
-        else if (queryWords.join(' ').includes(kwLower)) {
+        else if (normalizedQuestion.includes(kwLower)) {
             score += kw.length;
             matchCount++;
+        } else {
+            const wordOverlap = kwWords.filter((word) => queryWords.includes(word)).length;
+            if (wordOverlap > 0) {
+                score += wordOverlap * 1.5;
+                if (wordOverlap === kwWords.length || wordOverlap >= 2) {
+                    matchCount++;
+                }
+            }
         }
     }
     
@@ -584,7 +610,7 @@ function getKBAnswer(entry, lang) {
 }
 
 function searchKnowledgeBase(question) {
-    const q = question.toLowerCase().trim();
+    const q = normalizeQuestionForKB(question);
     const lang = detectLang(question);
     const qWords = q.split(/\s+/).filter(w => w.length > 0);
 
@@ -594,7 +620,7 @@ function searchKnowledgeBase(question) {
     let bestMatch = null;
     let bestScore = 0;
     for (const entry of KNOWLEDGE_BASE) {
-        const { score } = scoreKBEntry(entry, qWords);
+        const { score } = scoreKBEntry(entry, qWords, q);
         if (score > bestScore) {
             bestScore = score;
             bestMatch = entry;
@@ -607,11 +633,57 @@ function searchKnowledgeBase(question) {
     return { answer, score: bestScore, isGreeting };
 }
 
+function shouldUseDirectKBFallback(question, kbResult) {
+    if (!kbResult) return false;
+    const q = question.toLowerCase();
+    if (kbResult.isGreeting) return true;
+
+    const directIntentKeywords = [
+        'who are you', 'what can you do', 'contact', 'email', 'phone', 'whatsapp',
+        'join', 'register', 'sign up', 'search donor', 'find donor', 'donation guide',
+        'guide', 'events', 'profile', 'update profile', 'certificate', 'donor card',
+        'login', 'forgot password', 'reset password', 'feedback',
+        'আপনি কে', 'তুমি কে', 'কি করতে পারেন', 'যোগাযোগ', 'ইমেইল', 'ফোন',
+        'নিবন্ধন', 'রেজিস্টার', 'ডোনার খুঁজ', 'গাইড', 'ইভেন্ট', 'প্রোফাইল',
+        'সার্টিফিকেট', 'ডোনার কার্ড', 'লগইন', 'পাসওয়ার্ড', 'ফিডব্যাক'
+    ];
+
+    return directIntentKeywords.some((keyword) => q.includes(keyword));
+}
+
+function getGenericBloodDonationFallback(question, lang) {
+    const q = normalizeQuestionForKB(question);
+    const donationLike = ['blood', 'donation', 'donate', 'donor', 'rokto', 'রক্ত', 'ডোনার', 'দাতা'].some((word) => q.includes(word));
+    if (!donationLike) return null;
+
+    if (q.includes('tip') || q.includes('advice') || q.includes('prepare')) {
+        return getKBAnswer(KNOWLEDGE_BASE.find((entry) => entry.keywords.includes('donation tips')), lang);
+    }
+    if (q.includes('after') || q.includes('post') || q.includes('pore') || q.includes('পরে')) {
+        return getKBAnswer(KNOWLEDGE_BASE.find((entry) => entry.keywords.includes('after donat')), lang);
+    }
+    if (q.includes('before') || q.includes('age') || q.includes('আগে')) {
+        return getKBAnswer(KNOWLEDGE_BASE.find((entry) => entry.keywords.includes('prepare')), lang);
+    }
+    if (q.includes('eligib') || q.includes('can i') || q.includes('পারব') || q.includes('যোগ্য')) {
+        return getKBAnswer(KNOWLEDGE_BASE.find((entry) => entry.keywords.includes('who can donate')), lang);
+    }
+
+    if (lang === 'bangla') {
+        return 'রক্তদান বিষয়ে আমি সাহায্য করতে পারি। আপনি চাইলে যোগ্যতা, প্রস্তুতি, দানের পরে কী করবেন, খাবার, রক্তের গ্রুপ, বা ডোনার খোঁজা নিয়ে নির্দিষ্টভাবে জিজ্ঞাসা করতে পারেন।';
+    }
+    if (lang === 'banglish') {
+        return 'Blood donation niye ami help korte pari. Chaile eligibility, preparation, donation er por ki korben, food, blood group, ba donor search niye specific vabe jiggesh korte paren.';
+    }
+    return 'I can help with blood donation topics. You can ask specifically about eligibility, preparation, after-donation care, food, blood groups, or donor search.';
+}
+
 function buildKBContext(question) {
-    const qWords = question.toLowerCase().trim().split(/\s+/).filter(w => w.length > 0);
+    const normalizedQuestion = normalizeQuestionForKB(question);
+    const qWords = normalizedQuestion.split(/\s+/).filter(w => w.length > 0);
     const scored = KNOWLEDGE_BASE.map(entry => ({
         entry,
-        ...scoreKBEntry(entry, qWords)
+        ...scoreKBEntry(entry, qWords, normalizedQuestion)
     })).filter(s => s.score > 2).sort((a, b) => b.score - a.score);
 
     if (scored.length === 0) return '';
@@ -623,15 +695,130 @@ function buildKBContext(question) {
 }
 
 const CHAT_API_URL = '/chat';
+const CHATBOT_STORAGE_PREFIX = 'bdc-chatbot';
 
 let conversationHistory = [];
 const MAX_HISTORY = 10;
+let userMemory = { facts: [], preferences: {} };
+let activeChatMemoryKey = '';
+
+function getChatStorageKey() {
+    const uid = state.currentUser?.uid || 'guest';
+    return `${CHATBOT_STORAGE_PREFIX}:${uid}`;
+}
+
+function getUserFirstName() {
+    const fullName = state.currentUserProfile?.fullName || state.currentUserProfile?.name || '';
+    return fullName.trim().split(/\s+/).filter(Boolean)[0] || '';
+}
+
+function loadPersistedChatState() {
+    const storageKey = getChatStorageKey();
+    if (storageKey === activeChatMemoryKey) return;
+    activeChatMemoryKey = storageKey;
+
+    try {
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) {
+            conversationHistory = [];
+            userMemory = { facts: [], preferences: {} };
+            return;
+        }
+        const parsed = JSON.parse(raw);
+        conversationHistory = Array.isArray(parsed?.history) ? parsed.history.slice(-MAX_HISTORY) : [];
+        userMemory = {
+            facts: Array.isArray(parsed?.memory?.facts) ? parsed.memory.facts.slice(-12) : [],
+            preferences: parsed?.memory?.preferences && typeof parsed.memory.preferences === 'object'
+                ? parsed.memory.preferences
+                : {}
+        };
+    } catch (_) {
+        conversationHistory = [];
+        userMemory = { facts: [], preferences: {} };
+    }
+}
+
+function persistChatState() {
+    try {
+        localStorage.setItem(getChatStorageKey(), JSON.stringify({
+            history: conversationHistory.slice(-MAX_HISTORY),
+            memory: {
+                facts: userMemory.facts.slice(-12),
+                preferences: userMemory.preferences || {}
+            }
+        }));
+    } catch (_) {}
+}
+
+function rememberUserFact(fact) {
+    if (!fact) return;
+    loadPersistedChatState();
+    const cleanFact = fact.trim();
+    if (!cleanFact) return;
+    userMemory.facts = [cleanFact, ...userMemory.facts.filter((item) => item !== cleanFact)].slice(0, 12);
+    persistChatState();
+}
+
+function rememberFromQuestion(question) {
+    const q = question.trim();
+    const lower = q.toLowerCase();
+
+    const directNameMatch = q.match(/\b(?:my name is|i am|i'm|call me)\s+([a-z][a-z .'-]{1,40})/i);
+    if (directNameMatch?.[1]) {
+        const rawName = directNameMatch[1].trim().replace(/[.,!?]+$/, '');
+        userMemory.preferences.name = rawName;
+        rememberUserFact(`The user's preferred name is ${rawName}.`);
+    }
+
+    const locationMatch = q.match(/\b(?:i live in|i am from|from)\s+([a-z][a-z ,'-]{1,50})/i);
+    if (locationMatch?.[1] && lower.includes('i')) {
+        rememberUserFact(`The user said they are from ${locationMatch[1].trim().replace(/[.,!?]+$/, '')}.`);
+    }
+
+    const bloodGroupMatch = q.match(/\b(?:my blood group is|i am|i'm)\s*(a\+|a-|b\+|b-|ab\+|ab-|o\+|o-)\b/i);
+    if (bloodGroupMatch?.[1]) {
+        rememberUserFact(`The user's blood group is ${bloodGroupMatch[1].toUpperCase()}.`);
+    }
+}
+
+function buildUserContext() {
+    loadPersistedChatState();
+
+    const profile = state.currentUserProfile || null;
+    const privateName = getUserFirstName() || userMemory.preferences?.name || '';
+    const lines = [];
+
+    if (state.currentUser?.uid) {
+        lines.push('This is a private 1:1 chat for the current logged-in user. Do not present it as public chat.');
+    }
+    if (privateName) {
+        lines.push(`The user's first name is ${privateName}. You may address them by first name occasionally, but not in every reply.`);
+    }
+    if (profile?.bloodGroup) lines.push(`Profile blood group: ${profile.bloodGroup}.`);
+    if (profile?.location) lines.push(`Profile location: ${profile.location}.`);
+    if (profile?.department) lines.push(`Profile department: ${profile.department}.`);
+    if (profile?.batch) lines.push(`Profile batch: ${profile.batch}.`);
+    if (userMemory.facts.length) {
+        lines.push(`Remembered user facts: ${userMemory.facts.slice(0, 8).join(' | ')}`);
+    }
+
+    return lines.length ? `\n\n--- USER CONTEXT ---\n${lines.join('\n')}\n--- END USER CONTEXT ---\n` : '';
+}
+
+function maybePersonalizeReply(reply) {
+    const name = getUserFirstName() || userMemory.preferences?.name || '';
+    if (!name || !reply || /<strong>\s*live agent\s*<\/strong>/i.test(reply)) return reply;
+    if (new RegExp(`\\b${name}\\b`, 'i').test(reply)) return reply;
+    return `<span style="font-weight:600;color:#111827">${escapeHtml(name)}</span>, ${reply}`;
+}
 
 function addToHistory(role, text) {
+    loadPersistedChatState();
     conversationHistory.push({ role, parts: [{ text }] });
     if (conversationHistory.length > MAX_HISTORY) {
         conversationHistory = conversationHistory.slice(-MAX_HISTORY);
     }
+    persistChatState();
 }
 
 async function askGemini(question, ragContext = '') {
@@ -656,6 +843,7 @@ Do NOT use Bengali script. Do NOT reply in pure English. Reply in casual, natura
                 message: question,
                 lang,
                 context: ragContext,
+                userContext: buildUserContext(),
                 history: conversationHistory.slice(-MAX_HISTORY),
                 langInstruction
             })
@@ -670,6 +858,67 @@ Do NOT use Bengali script. Do NOT reply in pure English. Reply in casual, natura
         const data = await response.json();
         const answer = data?.reply;
         if (answer) {
+            addToHistory('user', question);
+            addToHistory('model', answer);
+            return answer;
+        }
+        return null;
+    } catch (err) {
+        console.warn('Chat API network error:', err.message);
+        return null;
+    }
+}
+
+async function askGeminiStream(question, ragContext = '', onChunk = () => {}) {
+    const lang = detectLang(question);
+    let langInstruction;
+    if (lang === 'bangla') {
+        langInstruction = `LANGUAGE: The user is communicating in Bengali/Bangla (বাংলা). You MUST reply ENTIRELY in Bengali script (বাংলা). Never use English sentences in your reply — only Bengali.`;
+    } else if (lang === 'banglish') {
+        langInstruction = `LANGUAGE: The user is communicating in Banglish (Bengali language written in English/Roman letters like "ami blood dite chai", "rokto deya jabe ki", "ami weak aktu").
+You MUST reply in Banglish — meaning Bengali thoughts/words but written in English letters.
+Example replies: "Haan, apni rokt dite parben jodi apnar boyosh 18+ hoy ar weight 50kg er beshi hoy", "Apnar hemoglobin level check kora dorkar, doctor er kache jan".
+Do NOT use Bengali script. Do NOT reply in pure English. Reply in casual, natural Banglish.`;
+    } else {
+        langInstruction = `LANGUAGE: The user is communicating in English. Reply in clear, well-structured English.`;
+    }
+
+    try {
+        const response = await fetch(CHAT_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: question,
+                lang,
+                context: ragContext,
+                userContext: buildUserContext(),
+                history: conversationHistory.slice(-MAX_HISTORY),
+                langInstruction
+            })
+        });
+
+        if (!response.ok || !response.body) {
+            const errText = await response.text().catch(() => '');
+            console.warn('Chat API failed:', errText || response.statusText);
+            return null;
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let answer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const chunk = decoder.decode(value, { stream: true });
+            if (!chunk) continue;
+            answer += chunk;
+            onChunk(answer, chunk);
+        }
+
+        answer += decoder.decode();
+
+        if (answer.trim()) {
             addToHistory('user', question);
             addToHistory('model', answer);
             return answer;
@@ -701,7 +950,19 @@ function getClarifyFallback(lang) {
     return 'Please share a bit more detail so I can help you quickly. 🙏 Is it about blood donation, donor search, or something else? A couple of details will help.';
 }
 
-async function getAnswer(question) {
+function getAIFallbackMessage(lang) {
+    if (lang === 'bangla') {
+        return 'এই মুহূর্তে AI reply পাওয়া যাচ্ছে না, তাই স্বাভাবিকভাবে উত্তর জেনারেট করতে পারছি না। একটু পরে আবার চেষ্টা করুন, অথবা প্রশ্নটা একটু নির্দিষ্টভাবে লিখলে আমি available তথ্য দিয়ে সাহায্য করব।';
+    }
+    if (lang === 'banglish') {
+        return 'Ekhon AI reply available na, tai ekdom natural vabe generate kore answer dite parchi na. Ektu pore abar try korun, ba question ta aro specific kore dile available info diye help korbo.';
+    }
+    return 'The AI reply service is unavailable right now, so I cannot generate a natural response at the moment. Please try again shortly, or send a more specific question and I will help with the information available.';
+}
+
+async function getAnswer(question, options = {}) {
+    const { skipAI = false } = options;
+    loadPersistedChatState();
     const lang = detectLang(question);
     const bloodGroup = extractBloodGroup(question);
     const wantsDonor = isDonorIntent(question);
@@ -710,46 +971,85 @@ async function getAnswer(question) {
     
     if (bloodGroup && (wantsDonor || softDonor)) {
         if (!state.donorsList || state.donorsList.length === 0) {
-            return getDonorListLoadingMessage(lang);
+            const reply = getDonorListLoadingMessage(lang);
+            addToHistory('user', question);
+            addToHistory('model', stripHtml(reply));
+            return reply;
         }
         const eligible = findEligibleDonors(bloodGroup);
         if (!eligible.length) {
             const fallback = findDonorsByGroup(bloodGroup);
             if (fallback.length) {
-                return wantsNameOnly(question)
+                const reply = wantsNameOnly(question)
                     ? formatDonorNameResults(fallback, bloodGroup, lang)
                     : formatFallbackDonorResults(fallback, bloodGroup, lang);
+                addToHistory('user', question);
+                addToHistory('model', stripHtml(reply));
+                return reply;
             }
         }
-        return wantsNameOnly(question)
+        const reply = wantsNameOnly(question)
             ? formatDonorNameResults(eligible, bloodGroup, lang)
             : formatDonorResults(eligible, bloodGroup, lang);
+        addToHistory('user', question);
+        addToHistory('model', stripHtml(reply));
+        return reply;
     }
 
     
-    const ragContext = buildKBContext(question) + buildDonorContext(question);
-    const geminiAnswer = await askGemini(question, ragContext);
-    if (geminiAnswer) {
-        return geminiAnswer;
+    if (!skipAI) {
+        const ragContext = buildKBContext(question) + buildDonorContext(question);
+        const geminiAnswer = await askGemini(question, ragContext);
+        if (geminiAnswer) {
+            return geminiAnswer;
+        }
     }
 
-    
     const kbResult = searchKnowledgeBase(question);
-    if (kbResult) {
-        return kbResult.answer;
+    if (kbResult && (skipAI || shouldUseDirectKBFallback(question, kbResult))) {
+        const reply = maybePersonalizeReply(kbResult.answer);
+        addToHistory('user', question);
+        addToHistory('model', stripHtml(reply));
+        return reply;
     }
 
-    
+    const genericBloodDonationFallback = getGenericBloodDonationFallback(question, lang);
+    if (genericBloodDonationFallback) {
+        const reply = maybePersonalizeReply(genericBloodDonationFallback);
+        addToHistory('user', question);
+        addToHistory('model', stripHtml(reply));
+        return reply;
+    }
+
     const clarify = getClarifyFallback(lang);
-    if (clarify) return clarify;
-    return getLiveAgentFallback(lang);
+    const aiFallback = getAIFallbackMessage(lang);
+    const liveAgent = getLiveAgentFallback(lang);
+    const reply = maybePersonalizeReply(`${aiFallback}<br><br>${clarify}<br><br>${liveAgent}`);
+    addToHistory('user', question);
+    addToHistory('model', stripHtml(reply));
+    return reply;
 }
 
 function escapeHtml(str) {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+function stripHtml(text) {
+    const temp = document.createElement('div');
+    temp.innerHTML = text;
+    return temp.textContent || temp.innerText || '';
+}
+
+function formatPlainTextForHtml(text) {
+    return escapeHtml(text).replace(/\n/g, '<br>');
+}
+
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export function initChatbot() {
+    loadPersistedChatState();
     
     const fab = document.createElement('div');
     fab.id = 'chatbot-fab';
@@ -845,50 +1145,63 @@ export function initChatbot() {
         return wrapper;
     }
 
+    function createAssistantMessage(initialHtml = '') {
+        const wrapper = addMessage(initialHtml, false);
+        const bubble = wrapper.querySelector('div:last-child');
+        return { wrapper, bubble };
+    }
+
+    function updateAssistantMessage(messageRef, html, isStreaming = false) {
+        if (!messageRef?.bubble) return;
+        messageRef.bubble.innerHTML = html;
+        if (isStreaming) {
+            messageRef.bubble.classList.add('chatbot-streaming');
+        } else {
+            messageRef.bubble.classList.remove('chatbot-streaming');
+        }
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function typeAssistantMessage(messageRef, html, stepDelay = 14) {
+        if (/<\/?[a-z][\s\S]*>/i.test(html)) {
+            updateAssistantMessage(messageRef, html, false);
+            return;
+        }
+
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const text = temp.textContent || temp.innerText || '';
+
+        if (!text.trim()) {
+            updateAssistantMessage(messageRef, html, false);
+            return;
+        }
+
+        let typed = '';
+        for (const char of text) {
+            typed += char;
+            updateAssistantMessage(messageRef, formatPlainTextForHtml(typed), true);
+            await sleep(stepDelay);
+        }
+
+        updateAssistantMessage(messageRef, formatPlainTextForHtml(text), false);
+    }
+
     function addTypingIndicator(isDonorSearch = false) {
         const wrapper = document.createElement('div');
         wrapper.id = 'chatbot-typing';
-        wrapper.style.cssText = 'display:flex;gap:0.5rem;align-items:flex-start';
-        const initialPhase = isDonorSearch
-            ? `<span style="font-size:0.95rem;">🔍</span><span style="font-weight:600;color:#2563eb;">Searching donors</span>`
-            : `<span class="thinking-brain-icon" style="font-size:0.95rem;">🧠</span><span style="font-weight:600;color:#dc2626;">Thinking</span>`;
+        wrapper.style.cssText = 'display:flex;flex-direction:column;align-items:flex-start;padding:0.15rem 0 0.25rem 0';
+        const label = isDonorSearch ? 'Searching donors' : 'Thinking';
         wrapper.innerHTML = `
-            <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#dc2626,#ef4444);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">
-                <i class="fa-solid fa-robot" style="color:#fff;font-size:0.65rem"></i>
+            <div class="chatbot-thinking-label" style="font-size:0.95rem;font-weight:600;color:#6b7280;letter-spacing:-0.01em;">
+                ${label}<span class="chatbot-inline-dots"><span>.</span><span>.</span><span>.</span></span>
             </div>
-            <div class="chatbot-thinking-bubble" style="background:#fff;border-radius:0 0.85rem 0.85rem 0.85rem;padding:0.7rem 0.9rem;font-size:0.78rem;color:#6b7280;box-shadow:0 1px 3px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:0.35rem;min-width:160px">
-                <div class="chatbot-think-phase" id="think-phase-1" style="display:flex;align-items:center;gap:6px;">
-                    ${initialPhase}
-                    <span class="chatbot-think-dots"><span>.</span><span>.</span><span>.</span></span>
-                </div>
+            <div class="chatbot-thinking-subtle" style="margin-top:0.35rem;font-size:0.74rem;color:#9ca3af;line-height:1.45;">
+                ${isDonorSearch ? 'Checking matching donor information for you.' : 'Preparing a natural reply for you.'}
             </div>
         `;
         messagesDiv.appendChild(wrapper);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-        
-        setTimeout(() => {
-            const phase1 = document.getElementById('think-phase-1');
-            if (phase1) {
-                phase1.innerHTML = `
-                    <span style="font-size:0.95rem;">🔬</span>
-                    <span style="font-weight:600;color:#7c3aed;">Analyzing</span>
-                    <span class="chatbot-think-dots"><span>.</span><span>.</span><span>.</span></span>
-                `;
-            }
-        }, 1800);
-
-        
-        setTimeout(() => {
-            const phase1 = document.getElementById('think-phase-1');
-            if (phase1) {
-                phase1.innerHTML = `
-                    <span style="font-size:0.95rem;">✍️</span>
-                    <span style="font-weight:600;color:#059669;">Writing response</span>
-                    <span class="chatbot-think-dots"><span>.</span><span>.</span><span>.</span></span>
-                `;
-            }
-        }, 4000);
     }
 
     function removeTypingIndicator() {
@@ -899,6 +1212,7 @@ export function initChatbot() {
         e.preventDefault();
         const question = chatInput.value.trim();
         if (!question) return;
+        rememberFromQuestion(question);
         chatInput.value = '';
         addMessage(question, true);
         
@@ -910,17 +1224,57 @@ export function initChatbot() {
 
         const startTime = Date.now();
         try {
-            const answer = await getAnswer(question);
-            
-            const elapsed = Date.now() - startTime;
-            const kbResult = searchKnowledgeBase(question);
-            const isInstant = kbResult && kbResult.isGreeting;
-            const minDelay = isInstant ? 1000 : 0;
-            if (elapsed < minDelay) {
-                await new Promise(r => setTimeout(r, minDelay - elapsed));
+            const minimumThinkingTime = 1800;
+
+            if (bg && (di || softDonor)) {
+                const answer = await getAnswer(question);
+                const elapsed = Date.now() - startTime;
+                if (elapsed < minimumThinkingTime) {
+                    await sleep(minimumThinkingTime - elapsed);
+                }
+                removeTypingIndicator();
+                const assistantMessage = createAssistantMessage('');
+                await typeAssistantMessage(assistantMessage, answer, 8);
+            } else {
+                const ragContext = buildKBContext(question) + buildDonorContext(question);
+                let assistantMessage = null;
+                let firstChunkReceived = false;
+
+                const answer = await askGeminiStream(question, ragContext, (fullText) => {
+                    if (!firstChunkReceived) {
+                        const elapsed = Date.now() - startTime;
+                        if (elapsed < minimumThinkingTime) {
+                            return;
+                        }
+                        firstChunkReceived = true;
+                        removeTypingIndicator();
+                        assistantMessage = createAssistantMessage('');
+                    }
+                    if (!firstChunkReceived) return;
+                    updateAssistantMessage(assistantMessage, formatPlainTextForHtml(fullText), true);
+                });
+
+                if (answer) {
+                    const elapsed = Date.now() - startTime;
+                    if (!firstChunkReceived && elapsed < minimumThinkingTime) {
+                        await sleep(minimumThinkingTime - elapsed);
+                    }
+                    if (!assistantMessage) {
+                        removeTypingIndicator();
+                        assistantMessage = createAssistantMessage('');
+                    }
+                    updateAssistantMessage(assistantMessage, formatPlainTextForHtml(answer), false);
+                } else {
+                    const elapsed = Date.now() - startTime;
+                    if (elapsed < minimumThinkingTime) {
+                        await sleep(minimumThinkingTime - elapsed);
+                    }
+                    removeTypingIndicator();
+                    const fallback = await getAnswer(question, { skipAI: true });
+                    const assistantMessage = createAssistantMessage('');
+                    await typeAssistantMessage(assistantMessage, fallback, 10);
+                }
             }
-            removeTypingIndicator();
-            addMessage(answer, false);
         } catch (err) {
             removeTypingIndicator();
             const lang = detectLang(question);
@@ -938,16 +1292,16 @@ export function initChatbot() {
     
     const style = document.createElement('style');
     style.textContent = `
-        .chatbot-dots span, .chatbot-think-dots span { animation: chatbot-blink 1.4s infinite both; font-size: 1.5rem; line-height: 0.5; }
-        .chatbot-dots span:nth-child(2), .chatbot-think-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .chatbot-dots span:nth-child(3), .chatbot-think-dots span:nth-child(3) { animation-delay: 0.4s; }
-        .chatbot-think-dots span { font-size: 1.2rem; line-height: 0.6; font-weight: bold; }
+        .chatbot-dots span, .chatbot-inline-dots span { animation: chatbot-blink 1.4s infinite both; }
+        .chatbot-dots span:nth-child(2), .chatbot-inline-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .chatbot-dots span:nth-child(3), .chatbot-inline-dots span:nth-child(3) { animation-delay: 0.4s; }
+        .chatbot-inline-dots { display:inline-flex; margin-left:2px; min-width:18px; }
+        .chatbot-inline-dots span { font-size: 1rem; line-height: 1; color:#9ca3af; }
         @keyframes chatbot-blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
-        .thinking-brain-icon { animation: brain-pulse 1s ease-in-out infinite; display: inline-block; }
-        @keyframes brain-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
-        .chatbot-thinking-bubble { animation: think-fade-in 0.3s ease-out; }
+        .chatbot-thinking-label, .chatbot-thinking-subtle { animation: think-fade-in 0.3s ease-out; }
         @keyframes think-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .chatbot-think-phase { transition: all 0.3s ease; }
+        .chatbot-streaming::after { content: "▋"; display: inline-block; margin-left: 2px; color: #dc2626; animation: chatbot-cursor-blink 1s step-end infinite; }
+        @keyframes chatbot-cursor-blink { 50% { opacity: 0; } }
         #chatbot-messages::-webkit-scrollbar { width: 4px; }
         #chatbot-messages::-webkit-scrollbar-track { background: transparent; }
         #chatbot-messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }

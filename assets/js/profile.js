@@ -18,6 +18,7 @@ import {
     push
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { firebaseConfig } from "./modules/firebase-config.js";
+import state from "./modules/state.js";
 import { initLanguageSystem, updatePageLanguage } from "./modules/language-ui.js";
 import { initBackToTop } from "./modules/back-to-top.js";
 import { initFeedback } from "./modules/feedback.js";
@@ -295,8 +296,10 @@ setTimeout(() => {
 onAuthStateChanged(auth, (user) => {
     authStateResolved = true;
     currentUser = user;
+    state.currentUser = user;
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
     if (!user) {
+        state.currentUserProfile = null;
         hideLoader();
         notLoggedIn?.classList.remove('hidden');
         profileContent?.classList.add('hidden');
@@ -310,6 +313,7 @@ onAuthStateChanged(auth, (user) => {
     const userRef = ref(database, `donors/${user.uid}`);
     onValue(userRef, (snapshot) => {
         const data = snapshot.val() || {};
+        state.currentUserProfile = { ...data, uid: user.uid, email: user.email || '' };
         currentDonorData = { ...data, uid: user.uid };
         populateProfile(data, user.email);
         refreshDonationCount();

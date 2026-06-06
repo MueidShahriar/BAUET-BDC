@@ -85,6 +85,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             }, { onlyOnce: true });
             
             function applyUserUiUpdates(resolvedUserData) {
+                state.currentUserProfile = { ...resolvedUserData, uid: state.currentUser?.uid || null };
                 const photoUrl = resolvedUserData.profilePhoto || '';
                 const displayName = getTextValue(resolvedUserData.fullName || resolvedUserData.name, 'User');
                 const initials = getInitials(displayName, 'U');
@@ -188,6 +189,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         }
         if (mobileLogoutBtn) { mobileLogoutBtn.classList.add('hidden'); mobileLogoutBtn.classList.remove('block'); }
         if (profileUserId) profileUserId.textContent = '';
+        state.currentUserProfile = null;
         adminPanel?.classList.add('hidden');
         document.body.classList.remove('admin-mode');
         leaderboardSection?.classList.remove('hidden');
@@ -299,6 +301,7 @@ export function initAuth({
 
     onAuthStateChanged(auth, (user) => {
         state.currentUser = user;
+        if (!user) state.currentUserProfile = null;
         updateLoginFn();
     });
 }

@@ -11,6 +11,7 @@ const state = {
     recentDonationsList: [],
     livesHelped: null,
     currentUser: null,
+    currentUserProfile: null,
     currentUserRole: 'member',
     isAuthRedirecting: false,
     searchLoaderEl: null,
