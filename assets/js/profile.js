@@ -1,25 +1,27 @@
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-    getAuth,
-    onAuthStateChanged,
-    signOut,
-    deleteUser,
-    updatePassword,
-    reauthenticateWithCredential,
-    EmailAuthProvider
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  deleteUser,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-    getDatabase,
-    ref,
-    onValue,
-    set,
-    remove,
-    push
+  getDatabase,
+  ref,
+  onValue,
+  set,
+  remove,
+  push,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { firebaseConfig } from "./modules/firebase-config.js";
 import state from "./modules/state.js";
-import { initLanguageSystem, updatePageLanguage } from "./modules/language-ui.js";
+import {
+  initLanguageSystem,
+  updatePageLanguage,
+} from "./modules/language-ui.js";
 import { initBackToTop } from "./modules/back-to-top.js";
 import { initFeedback } from "./modules/feedback.js";
 import { initHeader, initMobileMenu } from "./modules/header.js";
@@ -31,253 +33,301 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-const loader = document.getElementById('page-loader');
-const notLoggedIn = document.getElementById('not-logged-in');
-const profileContent = document.getElementById('profile-content');
-const profileForm = document.getElementById('profile-form');
+const loader = document.getElementById("page-loader");
+const notLoggedIn = document.getElementById("not-logged-in");
+const profileContent = document.getElementById("profile-content");
+const profileForm = document.getElementById("profile-form");
 
-const avatarText = document.getElementById('profile-avatar-text');
-const displayName = document.getElementById('profile-display-name');
-const displayBlood = document.getElementById('profile-display-blood');
-const displayLocation = document.getElementById('profile-display-location');
-const displayEmail = document.getElementById('profile-display-email');
-const displayDonorId = document.getElementById('profile-display-id');
-const statLast = document.getElementById('profile-stat-last');
-const statEligible = document.getElementById('profile-stat-eligible');
-const statDonations = document.getElementById('profile-stat-donations');
-const statRole = document.getElementById('profile-stat-role');
-const statMemberSince = document.getElementById('profile-stat-member-since');
+const avatarText = document.getElementById("profile-avatar-text");
+const displayName = document.getElementById("profile-display-name");
+const displayBlood = document.getElementById("profile-display-blood");
+const displayLocation = document.getElementById("profile-display-location");
+const displayEmail = document.getElementById("profile-display-email");
+const displayDonorId = document.getElementById("profile-display-id");
+const statLast = document.getElementById("profile-stat-last");
+const statEligible = document.getElementById("profile-stat-eligible");
+const statDonations = document.getElementById("profile-stat-donations");
+const statRole = document.getElementById("profile-stat-role");
+const statMemberSince = document.getElementById("profile-stat-member-since");
 
-const fFullName = document.getElementById('profile-fullName');
-const fEmail = document.getElementById('profile-email');
-const fPhone = document.getElementById('profile-phone');
-const fBloodGroup = document.getElementById('profile-bloodGroup');
-const fLocation = document.getElementById('profile-location');
-const fDepartment = document.getElementById('profile-department');
-const fBatch = document.getElementById('profile-batch');
-const fLastDonate = document.getElementById('profile-lastDonateDate');
-const fDateOfBirth = document.getElementById('profile-dateOfBirth');
-const fGender = document.getElementById('profile-gender');
+const fFullName = document.getElementById("profile-fullName");
+const fEmail = document.getElementById("profile-email");
+const fPhone = document.getElementById("profile-phone");
+const fBloodGroup = document.getElementById("profile-bloodGroup");
+const fLocation = document.getElementById("profile-location");
+const fDepartment = document.getElementById("profile-department");
+const fBatch = document.getElementById("profile-batch");
+const fLastDonate = document.getElementById("profile-lastDonateDate");
+const fDateOfBirth = document.getElementById("profile-dateOfBirth");
+const fGender = document.getElementById("profile-gender");
 
-const fNotes = document.getElementById('profile-notes');
-const fRole = document.getElementById('profile-role');
-const profilePhotoInput = document.getElementById('profile-photo-input');
-const profileAvatarImg = document.getElementById('profile-avatar-img');
-const profilePhotoRemoveBtn = document.getElementById('profile-photo-remove');
+const fNotes = document.getElementById("profile-notes");
+const fRole = document.getElementById("profile-role");
+const profilePhotoInput = document.getElementById("profile-photo-input");
+const profileAvatarImg = document.getElementById("profile-avatar-img");
+const profilePhotoRemoveBtn = document.getElementById("profile-photo-remove");
 
-const recentGrid = document.getElementById('profile-recent-grid');
-const recentEmpty = document.getElementById('profile-recent-empty');
-const recentDate = document.getElementById('profile-recent-date');
-const recentBlood = document.getElementById('profile-recent-blood');
-const recentLocation = document.getElementById('profile-recent-location');
-const recentDepartment = document.getElementById('profile-recent-department');
-const recentBatch = document.getElementById('profile-recent-batch');
-const recentAge = document.getElementById('profile-recent-age');
-const recentWeight = document.getElementById('profile-recent-weight');
+const recentGrid = document.getElementById("profile-recent-grid");
+const recentEmpty = document.getElementById("profile-recent-empty");
+const recentDate = document.getElementById("profile-recent-date");
+const recentBlood = document.getElementById("profile-recent-blood");
+const recentLocation = document.getElementById("profile-recent-location");
+const recentDepartment = document.getElementById("profile-recent-department");
+const recentBatch = document.getElementById("profile-recent-batch");
+const recentAge = document.getElementById("profile-recent-age");
+const recentWeight = document.getElementById("profile-recent-weight");
 
-const logoutHeaderBtn = document.getElementById('pf-logout-header');
-const deleteBtn = document.getElementById('pf-delete');
-const certBtn = document.getElementById('pf-certificate');
-const donorCardBtn = document.getElementById('pf-donor-card');
-const deleteModal = document.getElementById('delete-confirm-modal');
-const deleteCancelBtn = document.getElementById('delete-cancel');
-const deleteConfirmBtn = document.getElementById('delete-confirm');
+const logoutHeaderBtn = document.getElementById("pf-logout-header");
+const deleteBtn = document.getElementById("pf-delete");
+const certBtn = document.getElementById("pf-certificate");
+const donorCardBtn = document.getElementById("pf-donor-card");
+const deleteModal = document.getElementById("delete-confirm-modal");
+const deleteCancelBtn = document.getElementById("delete-cancel");
+const deleteConfirmBtn = document.getElementById("delete-confirm");
 
-const toast = document.getElementById('profile-toast');
-const toastIcon = document.getElementById('profile-toast-icon');
-const toastMsg = document.getElementById('profile-toast-msg');
+const toast = document.getElementById("profile-toast");
+const toastIcon = document.getElementById("profile-toast-icon");
+const toastMsg = document.getElementById("profile-toast-msg");
 
 initLanguageSystem();
-window.addEventListener('languageChanged', () => updatePageLanguage());
+window.addEventListener("languageChanged", () => updatePageLanguage());
 
-const feedbackRef = ref(database, 'feedback');
+const feedbackRef = ref(database, "feedback");
 initHeader();
 initMobileMenu();
 initBackToTop();
-initVisitorTracker(database, false); 
+initVisitorTracker(database, false);
 initFeedback(feedbackRef, push);
 initChatbot();
 
 function hideLoader() {
-    if (loader) {
-        loader.classList.add('fade-out');
-        document.body.classList.remove('loading');
-        setTimeout(() => { loader.style.display = 'none'; }, 500);
-    }
+  if (loader) {
+    loader.classList.add("fade-out");
+    document.body.classList.remove("loading");
+    setTimeout(() => {
+      loader.style.display = "none";
+    }, 500);
+  }
 }
 
 function getHomeHref() {
-    return window.location.pathname.includes('/pages/') ? '../index.html' : 'index.html';
+  return window.location.pathname.includes("/pages/")
+    ? "../index.html"
+    : "index.html";
 }
 
-function showToast(message, type = 'success') {
-    if (!toast) return;
-    toast.className = 'profile-toast';
-    toast.classList.add(`profile-toast--${type}`);
-    toast.classList.remove('hidden');
-    if (toastIcon) {
-        toastIcon.className = type === 'success'
-            ? 'fa-solid fa-check-circle'
-            : 'fa-solid fa-circle-xmark';
-    }
-    if (toastMsg) toastMsg.textContent = message;
+function showToast(message, type = "success") {
+  if (!toast) return;
+  toast.className = "profile-toast";
+  toast.classList.add(`profile-toast--${type}`);
+  toast.classList.remove("hidden");
+  if (toastIcon) {
+    toastIcon.className =
+      type === "success"
+        ? "fa-solid fa-check-circle"
+        : "fa-solid fa-circle-xmark";
+  }
+  if (toastMsg) toastMsg.textContent = message;
 
-    requestAnimationFrame(() => toast.classList.add('show'));
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.classList.add('hidden'), 350);
-    }, 3000);
+  requestAnimationFrame(() => toast.classList.add("show"));
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.classList.add("hidden"), 350);
+  }, 3000);
 }
 
 function getInitials(name) {
-    if (!name) return '?';
-    const parts = name.trim().split(/\s+/);
-    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    return parts[0][0]?.toUpperCase() || '?';
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2)
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  return parts[0][0]?.toUpperCase() || "?";
 }
 
 function formatDate(dateStr) {
-    if (!dateStr) return 'Not recorded';
-    try {
-        const d = new Date(dateStr + 'T00:00:00');
-        const pad = n => String(n).padStart(2, '0');
-        return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
-    } catch {
-        return dateStr;
-    }
+  if (!dateStr) return "Not recorded";
+  try {
+    const d = new Date(dateStr + "T00:00:00");
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+  } catch {
+    return dateStr;
+  }
 }
 
 function isDonorEligible(lastDonateDate) {
-    if (!lastDonateDate) return 'Unknown';
+  if (!lastDonateDate) return "Unknown";
 
-    const last = new Date(lastDonateDate + 'T00:00:00');
-    const now = new Date();
+  const last = new Date(lastDonateDate + "T00:00:00");
+  const now = new Date();
 
-    const diffDays = Math.floor((now - last) / (1000 * 60 * 60 * 24));
+  const diffDays = Math.floor((now - last) / (1000 * 60 * 60 * 24));
 
-    if (diffDays >= 120) return 'Eligible';
+  if (diffDays >= 120) return "Eligible";
 
-    return `${120 - diffDays} days left`;
+  return `${120 - diffDays} days left`;
 }
 
 function getEligibleDate(lastDonateDate) {
-    if (!lastDonateDate) return 'No donation date';
+  if (!lastDonateDate) return "No donation date";
 
-    const date = new Date(lastDonateDate + 'T00:00:00');
+  const date = new Date(lastDonateDate + "T00:00:00");
 
-    date.setDate(date.getDate() + 120);
+  date.setDate(date.getDate() + 120);
 
-    return date.toLocaleDateString('en-GB');
+  return date.toLocaleDateString("en-GB");
 }
 
-
 function populateProfile(data, email) {
-    const name = data.fullName || 'Donor';
-    const blood = data.bloodGroup || '—';
-    const loc = data.location || '—';
-    const role = data.role || 'member';
+  const name = data.fullName || "Donor";
+  const blood = data.bloodGroup || "—";
+  const loc = data.location || "—";
+  const role = data.role || "member";
 
-    if (avatarText) avatarText.textContent = getInitials(name);
-    
-    if (profileAvatarImg && data.profilePhoto) {
-        profileAvatarImg.src = data.profilePhoto;
-        profileAvatarImg.style.display = 'block';
-        if (avatarText) avatarText.style.display = 'none';
-        if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = 'flex';
-    } else if (profileAvatarImg) {
-        profileAvatarImg.style.display = 'none';
-        if (avatarText) avatarText.style.display = '';
-        if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = 'none';
-    }
-    if (displayName) displayName.textContent = name;
-    if (displayBlood) displayBlood.querySelector('span:last-child').textContent = blood;
-    if (displayLocation) displayLocation.querySelector('span:last-child').textContent = loc;
-    if (displayEmail) displayEmail.textContent = email || '';
-    if (displayDonorId) displayDonorId.textContent = normalizeDonorId(data.donorId) || data.donorId || '—';
-    if (statLast) statLast.textContent = formatDate(data.lastDonateDate);
+  if (avatarText) avatarText.textContent = getInitials(name);
 
-    if (statEligible) {
-        const elig = isDonorEligible(data.lastDonateDate);
-        statEligible.textContent = elig;
-        statEligible.style.color = elig === 'Eligible' ? '#059669' : elig === 'Unknown' ? '#6b7280' : '#d97706';
-    }
+  if (profileAvatarImg && data.profilePhoto) {
+    profileAvatarImg.src = data.profilePhoto;
+    profileAvatarImg.style.display = "block";
+    if (avatarText) avatarText.style.display = "none";
+    if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = "flex";
+  } else if (profileAvatarImg) {
+    profileAvatarImg.style.display = "none";
+    if (avatarText) avatarText.style.display = "";
+    if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = "none";
+  }
+  if (displayName) displayName.textContent = name;
+  if (displayBlood)
+    displayBlood.querySelector("span:last-child").textContent = blood;
+  if (displayLocation)
+    displayLocation.querySelector("span:last-child").textContent = loc;
+  if (displayEmail) displayEmail.textContent = email || "";
+  if (displayDonorId)
+    displayDonorId.textContent =
+      normalizeDonorId(data.donorId) || data.donorId || "—";
+  if (statLast) statLast.textContent = formatDate(data.lastDonateDate);
 
-    const eligibleDateEl = document.getElementById('profile-stat-eligible-date');
+  if (statEligible) {
+    const elig = isDonorEligible(data.lastDonateDate);
+
+    statEligible.textContent = elig;
+    statEligible.style.color =
+      elig === "Eligible"
+        ? "#059669"
+        : elig === "Unknown"
+          ? "#6b7280"
+          : "#d97706";
+
+    const eligibleDateEl = document.getElementById(
+      "profile-stat-eligible-date",
+    );
 
     if (eligibleDateEl) {
-        eligibleDateEl.textContent =
-        `ELIGIBLE ON: ${getEligibleDate(data.lastDonateDate)}`;
+      // If eligible → don't show date
+      if (elig === "Eligible") {
+        eligibleDateEl.textContent = "";
+      }
+
+      // If not eligible → show eligible date
+      else if (elig !== "Unknown") {
+        eligibleDateEl.textContent = `ELIGIBLE ON: ${getEligibleDate(data.lastDonateDate)}`;
+      }
+
+      // If unknown
+      else {
+        eligibleDateEl.textContent = "—";
+      }
     }
+  }
 
-    if (statDonations) {
-        const count = getDonationCountForDonor({ ...data, donorId: data.donorId || data.rawDonorId }, recentDonationsList);
-        statDonations.textContent = String(count);
-    }
-    if (statRole) statRole.textContent = role.charAt(0).toUpperCase() + role.slice(1);
-
-    if (statMemberSince) {
-        if (data.createdAt) {
-            const _d = new Date(data.createdAt);
-            const _pad = n => String(n).padStart(2, '0');
-            statMemberSince.textContent = `${_pad(_d.getDate())}/${_pad(_d.getMonth() + 1)}/${_d.getFullYear()}`;
-        } else if (auth.currentUser && auth.currentUser.metadata && auth.currentUser.metadata.creationTime) {
-            const _d = new Date(auth.currentUser.metadata.creationTime);
-            const _pad = n => String(n).padStart(2, '0');
-            statMemberSince.textContent = `${_pad(_d.getDate())}/${_pad(_d.getMonth() + 1)}/${_d.getFullYear()}`;
-        } else {
-            statMemberSince.textContent = '—';
-        }
-    }
-
-    const recentInfo = (data.lastDonationInfo && typeof data.lastDonationInfo === 'object')
-        ? data.lastDonationInfo
-        : null;
-    if (fFullName) fFullName.value = data.fullName || '';
-    if (fEmail) fEmail.value = email || '';
-    if (fPhone) fPhone.value = data.phone || '';
-    if (fBloodGroup) fBloodGroup.value = data.bloodGroup || '';
-    if (fLocation) fLocation.value = data.location || '';
-    if (fDepartment) fDepartment.value = data.department || recentInfo?.department || '';
-    if (fBatch) fBatch.value = data.batch || recentInfo?.batch || '';
-    if (fLastDonate) fLastDonate.value = data.lastDonateDate || '';
-    if (fDateOfBirth) fDateOfBirth.value = data.dateOfBirth || '';
-    if (fGender) fGender.value = data.gender || '';
-
-    if (fNotes) fNotes.value = data.notes || '';
-    if (fRole) fRole.value = role;
-    const hasRecent = Boolean(
-        recentInfo && Object.keys(recentInfo).some(key => recentInfo[key])
+  if (statDonations) {
+    const count = getDonationCountForDonor(
+      { ...data, donorId: data.donorId || data.rawDonorId },
+      recentDonationsList,
     );
-    if (recentGrid && recentEmpty) {
-        recentGrid.classList.toggle('hidden', !hasRecent);
-        recentEmpty.classList.toggle('hidden', hasRecent);
+    statDonations.textContent = String(count);
+  }
+  if (statRole)
+    statRole.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+
+  if (statMemberSince) {
+    if (data.createdAt) {
+      const _d = new Date(data.createdAt);
+      const _pad = (n) => String(n).padStart(2, "0");
+      statMemberSince.textContent = `${_pad(_d.getDate())}/${_pad(_d.getMonth() + 1)}/${_d.getFullYear()}`;
+    } else if (
+      auth.currentUser &&
+      auth.currentUser.metadata &&
+      auth.currentUser.metadata.creationTime
+    ) {
+      const _d = new Date(auth.currentUser.metadata.creationTime);
+      const _pad = (n) => String(n).padStart(2, "0");
+      statMemberSince.textContent = `${_pad(_d.getDate())}/${_pad(_d.getMonth() + 1)}/${_d.getFullYear()}`;
+    } else {
+      statMemberSince.textContent = "—";
     }
-    if (hasRecent) {
-        if (recentDate) recentDate.textContent = formatDate(recentInfo.date || data.lastDonateDate);
-        if (recentBlood) recentBlood.textContent = recentInfo.bloodGroup || data.bloodGroup || '—';
-        if (recentLocation) recentLocation.textContent = recentInfo.location || data.location || '—';
-        if (recentDepartment) recentDepartment.textContent = recentInfo.department || '—';
-        if (recentBatch) recentBatch.textContent = recentInfo.batch || '—';
-        if (recentAge) recentAge.textContent = recentInfo.age || '—';
-        if (recentWeight) recentWeight.textContent = recentInfo.weight ? `${recentInfo.weight} kg` : '—';
-    }
+  }
+
+  const recentInfo =
+    data.lastDonationInfo && typeof data.lastDonationInfo === "object"
+      ? data.lastDonationInfo
+      : null;
+  if (fFullName) fFullName.value = data.fullName || "";
+  if (fEmail) fEmail.value = email || "";
+  if (fPhone) fPhone.value = data.phone || "";
+  if (fBloodGroup) fBloodGroup.value = data.bloodGroup || "";
+  if (fLocation) fLocation.value = data.location || "";
+  if (fDepartment)
+    fDepartment.value = data.department || recentInfo?.department || "";
+  if (fBatch) fBatch.value = data.batch || recentInfo?.batch || "";
+  if (fLastDonate) fLastDonate.value = data.lastDonateDate || "";
+  if (fDateOfBirth) fDateOfBirth.value = data.dateOfBirth || "";
+  if (fGender) fGender.value = data.gender || "";
+
+  if (fNotes) fNotes.value = data.notes || "";
+  if (fRole) fRole.value = role;
+  const hasRecent = Boolean(
+    recentInfo && Object.keys(recentInfo).some((key) => recentInfo[key]),
+  );
+  if (recentGrid && recentEmpty) {
+    recentGrid.classList.toggle("hidden", !hasRecent);
+    recentEmpty.classList.toggle("hidden", hasRecent);
+  }
+  if (hasRecent) {
+    if (recentDate)
+      recentDate.textContent = formatDate(
+        recentInfo.date || data.lastDonateDate,
+      );
+    if (recentBlood)
+      recentBlood.textContent = recentInfo.bloodGroup || data.bloodGroup || "—";
+    if (recentLocation)
+      recentLocation.textContent = recentInfo.location || data.location || "—";
+    if (recentDepartment)
+      recentDepartment.textContent = recentInfo.department || "—";
+    if (recentBatch) recentBatch.textContent = recentInfo.batch || "—";
+    if (recentAge) recentAge.textContent = recentInfo.age || "—";
+    if (recentWeight)
+      recentWeight.textContent = recentInfo.weight
+        ? `${recentInfo.weight} kg`
+        : "—";
+  }
 }
 
 function openModal(m) {
-    if (!m) return;
-    m.classList.remove('hidden');
-    m.classList.add('flex');
+  if (!m) return;
+  m.classList.remove("hidden");
+  m.classList.add("flex");
 }
 function closeModal(m) {
-    if (!m) return;
-    m.classList.add('hidden');
-    m.classList.remove('flex');
+  if (!m) return;
+  m.classList.add("hidden");
+  m.classList.remove("flex");
 }
 
 function refreshDonationCount() {
-    if (!statDonations) return;
-    const count = getDonationCountForDonor(currentDonorData, recentDonationsList);
-    statDonations.textContent = String(count);
+  if (!statDonations) return;
+  const count = getDonationCountForDonor(currentDonorData, recentDonationsList);
+  statDonations.textContent = String(count);
 }
 
 let currentUser = null;
@@ -286,439 +336,531 @@ let authStateResolved = false;
 let recentDonationsList = [];
 
 setTimeout(() => {
-    if (!authStateResolved) {
-        hideLoader();
-        notLoggedIn?.classList.remove('hidden');
-        profileContent?.classList.add('hidden');
-    }
+  if (!authStateResolved) {
+    hideLoader();
+    notLoggedIn?.classList.remove("hidden");
+    profileContent?.classList.add("hidden");
+  }
 }, 4500);
 
 onAuthStateChanged(auth, (user) => {
-    authStateResolved = true;
-    currentUser = user;
-    state.currentUser = user;
-    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
-    if (!user) {
-        state.currentUserProfile = null;
-        hideLoader();
-        notLoggedIn?.classList.remove('hidden');
-        profileContent?.classList.add('hidden');
-        if (logoutHeaderBtn) logoutHeaderBtn.style.display = 'none';
-        if (mobileLogoutBtn) mobileLogoutBtn.classList.add('hidden');
-        return;
-    }
-    if (logoutHeaderBtn) logoutHeaderBtn.style.display = '';
-    if (mobileLogoutBtn) mobileLogoutBtn.classList.remove('hidden');
+  authStateResolved = true;
+  currentUser = user;
+  state.currentUser = user;
+  const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
+  if (!user) {
+    state.currentUserProfile = null;
+    hideLoader();
+    notLoggedIn?.classList.remove("hidden");
+    profileContent?.classList.add("hidden");
+    if (logoutHeaderBtn) logoutHeaderBtn.style.display = "none";
+    if (mobileLogoutBtn) mobileLogoutBtn.classList.add("hidden");
+    return;
+  }
+  if (logoutHeaderBtn) logoutHeaderBtn.style.display = "";
+  if (mobileLogoutBtn) mobileLogoutBtn.classList.remove("hidden");
 
-    const userRef = ref(database, `donors/${user.uid}`);
-    onValue(userRef, (snapshot) => {
-        const data = snapshot.val() || {};
-        state.currentUserProfile = { ...data, uid: user.uid, email: user.email || '' };
-        currentDonorData = { ...data, uid: user.uid };
-        populateProfile(data, user.email);
-        refreshDonationCount();
-        hideLoader();
-        notLoggedIn?.classList.add('hidden');
-        profileContent?.classList.remove('hidden');
+  const userRef = ref(database, `donors/${user.uid}`);
+  onValue(
+    userRef,
+    (snapshot) => {
+      const data = snapshot.val() || {};
+      state.currentUserProfile = {
+        ...data,
+        uid: user.uid,
+        email: user.email || "",
+      };
+      currentDonorData = { ...data, uid: user.uid };
+      populateProfile(data, user.email);
+      refreshDonationCount();
+      hideLoader();
+      notLoggedIn?.classList.add("hidden");
+      profileContent?.classList.remove("hidden");
 
-        
-        const role = data.role || 'member';
-        const adminBadge = document.getElementById('admin-badge');
-        const adminMobileLink = document.getElementById('admin-mobile-link');
-        const adminDesktopLink = document.getElementById('nav-dashboard-link');
-        
-        const navLinkIds = ['nav-home-link','nav-about-link','nav-how-link','nav-events-link','nav-join-link','nav-search-link','nav-contact-link'];
-        const mobileNavIds = ['mobile-home-link','mobile-about-link','mobile-how-link','mobile-events-link','mobile-join-link','mobile-search-link','mobile-contact-link'];
+      const role = data.role || "member";
+      const adminBadge = document.getElementById("admin-badge");
+      const adminMobileLink = document.getElementById("admin-mobile-link");
+      const adminDesktopLink = document.getElementById("nav-dashboard-link");
 
-        if (role === 'admin') {
-            document.body.classList.add('admin-mode');
-            
-            if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
-            
-            adminMobileLink?.classList.remove('hidden');
-            if (adminDesktopLink) { adminDesktopLink.classList.remove('hidden'); }
-            
-            navLinkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
-            mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
-        } else {
-            document.body.classList.remove('admin-mode');
-            if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
-            adminMobileLink?.classList.add('hidden');
-            if (adminDesktopLink) { adminDesktopLink.classList.add('hidden'); }
-            navLinkIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
-            mobileNavIds.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+      const navLinkIds = [
+        "nav-home-link",
+        "nav-about-link",
+        "nav-how-link",
+        "nav-events-link",
+        "nav-join-link",
+        "nav-search-link",
+        "nav-contact-link",
+      ];
+      const mobileNavIds = [
+        "mobile-home-link",
+        "mobile-about-link",
+        "mobile-how-link",
+        "mobile-events-link",
+        "mobile-join-link",
+        "mobile-search-link",
+        "mobile-contact-link",
+      ];
+
+      if (role === "admin") {
+        document.body.classList.add("admin-mode");
+
+        if (adminBadge) {
+          adminBadge.classList.add("hidden");
+          adminBadge.classList.remove("inline-flex");
         }
-    }, () => {
-        
-        hideLoader();
-        notLoggedIn?.classList.remove('hidden');
-        profileContent?.classList.add('hidden');
-        showToast('Failed to load profile data. Please try again.', 'error');
-    }, { onlyOnce: true });
+
+        adminMobileLink?.classList.remove("hidden");
+        if (adminDesktopLink) {
+          adminDesktopLink.classList.remove("hidden");
+        }
+
+        navLinkIds.forEach((id) =>
+          document.getElementById(id)?.classList.add("hidden"),
+        );
+        mobileNavIds.forEach((id) =>
+          document.getElementById(id)?.classList.add("hidden"),
+        );
+      } else {
+        document.body.classList.remove("admin-mode");
+        if (adminBadge) {
+          adminBadge.classList.add("hidden");
+          adminBadge.classList.remove("inline-flex");
+        }
+        adminMobileLink?.classList.add("hidden");
+        if (adminDesktopLink) {
+          adminDesktopLink.classList.add("hidden");
+        }
+        navLinkIds.forEach((id) =>
+          document.getElementById(id)?.classList.remove("hidden"),
+        );
+        mobileNavIds.forEach((id) =>
+          document.getElementById(id)?.classList.remove("hidden"),
+        );
+      }
+    },
+    () => {
+      hideLoader();
+      notLoggedIn?.classList.remove("hidden");
+      profileContent?.classList.add("hidden");
+      showToast("Failed to load profile data. Please try again.", "error");
+    },
+    { onlyOnce: true },
+  );
 });
 
-const recentDonationsRef = ref(database, 'recentDonations');
+const recentDonationsRef = ref(database, "recentDonations");
 onValue(recentDonationsRef, (snapshot) => {
-    const data = snapshot.val();
-    const list = [];
-    if (data && typeof data === 'object') {
-        for (const key in data) {
-            if (Object.prototype.hasOwnProperty.call(data, key)) {
-                list.push({ id: key, ...data[key] });
-            }
-        }
+  const data = snapshot.val();
+  const list = [];
+  if (data && typeof data === "object") {
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        list.push({ id: key, ...data[key] });
+      }
     }
-    recentDonationsList = list;
-    refreshDonationCount();
+  }
+  recentDonationsList = list;
+  refreshDonationCount();
 });
 
 const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i;
 
-const emailChangeModal = document.getElementById('email-change-modal');
-const emailChangeForm = document.getElementById('email-change-form');
-const ecNewEmailDisplay = document.getElementById('ec-new-email');
-const ecPassword = document.getElementById('ec-password');
-const ecError = document.getElementById('ec-error');
-const ecCancel = document.getElementById('ec-cancel');
+const emailChangeModal = document.getElementById("email-change-modal");
+const emailChangeForm = document.getElementById("email-change-form");
+const ecNewEmailDisplay = document.getElementById("ec-new-email");
+const ecPassword = document.getElementById("ec-password");
+const ecError = document.getElementById("ec-error");
+const ecCancel = document.getElementById("ec-cancel");
 
 let pendingProfileUpdate = null;
 
-ecCancel?.addEventListener('click', () => closeModal(emailChangeModal));
-emailChangeModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(emailChangeModal));
+ecCancel?.addEventListener("click", () => closeModal(emailChangeModal));
+emailChangeModal
+  ?.querySelector(".absolute.inset-0")
+  ?.addEventListener("click", () => closeModal(emailChangeModal));
 
-profileForm?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (!currentUser) return;
-    const fd = new FormData(profileForm);
+profileForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!currentUser) return;
+  const fd = new FormData(profileForm);
 
-    const newEmail = fd.get('email')?.toString().trim() || '';
-    const emailChanged = newEmail && newEmail !== currentUser.email;
+  const newEmail = fd.get("email")?.toString().trim() || "";
+  const emailChanged = newEmail && newEmail !== currentUser.email;
 
-    
-    if (emailChanged && !gmailRegex.test(newEmail)) {
-        showToast('Only @gmail.com email addresses are accepted.', 'error');
-        return;
-    }
+  if (emailChanged && !gmailRegex.test(newEmail)) {
+    showToast("Only @gmail.com email addresses are accepted.", "error");
+    return;
+  }
 
-    const updatedData = {
-        ...currentDonorData,
-        fullName: fd.get('fullName')?.toString().trim() || '',
-        phone: fd.get('phone')?.toString().trim() || '',
-        bloodGroup: fd.get('bloodGroup')?.toString().trim() || '',
-        location: fd.get('location')?.toString().trim() || '',
-        department: fd.get('department')?.toString().trim() || currentDonorData.department || '',
-        batch: fd.get('batch')?.toString().trim() || currentDonorData.batch || '',
-        lastDonateDate: fd.get('lastDonateDate')?.toString() || '',
-        notes: fd.get('notes')?.toString() || '',
-        dateOfBirth: fd.get('dateOfBirth')?.toString() || currentDonorData.dateOfBirth || '',
-        gender: fd.get('gender')?.toString() || currentDonorData.gender || '',
-        email: emailChanged ? newEmail : currentUser.email,
-        role: fd.get('role')?.toString().trim() || 'member'
-    };
-    
-    if (currentDonorData.profilePhoto) {
-        updatedData.profilePhoto = currentDonorData.profilePhoto;
-    }
-    delete updatedData.uid;
+  const updatedData = {
+    ...currentDonorData,
+    fullName: fd.get("fullName")?.toString().trim() || "",
+    phone: fd.get("phone")?.toString().trim() || "",
+    bloodGroup: fd.get("bloodGroup")?.toString().trim() || "",
+    location: fd.get("location")?.toString().trim() || "",
+    department:
+      fd.get("department")?.toString().trim() ||
+      currentDonorData.department ||
+      "",
+    batch: fd.get("batch")?.toString().trim() || currentDonorData.batch || "",
+    lastDonateDate: fd.get("lastDonateDate")?.toString() || "",
+    notes: fd.get("notes")?.toString() || "",
+    dateOfBirth:
+      fd.get("dateOfBirth")?.toString() || currentDonorData.dateOfBirth || "",
+    gender: fd.get("gender")?.toString() || currentDonorData.gender || "",
+    email: emailChanged ? newEmail : currentUser.email,
+    role: fd.get("role")?.toString().trim() || "member",
+  };
 
-    
-    const userRef = ref(database, 'donors/' + currentUser.uid);
-    set(userRef, updatedData)
-        .then(() => {
-            showToast('Profile updated successfully!', 'success');
-            populateProfile(updatedData, updatedData.email || currentUser.email);
-        })
-        .catch((err) => {
-            console.error('Update failed:', err);
-            showToast('Failed to update profile.', 'error');
-        });
+  if (currentDonorData.profilePhoto) {
+    updatedData.profilePhoto = currentDonorData.profilePhoto;
+  }
+  delete updatedData.uid;
+
+  const userRef = ref(database, "donors/" + currentUser.uid);
+  set(userRef, updatedData)
+    .then(() => {
+      showToast("Profile updated successfully!", "success");
+      populateProfile(updatedData, updatedData.email || currentUser.email);
+    })
+    .catch((err) => {
+      console.error("Update failed:", err);
+      showToast("Failed to update profile.", "error");
+    });
 });
 
-profilePhotoInput?.addEventListener('change', async (e) => {
-    const file = e.target.files?.[0];
-    if (!file || !currentUser) return;
+profilePhotoInput?.addEventListener("change", async (e) => {
+  const file = e.target.files?.[0];
+  if (!file || !currentUser) return;
 
-    
-    if (!['image/png', 'image/jpeg'].includes(file.type)) {
-        showToast('Only PNG or JPEG images are allowed.', 'error');
-        profilePhotoInput.value = '';
-        return;
+  if (!["image/png", "image/jpeg"].includes(file.type)) {
+    showToast("Only PNG or JPEG images are allowed.", "error");
+    profilePhotoInput.value = "";
+    return;
+  }
+  try {
+    const base64 = await resizeAndCompressPhoto(file, 300, 300, 100 * 1024);
+    const userRef = ref(
+      database,
+      "donors/" + currentUser.uid + "/profilePhoto",
+    );
+    await set(userRef, base64);
+    if (profileAvatarImg) {
+      profileAvatarImg.src = base64;
+      profileAvatarImg.style.display = "block";
     }
-    try {
-        const base64 = await resizeAndCompressPhoto(file, 300, 300, 100 * 1024);
-        const userRef = ref(database, 'donors/' + currentUser.uid + '/profilePhoto');
-        await set(userRef, base64);
-        if (profileAvatarImg) {
-            profileAvatarImg.src = base64;
-            profileAvatarImg.style.display = 'block';
-        }
-        if (avatarText) avatarText.style.display = 'none';
-        currentDonorData.profilePhoto = base64;
-        showToast('Profile photo updated!', 'success');
-    } catch (err) {
-        console.error('Photo upload failed:', err);
-        showToast('Failed to upload photo.', 'error');
-    }
-    profilePhotoInput.value = '';
+    if (avatarText) avatarText.style.display = "none";
+    currentDonorData.profilePhoto = base64;
+    showToast("Profile photo updated!", "success");
+  } catch (err) {
+    console.error("Photo upload failed:", err);
+    showToast("Failed to upload photo.", "error");
+  }
+  profilePhotoInput.value = "";
 });
 
-profilePhotoRemoveBtn?.addEventListener('click', async () => {
-    if (!currentUser) {
-        showToast('You must be logged in.', 'error');
-        return;
+profilePhotoRemoveBtn?.addEventListener("click", async () => {
+  if (!currentUser) {
+    showToast("You must be logged in.", "error");
+    return;
+  }
+  try {
+    await remove(ref(database, "donors/" + currentUser.uid + "/profilePhoto"));
+    if (profileAvatarImg) {
+      profileAvatarImg.src = "";
+      profileAvatarImg.style.display = "none";
     }
-    try {
-        await remove(ref(database, 'donors/' + currentUser.uid + '/profilePhoto'));
-        if (profileAvatarImg) {
-            profileAvatarImg.src = '';
-            profileAvatarImg.style.display = 'none';
-        }
-        if (avatarText) avatarText.style.display = '';
-        if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = 'none';
-        currentDonorData.profilePhoto = null;
-        showToast('Profile photo removed.', 'success');
-    } catch (err) {
-        console.error('Photo remove failed:', err);
-        showToast('Failed to remove photo.', 'error');
-    }
+    if (avatarText) avatarText.style.display = "";
+    if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = "none";
+    currentDonorData.profilePhoto = null;
+    showToast("Profile photo removed.", "success");
+  } catch (err) {
+    console.error("Photo remove failed:", err);
+    showToast("Failed to remove photo.", "error");
+  }
 });
 
 function getDataUrlSize(dataUrl) {
-    const base64 = dataUrl.split(',')[1] || '';
-    return Math.floor(base64.length * 3 / 4);
+  const base64 = dataUrl.split(",")[1] || "";
+  return Math.floor((base64.length * 3) / 4);
 }
 
 function resizeAndCompressPhoto(file, maxW, maxH, targetBytes) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const img = new Image();
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                const side = Math.min(img.width, img.height);
-                const sx = (img.width - side) / 2;
-                const sy = (img.height - side) / 2;
-                let curW = maxW;
-                let curH = maxH;
-                let quality = 0.85;
-                let lastDataUrl = '';
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
-                for (let i = 0; i < 10; i += 1) {
-                    canvas.width = curW;
-                    canvas.height = curH;
-                    ctx.clearRect(0, 0, curW, curH);
-                    ctx.drawImage(img, sx, sy, side, side, 0, 0, curW, curH);
-                    const dataUrl = canvas.toDataURL('image/jpeg', quality);
-                    lastDataUrl = dataUrl;
-                    const size = getDataUrlSize(dataUrl);
-                    if (size <= targetBytes) {
-                        resolve(dataUrl);
-                        return;
-                    }
-                    if (quality > 0.45) {
-                        quality = Math.max(0.45, quality - 0.1);
-                    } else {
-                        curW = Math.max(200, Math.floor(curW * 0.9));
-                        curH = curW;
-                        quality = 0.75;
-                    }
-                }
-                resolve(lastDataUrl);
-            };
-            img.onerror = reject;
-            img.src = ev.target.result;
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
+        const side = Math.min(img.width, img.height);
+        const sx = (img.width - side) / 2;
+        const sy = (img.height - side) / 2;
+        let curW = maxW;
+        let curH = maxH;
+        let quality = 0.85;
+        let lastDataUrl = "";
+
+        for (let i = 0; i < 10; i += 1) {
+          canvas.width = curW;
+          canvas.height = curH;
+          ctx.clearRect(0, 0, curW, curH);
+          ctx.drawImage(img, sx, sy, side, side, 0, 0, curW, curH);
+          const dataUrl = canvas.toDataURL("image/jpeg", quality);
+          lastDataUrl = dataUrl;
+          const size = getDataUrlSize(dataUrl);
+          if (size <= targetBytes) {
+            resolve(dataUrl);
+            return;
+          }
+          if (quality > 0.45) {
+            quality = Math.max(0.45, quality - 0.1);
+          } else {
+            curW = Math.max(200, Math.floor(curW * 0.9));
+            curH = curW;
+            quality = 0.75;
+          }
+        }
+        resolve(lastDataUrl);
+      };
+      img.onerror = reject;
+      img.src = ev.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 function handleLogout() {
-    signOut(auth).then(() => {
-        showToast('Logged out', 'success');
-        setTimeout(() => { window.location.href = getHomeHref(); }, 600);
-    }).catch((err) => {
-        console.error('Logout failed:', err);
-        showToast('Logout failed', 'error');
+  signOut(auth)
+    .then(() => {
+      showToast("Logged out", "success");
+      setTimeout(() => {
+        window.location.href = getHomeHref();
+      }, 600);
+    })
+    .catch((err) => {
+      console.error("Logout failed:", err);
+      showToast("Logout failed", "error");
     });
 }
-logoutHeaderBtn?.addEventListener('click', handleLogout);
-document.getElementById('mobile-logout-btn')?.addEventListener('click', handleLogout);
+logoutHeaderBtn?.addEventListener("click", handleLogout);
+document
+  .getElementById("mobile-logout-btn")
+  ?.addEventListener("click", handleLogout);
 
-certBtn?.addEventListener('click', async () => {
-    if (!currentUser) {
-        showToast('You must be logged in.', 'error');
-        return;
-    }
-    try {
-        const { showCertificateModal } = await import('./modules/certificate.js');
-        const donorData = {
-            ...currentDonorData,
-            fullName: fFullName?.value || '',
-            email: fEmail?.value || '',
-            bloodGroup: fBloodGroup?.value || '',
-            location: fLocation?.value || '',
-            lastDonateDate: fLastDonate?.value || '',
-            phone: fPhone?.value || ''
-        };
-        showCertificateModal(donorData);
-    } catch (err) {
-        console.error('Certificate error:', err);
-        showToast('Failed to generate certificate.', 'error');
-    }
+certBtn?.addEventListener("click", async () => {
+  if (!currentUser) {
+    showToast("You must be logged in.", "error");
+    return;
+  }
+  try {
+    const { showCertificateModal } = await import("./modules/certificate.js");
+    const donorData = {
+      ...currentDonorData,
+      fullName: fFullName?.value || "",
+      email: fEmail?.value || "",
+      bloodGroup: fBloodGroup?.value || "",
+      location: fLocation?.value || "",
+      lastDonateDate: fLastDonate?.value || "",
+      phone: fPhone?.value || "",
+    };
+    showCertificateModal(donorData);
+  } catch (err) {
+    console.error("Certificate error:", err);
+    showToast("Failed to generate certificate.", "error");
+  }
 });
 
-donorCardBtn?.addEventListener('click', async () => {
-    if (!currentUser) {
-        showToast('You must be logged in.', 'error');
-        return;
+donorCardBtn?.addEventListener("click", async () => {
+  if (!currentUser) {
+    showToast("You must be logged in.", "error");
+    return;
+  }
+  try {
+    const { showDonorCardModal } = await import("./modules/certificate.js");
+    const donorData = {
+      ...currentDonorData,
+      fullName: fFullName?.value || "",
+      email: fEmail?.value || "",
+      bloodGroup: fBloodGroup?.value || "",
+      location: fLocation?.value || "",
+      lastDonateDate: fLastDonate?.value || "",
+      phone: fPhone?.value || "",
+      uid: currentUser?.uid || "",
+    };
+
+    if (!donorData.createdAt && currentUser.metadata?.creationTime) {
+      donorData.memberSince = currentUser.metadata.creationTime;
     }
-    try {
-        const { showDonorCardModal } = await import('./modules/certificate.js');
-        const donorData = {
-            ...currentDonorData,
-            fullName: fFullName?.value || '',
-            email: fEmail?.value || '',
-            bloodGroup: fBloodGroup?.value || '',
-            location: fLocation?.value || '',
-            lastDonateDate: fLastDonate?.value || '',
-            phone: fPhone?.value || '',
-            uid: currentUser?.uid || ''
-        };
-        
-        if (!donorData.createdAt && currentUser.metadata?.creationTime) {
-            donorData.memberSince = currentUser.metadata.creationTime;
-        }
-        showDonorCardModal(donorData);
-    } catch (err) {
-        console.error('Donor card error:', err);
-        showToast('Failed to load donor card.', 'error');
-    }
+    showDonorCardModal(donorData);
+  } catch (err) {
+    console.error("Donor card error:", err);
+    showToast("Failed to load donor card.", "error");
+  }
 });
 
-deleteBtn?.addEventListener('click', () => {
-    openModal(deleteModal);
+deleteBtn?.addEventListener("click", () => {
+  openModal(deleteModal);
 });
 
-deleteCancelBtn?.addEventListener('click', () => closeModal(deleteModal));
-deleteModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(deleteModal));
+deleteCancelBtn?.addEventListener("click", () => closeModal(deleteModal));
+deleteModal
+  ?.querySelector(".absolute.inset-0")
+  ?.addEventListener("click", () => closeModal(deleteModal));
 
-deleteConfirmBtn?.addEventListener('click', () => {
-    const user = auth.currentUser;
-    if (!user) {
-        showToast('Not logged in.', 'error');
-        return;
-    }
-    const donorRef = ref(database, 'donors/' + user.uid);
-    remove(donorRef)
-        .then(() => deleteUser(user))
-        .then(() => {
-            closeModal(deleteModal);
-            showToast('Account deleted.', 'success');
-            setTimeout(() => { window.location.href = getHomeHref(); }, 800);
-        })
-        .catch((err) => {
-            if (err && err.code === 'auth/requires-recent-login') {
-                showToast('Please log in again to delete your account.', 'error');
-                signOut(auth).then(() => {
-                    setTimeout(() => { window.location.href = getHomeHref(); }, 1200);
-                });
-            } else {
-                console.error('Delete failed:', err);
-                showToast('Failed to delete account.', 'error');
-            }
+deleteConfirmBtn?.addEventListener("click", () => {
+  const user = auth.currentUser;
+  if (!user) {
+    showToast("Not logged in.", "error");
+    return;
+  }
+  const donorRef = ref(database, "donors/" + user.uid);
+  remove(donorRef)
+    .then(() => deleteUser(user))
+    .then(() => {
+      closeModal(deleteModal);
+      showToast("Account deleted.", "success");
+      setTimeout(() => {
+        window.location.href = getHomeHref();
+      }, 800);
+    })
+    .catch((err) => {
+      if (err && err.code === "auth/requires-recent-login") {
+        showToast("Please log in again to delete your account.", "error");
+        signOut(auth).then(() => {
+          setTimeout(() => {
+            window.location.href = getHomeHref();
+          }, 1200);
         });
+      } else {
+        console.error("Delete failed:", err);
+        showToast("Failed to delete account.", "error");
+      }
+    });
 });
 
-document.addEventListener('keydown', (ev) => {
-    if (ev.key === 'Escape') {
-        closeModal(deleteModal);
-        closeModal(changePasswordModal);
-        closeModal(emailChangeModal);
-    }
+document.addEventListener("keydown", (ev) => {
+  if (ev.key === "Escape") {
+    closeModal(deleteModal);
+    closeModal(changePasswordModal);
+    closeModal(emailChangeModal);
+  }
 });
 
-const changePasswordModal = document.getElementById('change-password-modal');
-const changePasswordForm = document.getElementById('change-password-form');
-const changePasswordBtn = document.getElementById('pf-change-password');
-const cpCancel = document.getElementById('cp-cancel');
-const cpError = document.getElementById('cp-error');
+const changePasswordModal = document.getElementById("change-password-modal");
+const changePasswordForm = document.getElementById("change-password-form");
+const changePasswordBtn = document.getElementById("pf-change-password");
+const cpCancel = document.getElementById("cp-cancel");
+const cpError = document.getElementById("cp-error");
 
-changePasswordBtn?.addEventListener('click', () => {
-    if (!currentUser) {
-        showToast('You must be logged in.', 'error');
-        return;
-    }
-    
-    changePasswordForm?.reset();
-    if (cpError) { cpError.textContent = ''; cpError.classList.add('hidden'); }
-    openModal(changePasswordModal);
+changePasswordBtn?.addEventListener("click", () => {
+  if (!currentUser) {
+    showToast("You must be logged in.", "error");
+    return;
+  }
+
+  changePasswordForm?.reset();
+  if (cpError) {
+    cpError.textContent = "";
+    cpError.classList.add("hidden");
+  }
+  openModal(changePasswordModal);
 });
 
-cpCancel?.addEventListener('click', () => closeModal(changePasswordModal));
-changePasswordModal?.querySelector('.absolute.inset-0')?.addEventListener('click', () => closeModal(changePasswordModal));
+cpCancel?.addEventListener("click", () => closeModal(changePasswordModal));
+changePasswordModal
+  ?.querySelector(".absolute.inset-0")
+  ?.addEventListener("click", () => closeModal(changePasswordModal));
 
-changePasswordForm?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (!currentUser) return;
+changePasswordForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!currentUser) return;
 
-    const currentPwd = document.getElementById('cp-current')?.value;
-    const newPwd = document.getElementById('cp-new')?.value;
-    const confirmPwd = document.getElementById('cp-confirm')?.value;
+  const currentPwd = document.getElementById("cp-current")?.value;
+  const newPwd = document.getElementById("cp-new")?.value;
+  const confirmPwd = document.getElementById("cp-confirm")?.value;
 
-    
-    if (cpError) { cpError.textContent = ''; cpError.classList.add('hidden'); }
+  if (cpError) {
+    cpError.textContent = "";
+    cpError.classList.add("hidden");
+  }
 
-    if (!currentPwd || !newPwd || !confirmPwd) {
-        if (cpError) { cpError.textContent = 'All fields are required.'; cpError.classList.remove('hidden'); }
-        return;
+  if (!currentPwd || !newPwd || !confirmPwd) {
+    if (cpError) {
+      cpError.textContent = "All fields are required.";
+      cpError.classList.remove("hidden");
     }
+    return;
+  }
 
-    if (newPwd.length < 6) {
-        if (cpError) { cpError.textContent = 'New password must be at least 6 characters.'; cpError.classList.remove('hidden'); }
-        return;
+  if (newPwd.length < 6) {
+    if (cpError) {
+      cpError.textContent = "New password must be at least 6 characters.";
+      cpError.classList.remove("hidden");
     }
+    return;
+  }
 
-    if (newPwd !== confirmPwd) {
-        if (cpError) { cpError.textContent = 'New passwords do not match.'; cpError.classList.remove('hidden'); }
-        return;
+  if (newPwd !== confirmPwd) {
+    if (cpError) {
+      cpError.textContent = "New passwords do not match.";
+      cpError.classList.remove("hidden");
     }
+    return;
+  }
 
-    if (currentPwd === newPwd) {
-        if (cpError) { cpError.textContent = 'New password must be different from current password.'; cpError.classList.remove('hidden'); }
-        return;
+  if (currentPwd === newPwd) {
+    if (cpError) {
+      cpError.textContent =
+        "New password must be different from current password.";
+      cpError.classList.remove("hidden");
     }
+    return;
+  }
 
-    const submitBtn = document.getElementById('cp-submit');
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Updating...'; }
+  const submitBtn = document.getElementById("cp-submit");
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Updating...";
+  }
 
-    try {
-        
-        const credential = EmailAuthProvider.credential(currentUser.email, currentPwd);
-        await reauthenticateWithCredential(currentUser, credential);
+  try {
+    const credential = EmailAuthProvider.credential(
+      currentUser.email,
+      currentPwd,
+    );
+    await reauthenticateWithCredential(currentUser, credential);
 
-        
-        await updatePassword(currentUser, newPwd);
+    await updatePassword(currentUser, newPwd);
 
-        closeModal(changePasswordModal);
-        showToast('Password updated successfully!', 'success');
-        changePasswordForm.reset();
-    } catch (err) {
-        console.error('Password change error:', err);
-        let msg = 'Failed to change password.';
-        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-            msg = 'Current password is incorrect.';
-        } else if (err.code === 'auth/weak-password') {
-            msg = 'New password is too weak. Use at least 6 characters.';
-        } else if (err.code === 'auth/too-many-requests') {
-            msg = 'Too many attempts. Please try again later.';
-        } else if (err.code === 'auth/requires-recent-login') {
-            msg = 'Session expired. Please log out and log in again.';
-        }
-        if (cpError) { cpError.textContent = msg; cpError.classList.remove('hidden'); }
-    } finally {
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Update Password'; }
+    closeModal(changePasswordModal);
+    showToast("Password updated successfully!", "success");
+    changePasswordForm.reset();
+  } catch (err) {
+    console.error("Password change error:", err);
+    let msg = "Failed to change password.";
+    if (
+      err.code === "auth/wrong-password" ||
+      err.code === "auth/invalid-credential"
+    ) {
+      msg = "Current password is incorrect.";
+    } else if (err.code === "auth/weak-password") {
+      msg = "New password is too weak. Use at least 6 characters.";
+    } else if (err.code === "auth/too-many-requests") {
+      msg = "Too many attempts. Please try again later.";
+    } else if (err.code === "auth/requires-recent-login") {
+      msg = "Session expired. Please log out and log in again.";
     }
+    if (cpError) {
+      cpError.textContent = msg;
+      cpError.classList.remove("hidden");
+    }
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Update Password";
+    }
+  }
 });
