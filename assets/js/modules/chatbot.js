@@ -1,5 +1,3 @@
-
-
 import state from './state.js';
 import { isDonorEligible, normalizeBloodGroup } from './utils.js';
 
