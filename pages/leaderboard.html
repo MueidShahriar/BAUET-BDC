@@ -51,6 +51,8 @@
                     data-i18n="adminBadge">Admin</span>
             </div>
             <div class="hidden md:flex items-center gap-1 text-base font-medium flex-1">
+                <a id="nav-home-link" href="../index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                    data-i18n="navHome">Home</a>
                 <a id="nav-about-link" href="about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navAbout">About</a>
                 <a id="nav-how-link" href="donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
@@ -86,6 +88,8 @@
         </nav>
         <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
             <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
+                <a id="mobile-home-link" href="../index.html" class="block px-3 py-2 rounded hover:bg-red-50"
+                    data-i18n="navHome">Home</a>
                 <a id="mobile-about-link" href="about.html" class="block px-3 py-2 rounded hover:bg-red-50"
                     data-i18n="navAbout">About</a>
                 <a id="mobile-how-link" href="donationGuide.html" class="block px-3 py-2 rounded hover:bg-red-50"
@@ -114,12 +118,46 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6">
+    <main class="page-shell max-w-6xl mx-auto px-4 sm:px-4 lg:px-6">
         <section id="donor-leaderboard" class="py-12 pt-10">
-            <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-                <div class="text-left">
-                    <h1 class="text-3xl font-extrabold text-red-700" data-i18n="leaderboardTitle">Top donors of BAUET</h1>
-                    <p class="mt-2 text-sm text-gray-600 max-w-2xl" data-i18n="leaderboardSubtitle">Gamified donor reputation based on donations, activity, and response speed.</p>
+            <div class="page-surface page-surface--hero leaderboard-page-hero p-6 sm:p-8 lg:p-10">
+                <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+                    <div class="text-left max-w-3xl">
+                        <span class="page-eyebrow">
+                            <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+                            Donor recognition
+                        </span>
+                        <h1 class="page-title" data-i18n="leaderboardTitle">Top donors of BAUET</h1>
+                        <p class="page-copy" data-i18n="leaderboardSubtitle">Gamified donor reputation based on donations, activity, and response speed.</p>
+                        <div class="page-stats-grid leaderboard-summary-grid">
+                            <article class="page-stat-chip">
+                                <span class="page-stat-chip__label">Visible donors</span>
+                                <span id="leaderboard-stat-total" class="page-stat-chip__value">0</span>
+                                <span class="page-stat-chip__meta">Profiles in the current result set</span>
+                            </article>
+                            <article class="page-stat-chip">
+                                <span class="page-stat-chip__label">Total donations</span>
+                                <span id="leaderboard-stat-donations" class="page-stat-chip__value">0</span>
+                                <span class="page-stat-chip__meta">Combined contributions from ranked donors</span>
+                            </article>
+                            <article class="page-stat-chip">
+                                <span class="page-stat-chip__label">Top AI score</span>
+                                <span id="leaderboard-stat-score" class="page-stat-chip__value">0</span>
+                                <span class="page-stat-chip__meta">Highest live reputation score right now</span>
+                            </article>
+                        </div>
+                    </div>
+                    <div class="leaderboard-page-side">
+                        <div class="leaderboard-page-note">
+                            <div class="leaderboard-page-note__icon">
+                                <i class="fa-solid fa-medal" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <h2 class="leaderboard-page-note__title">How ranking works</h2>
+                                <p class="leaderboard-page-note__copy">We balance donation history, recent activity, and responsiveness so recognition stays fair and motivating.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="leaderboard-legend">
                     <span class="donor-badge donor-badge--gold"><span class="badge-emoji">🥇</span><span data-i18n="badgeGold">Gold donor</span></span>
@@ -127,7 +165,7 @@
                     <span class="donor-badge donor-badge--bronze"><span class="badge-emoji">🥉</span><span data-i18n="badgeBronze">Bronze donor</span></span>
                 </div>
             </div>
-            <div id="leaderboard-filters" class="leaderboard-filters" aria-label="Leaderboard filters">
+            <div id="leaderboard-filters" class="leaderboard-filters mt-6" aria-label="Leaderboard filters">
                 <div class="leaderboard-filters__field">
                     <label for="leaderboard-filter-input">Search</label>
                     <div class="leaderboard-filters__input">

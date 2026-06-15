@@ -1,6 +1,53 @@
 export function initHeader() {
     const header = document.querySelector('header');
     const menuToggle = document.getElementById('menu-toggle');
+    const desktopLinks = Array.from(
+        document.querySelectorAll('header nav a[id^="nav-"]')
+    );
+    const mobileLinks = Array.from(
+        document.querySelectorAll('#mobile-menu a[id^="mobile-"]')
+    );
+    const ctaButtons = Array.from(
+        document.querySelectorAll(
+            '#login-btn, #pf-logout-header, #mobile-login-btn, #mobile-logout-btn'
+        )
+    );
+
+    if (header) {
+        header.classList.add('site-header');
+    }
+
+    desktopLinks.forEach((link) => {
+        link.classList.add('nav-link');
+        if (
+            link.classList.contains('bg-red-50') ||
+            link.classList.contains('font-bold')
+        ) {
+            link.classList.add('nav-link--active');
+        }
+    });
+
+    mobileLinks.forEach((link) => {
+        link.classList.add('mobile-nav-link');
+        if (
+            link.classList.contains('bg-red-50') ||
+            link.classList.contains('font-bold')
+        ) {
+            link.classList.add('mobile-nav-link--active');
+        }
+    });
+
+    ctaButtons.forEach((button) => {
+        if (
+            button.id === 'mobile-login-btn' ||
+            button.id === 'mobile-logout-btn'
+        ) {
+            return;
+        }
+
+        button.classList.add('nav-cta');
+    });
+
     if (menuToggle && !document.getElementById('mobile-profile-btn')) {
         const btn = document.createElement('button');
         btn.id = 'mobile-profile-btn';

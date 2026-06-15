@@ -17,6 +17,8 @@ export function setRecentLoading(isLoading) {
 
     if (!carousel) return;
 
+    carousel.setAttribute('aria-busy', isLoading.toString());
+
     if (isLoading) {
         carousel.classList.remove('show-controls');
     } else {
@@ -55,6 +57,10 @@ export function renderRecentDonorsCarousel(donors = []) {
     carouselIndicators.innerHTML = '';
 
     if (!Array.isArray(donors) || donors.length === 0) {
+        if (carousel) {
+            carousel.dataset.state = 'empty';
+        }
+
         carouselInner.innerHTML = `
             <div class="carousel-item active">
                 <article class="recent-card mx-auto max-w-2xl w-full">
@@ -90,6 +96,11 @@ export function renderRecentDonorsCarousel(donors = []) {
         }
 
         return;
+    }
+
+    if (carousel) {
+        carousel.dataset.state =
+            donors.length === 1 ? 'single' : 'ready';
     }
 
     let itemsHTML = '';
@@ -235,6 +246,11 @@ export function renderRecentDonorsCarousel(donors = []) {
 
     carouselInner.innerHTML = itemsHTML;
     carouselIndicators.innerHTML = indicatorsHTML;
+
+    carouselIndicators.classList.toggle(
+        'hidden',
+        donors.length <= 1
+    );
 
     if (window.registerFloatEls) {
         window.registerFloatEls(carouselInner);

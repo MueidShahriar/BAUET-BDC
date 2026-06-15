@@ -209,56 +209,122 @@ function promoteMemberToAdmin(memberId, memberData) {
         showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
         return;
     }
+
     if (!memberId) return;
+
     if ((memberData?.role || 'member') === 'admin') {
         showModalMessage('success-modal', 'This member is already an admin.', 'No Changes Needed');
         return;
     }
+
     const memberName = memberData?.fullName || memberData?.name || 'this member';
+
     attachConfirmHandler(() => {
+
         const modal = document.getElementById('delete-confirm-modal');
+
         update(ref(database, 'donors/' + memberId), { role: 'admin' })
+
             .then(() => {
                 closeModal(modal);
-                showModalMessage('success-modal', `${memberName} is now an admin.`, 'Success');
+
+                showModalMessage(
+                    'success-modal',
+                    `${memberName} is now an admin.`,
+                    'Success'
+                );
+
                 clearAdminMemberForm();
             })
+
             .catch(error => {
                 closeModal(modal);
-                showModalMessage('success-modal', `Failed to update role: ${error.message}`, 'Error');
+
+                showModalMessage(
+                    'success-modal',
+                    `Failed to update role: ${error.message}`,
+                    'Error'
+                );
             });
+
     }, {
         title: 'Promote Member to Admin',
-        message: `Are you sure you want to make ${memberName} an admin?`
+
+        message:
+            `Are you sure you want to make ${memberName} an admin?`,
+
+        confirmText: 'Promote to Admin',
+
+        confirmClass:
+            'px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700'
     });
 }
 
 function demoteAdminToMember(memberId, memberData) {
+
     if (!state.currentUser || state.currentUserRole !== 'admin') {
-        showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
+        showModalMessage(
+            'success-modal',
+            'You do not have permission to perform this action.',
+            'Permission Denied'
+        );
+
         return;
     }
+
     if (!memberId) return;
+
     if ((memberData?.role || 'member') !== 'admin') {
-        showModalMessage('success-modal', 'This member is already a member.', 'No Changes Needed');
+        showModalMessage(
+            'success-modal',
+            'This member is already a member.',
+            'No Changes Needed'
+        );
+
         return;
     }
-    const memberName = memberData?.fullName || memberData?.name || 'this member';
+
+    const memberName =
+        memberData?.fullName || memberData?.name || 'this member';
+
     attachConfirmHandler(() => {
+
         const modal = document.getElementById('delete-confirm-modal');
+
         update(ref(database, 'donors/' + memberId), { role: 'member' })
+
             .then(() => {
                 closeModal(modal);
-                showModalMessage('success-modal', `${memberName} is now a member.`, 'Success');
+
+                showModalMessage(
+                    'success-modal',
+                    `${memberName} is now a member.`,
+                    'Success'
+                );
+
                 clearAdminMemberForm();
             })
+
             .catch(error => {
                 closeModal(modal);
-                showModalMessage('success-modal', `Failed to update role: ${error.message}`, 'Error');
+
+                showModalMessage(
+                    'success-modal',
+                    `Failed to update role: ${error.message}`,
+                    'Error'
+                );
             });
+
     }, {
         title: 'Make Admin a Member',
-        message: `Are you sure you want to make ${memberName} a member?`
+
+        message:
+            `Are you sure you want to make ${memberName} a member?`,
+
+        confirmText: 'Make Member',
+
+        confirmClass:
+            'px-5 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600'
     });
 }
 

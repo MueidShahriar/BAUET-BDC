@@ -45,7 +45,7 @@
     <script src="assets/js/viewport.js" defer></script>
     <script type="module" src="assets/js/app.js"></script>
 
-    <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
+    <header class="site-header fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
         <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">
             <div class="flex items-center gap-3">
                 <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
@@ -55,27 +55,27 @@
                     data-i18n="adminBadge">Admin</span>
             </div>
             <div class="hidden md:flex items-center gap-1 text-base font-medium flex-1">
-                <a id="nav-about-link" href="pages/about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                <a id="nav-about-link" href="pages/about.html" class="nav-link px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navAbout">About</a>
-                <a id="nav-how-link" href="pages/donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                <a id="nav-how-link" href="pages/donationGuide.html" class="nav-link px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navHow">Donation
                     Guide</a>
-                <a id="nav-events-link" href="pages/events.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                <a id="nav-events-link" href="pages/events.html" class="nav-link px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navEvents">Events</a>
-                <a id="nav-join-link" href="pages/join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                <a id="nav-join-link" href="pages/join.html" class="nav-link px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navJoin">Join</a>
-                <a id="nav-search-link" href="pages/search.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                <a id="nav-search-link" href="pages/search.html" class="nav-link px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navSearch">Search</a>
-                <a id="nav-leaderboard-link" href="pages/leaderboard.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                <a id="nav-leaderboard-link" href="pages/leaderboard.html" class="nav-link px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navLeaderboard">Leaderboard</a>
-                <a id="nav-contact-link" href="#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
+                <a id="nav-contact-link" href="#contact" class="nav-link px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navContact">Contact</a>
                 <a id="nav-dashboard-link" href="pages/admin.html" class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700 font-bold"
                     data-i18n="navDashboard"><i class="fa-solid fa-gauge-high" style="margin-right:4px"></i>Dashboard</a>
             </div>
             <div class="flex items-center gap-4">
                 <button id="login-btn"
-                    class="desktop-only inline-flex bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition items-center justify-center"
+                    class="desktop-only nav-cta inline-flex bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition items-center justify-center"
                     data-i18n="btnLogin"><img src="image/login.png" alt="Login" class="inline-icon"> Login</button>
             </div>
 
@@ -120,32 +120,36 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6">
-        <section id="hero" class="relative flex flex-col md:flex-row items-center justify-between pt-4 pb-12 gap-6">
-            <div class="flex-1 flex flex-col items-center justify-center text-center md:items-start md:text-left">
+        <section id="hero" class="hero-shell relative flex flex-col md:flex-row items-center justify-between pt-4 pb-12 gap-6">
+            <div class="hero-copy flex-1 flex flex-col items-center justify-center text-center md:items-start md:text-left">
+                <span class="hero-eyebrow">
+                    <i class="fa-solid fa-heart-circle-plus" aria-hidden="true"></i>
+                    Community-powered emergency support
+                </span>
                 <h1 class="text-4xl sm:text-5xl font-extrabold text-red-700 mb-4 tracking-tight break-words leading-tight hero-title"
                     data-i18n="heroTitle">
                     Donate Blood Save Lives
                 </h1>
-                <p class="mb-8 text-lg text-gray-700 max-w-xl mx-auto md:mx-0" data-i18n="heroDescription">Be a hero in
+                <p class="hero-description mb-8 text-lg text-gray-700 max-w-xl mx-auto md:mx-0" data-i18n="heroDescription">Be a hero in
                     your community. Register as
                     a donor,
                     find blood matches and join our events to help save lives every day.</p>
                 <div
-                    class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto items-center justify-center md:justify-start">
+                    class="hero-actions flex flex-col sm:flex-row gap-4 w-full sm:w-auto items-center justify-center md:justify-start">
                     <a href="pages/join.html"
-                        class="w-full sm:w-auto text-center bg-gradient-to-r from-red-600 to-red-400 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:scale-105 transition inline-flex items-center justify-center gap-2 btn-breathe">
+                        class="hero-primary-cta w-full sm:w-auto text-center bg-gradient-to-r from-red-600 to-red-400 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:scale-105 transition inline-flex items-center justify-center gap-2 btn-breathe">
                         <i class="fa-solid fa-hand-holding-droplet"></i>
                         <span data-i18n="btnBecomeDonor">Become a Donor</span>
                     </a>
                     <a href="pages/search.html"
-                        class="w-full sm:w-auto text-center bg-white border-2 border-red-600 text-red-600 px-8 py-3 rounded-lg font-semibold shadow hover:bg-red-50 hover:scale-105 transition inline-flex items-center justify-center gap-2 btn-breathe">
+                        class="hero-secondary-cta w-full sm:w-auto text-center bg-white border-2 border-red-600 text-red-600 px-8 py-3 rounded-lg font-semibold shadow hover:bg-red-50 hover:scale-105 transition inline-flex items-center justify-center gap-2 btn-breathe">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <span data-i18n="btnSearchDonors">Search Donors</span>
                     </a>
                 </div>
             </div>
-            <div class="flex-1 flex justify-center items-center">
-                <div class="relative">
+            <div class="hero-visual-wrap flex-1 flex justify-center items-center">
+                <div class="hero-visual relative">
                     <img src="image/blood-drop.png" alt="blood drop"
                         class="w-56 h-56 object-contain drop-shadow-xl animate-bounce-slow" loading="eager" fetchpriority="high" decoding="async" />
                     <div
@@ -156,6 +160,13 @@
         </section>
 
         <section id="recent-donor" class="py-12">
+            <div class="section-heading">
+                <div>
+                    <span class="section-kicker">Fresh Activity</span>
+                    <h2 class="section-title">Recent donation spotlight</h2>
+                    <p class="section-subtitle">A cleaner live feed that keeps the newest community contributions visible at a glance.</p>
+                </div>
+            </div>
             <div id="recent-loading" class="loading-banner" role="status" aria-live="polite">
                 <span class="loading-banner__spinner" aria-hidden="true"></span>
                 <span class="loading-banner__text" data-i18n="recentLoading">Fetching recent donations...</span>
@@ -178,8 +189,9 @@
         </section>
 
         <section id="dashboard-insights" class="py-12">
-            <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div class="section-heading flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                 <div class="text-left">
+                    <span class="section-kicker">Analytics Snapshot</span>
                     <h2 class="text-2xl font-extrabold text-red-700" data-i18n="dashboardTitle">Live Donor Insights</h2>
                     <p class="mt-1 text-sm text-gray-600 max-w-2xl" data-i18n="dashboardDescription">These snapshots
                         refresh instantly whenever new donors join or donations are logged.</p>
@@ -248,8 +260,9 @@
         </section>
 
         <section id="donor-leaderboard" class="py-12">
-            <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div class="section-heading flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                 <div class="text-left">
+                    <span class="section-kicker">Recognition Wall</span>
                     <h2 class="text-2xl font-extrabold text-red-700" data-i18n="leaderboardTitle">Top donors of BAUET</h2>
                     <p class="mt-1 text-sm text-gray-600 max-w-2xl" data-i18n="leaderboardSubtitle">Gamified donor reputation based on donations, activity, and response speed.</p>
                 </div>
@@ -271,7 +284,7 @@
 
         <section id="community-stats" class="py-10">
             <div
-                class="how-card tint-rose rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col md:flex-row items-center justify-between gap-6">
+                class="community-stats-shell how-card tint-rose rounded-xl shadow-lg p-6 transform transition hover:scale-105 float-in flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="stats-grid w-full md:w-auto">
                     <div class="stat-card text-center accent-indigo">
                         <div class="icon-circle-sm"><i class="fa-solid fa-users" aria-hidden="true"></i></div>
@@ -291,7 +304,7 @@
                 </div>
                 <div class="w-full md:w-auto">
                     <a href="pages/join.html"
-                        class="w-full inline-flex items-center justify-center gap-2 bg-red-600 text-white px-5 py-2 rounded-md font-semibold">
+                        class="stats-cta w-full inline-flex items-center justify-center gap-2 bg-red-600 text-white px-5 py-2 rounded-md font-semibold">
                         <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
                         <span data-i18n="statJoinNetwork">Join Our Donor Network</span>
                     </a>
