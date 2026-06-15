@@ -316,10 +316,10 @@ function demoteAdminToMember(memberId, memberData) {
             });
 
     }, {
-        title: 'Make Admin a Member',
+        title: 'Make Admin to Member',
 
         message:
-            `Are you sure you want to make ${memberName} a member?`,
+            `Are you sure you want to make ${memberName} to member?`,
 
         confirmText: 'Make Member',
 
