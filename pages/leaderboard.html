@@ -44,7 +44,8 @@
             <div class="flex items-center gap-3">
                 <a href="../index.html" class="flex items-center gap-3 text-decoration-none">
                     <img src="../image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
-                    <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title" data-i18n="siteTitle">BAUET BDC</span>
+                    <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title"
+                        data-i18n="siteTitle">BAUET BDC</span>
                 </a>
                 <span id="admin-badge"
                     class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-red-600 text-white shadow"
@@ -63,12 +64,14 @@
                     data-i18n="navJoin">Join</a>
                 <a id="nav-search-link" href="search.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
                     data-i18n="navSearch">Search</a>
-                <a id="nav-leaderboard-link" href="leaderboard.html" class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold"
+                <a id="nav-leaderboard-link" href="leaderboard.html"
+                    class="px-3 py-2 rounded bg-red-50 text-red-700 font-bold"
                     data-i18n="navLeaderboard">Leaderboard</a>
-                <a id="nav-contact-link" href="../index.html#contact" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
-                    data-i18n="navContact">Contact</a>
-                <a id="nav-dashboard-link" href="admin.html" class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700 font-bold"
-                    data-i18n="navDashboard"><i class="fa-solid fa-gauge-high" style="margin-right:4px"></i>Dashboard</a>
+                <a id="nav-contact-link" href="../index.html#contact"
+                    class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navContact">Contact</a>
+                <a id="nav-dashboard-link" href="admin.html"
+                    class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700 font-bold" data-i18n="navDashboard"><i
+                        class="fa-solid fa-gauge-high" style="margin-right:4px"></i>Dashboard</a>
             </div>
             <div class="flex items-center gap-4">
                 <button id="login-btn"
@@ -100,8 +103,8 @@
                     data-i18n="navJoin">Join</a>
                 <a id="mobile-search-link" href="search.html" class="block px-3 py-2 rounded hover:bg-red-50"
                     data-i18n="navSearch">Search</a>
-                <a id="mobile-leaderboard-link" href="leaderboard.html" class="block px-3 py-2 rounded bg-red-50 font-bold"
-                    data-i18n="navLeaderboard">Leaderboard</a>
+                <a id="mobile-leaderboard-link" href="leaderboard.html"
+                    class="block px-3 py-2 rounded bg-red-50 font-bold" data-i18n="navLeaderboard">Leaderboard</a>
                 <a id="mobile-contact-link" href="../index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50"
                     data-i18n="navContact">Contact</a>
                 <a id="admin-mobile-link" href="admin.html" class="hidden px-3 py-2 rounded hover:bg-red-50"
@@ -119,51 +122,18 @@
     </header>
 
     <main class="page-shell max-w-6xl mx-auto px-4 sm:px-4 lg:px-6">
-        <section id="donor-leaderboard" class="py-12 pt-10">
-            <div class="page-surface page-surface--hero leaderboard-page-hero p-6 sm:p-8 lg:p-10">
-                <div class="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-                    <div class="text-left max-w-3xl">
-                        <span class="page-eyebrow">
-                            <i class="fa-solid fa-trophy" aria-hidden="true"></i>
-                            Donor recognition
-                        </span>
-                        <h1 class="page-title" data-i18n="leaderboardTitle">Top donors of BAUET</h1>
-                        <p class="page-copy" data-i18n="leaderboardSubtitle">Gamified donor reputation based on donations, activity, and response speed.</p>
-                        <div class="page-stats-grid leaderboard-summary-grid">
-                            <article class="page-stat-chip">
-                                <span class="page-stat-chip__label">Visible donors</span>
-                                <span id="leaderboard-stat-total" class="page-stat-chip__value">0</span>
-                                <span class="page-stat-chip__meta">Profiles in the current result set</span>
-                            </article>
-                            <article class="page-stat-chip">
-                                <span class="page-stat-chip__label">Total donations</span>
-                                <span id="leaderboard-stat-donations" class="page-stat-chip__value">0</span>
-                                <span class="page-stat-chip__meta">Combined contributions from ranked donors</span>
-                            </article>
-                            <article class="page-stat-chip">
-                                <span class="page-stat-chip__label">Top AI score</span>
-                                <span id="leaderboard-stat-score" class="page-stat-chip__value">0</span>
-                                <span class="page-stat-chip__meta">Highest live reputation score right now</span>
-                            </article>
-                        </div>
-                    </div>
-                    <div class="leaderboard-page-side">
-                        <div class="leaderboard-page-note">
-                            <div class="leaderboard-page-note__icon">
-                                <i class="fa-solid fa-medal" aria-hidden="true"></i>
-                            </div>
-                            <div>
-                                <h2 class="leaderboard-page-note__title">How ranking works</h2>
-                                <p class="leaderboard-page-note__copy">We balance donation history, recent activity, and responsiveness so recognition stays fair and motivating.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="leaderboard-legend">
-                    <span class="donor-badge donor-badge--gold"><span class="badge-emoji">🥇</span><span data-i18n="badgeGold">Gold donor</span></span>
-                    <span class="donor-badge donor-badge--silver"><span class="badge-emoji">🥈</span><span data-i18n="badgeSilver">Silver donor</span></span>
-                    <span class="donor-badge donor-badge--bronze"><span class="badge-emoji">🥉</span><span data-i18n="badgeBronze">Bronze donor</span></span>
-                </div>
+        <section class="leaderboard-section mt-10 mb-8">
+            <h2 class="text-3xl font-bold text-red-700 mb-6">
+                Top Donors of BAUET
+            </h2>
+            <div class="leaderboard-legend">
+                <span class="donor-badge donor-badge--gold"><span class="badge-emoji">🥇</span><span
+                        data-i18n="badgeGold">Gold donor</span></span>
+                <span class="donor-badge donor-badge--silver"><span class="badge-emoji">🥈</span><span
+                        data-i18n="badgeSilver">Silver donor</span></span>
+                <span class="donor-badge donor-badge--bronze"><span class="badge-emoji">🥉</span><span
+                        data-i18n="badgeBronze">Bronze donor</span></span>
+            </div>
             </div>
             <div id="leaderboard-filters" class="leaderboard-filters mt-6" aria-label="Leaderboard filters">
                 <div class="leaderboard-filters__field">
@@ -223,7 +193,8 @@
                 </div>
             </div>
             <div id="leaderboard-list" class="leaderboard-grid mt-6" data-limit="all"></div>
-            <div id="leaderboard-empty" class="leaderboard-empty" data-i18n="leaderboardEmpty">No donor leaderboard data yet.</div>
+            <div id="leaderboard-empty" class="leaderboard-empty" data-i18n="leaderboardEmpty">No donor leaderboard data
+                yet.</div>
         </section>
     </main>
 
@@ -236,7 +207,8 @@
             </div>
             <form id="login-form" class="mt-4">
                 <div class="mb-3 field-icon-left">
-                    <label for="login-email" class="block text-sm text-gray-600 mb-1" data-i18n="loginEmail">Email</label>
+                    <label for="login-email" class="block text-sm text-gray-600 mb-1"
+                        data-i18n="loginEmail">Email</label>
                     <div class="input-wrap">
                         <i class="fi fa-solid fa-at"></i>
                         <input id="login-email" type="email" required
@@ -244,7 +216,8 @@
                     </div>
                 </div>
                 <div class="mb-3 field-icon-left field-icon-right">
-                    <label for="login-password" class="block text-sm text-gray-600 mb-1" data-i18n="loginPassword">Password</label>
+                    <label for="login-password" class="block text-sm text-gray-600 mb-1"
+                        data-i18n="loginPassword">Password</label>
                     <div class="input-wrap">
                         <i class="fi fa-solid fa-key"></i>
                         <input id="login-password" type="password" required
