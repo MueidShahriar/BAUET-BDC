@@ -1,5 +1,5 @@
 import state from './state.js';
-import { getInitials, getTextValue } from './utils.js';
+import { getInitials, getTextValue, normalizeDonorId } from './utils.js';
 
 export function setRecentLoading(isLoading) {
     state.recentLoaderState = Boolean(isLoading);
@@ -38,6 +38,74 @@ function formatDate(date) {
     const pad = n => String(n).padStart(2, '0');
 
     return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+}
+
+function getRecentDonationProfile(donation) {
+    if (!donation || !Array.isArray(state.donorsList) || !state.donorsList.length) {
+        return null;
+    }
+
+    const normalizedDonationId = normalizeDonorId(donation.donorId || donation.rawDonorId);
+    const donationPhone = getTextValue(donation.phone, '');
+    const donationEmail = getTextValue(donation.email, '').toLowerCase();
+    const donationName = getTextValue(donation.name || donation.donorName || donation.fullName, '').toLowerCase();
+
+    return state.donorsList.find((donor) => {
+        const normalizedDonorId = normalizeDonorId(donor.donorId || donor.rawDonorId);
+        if (normalizedDonationId && normalizedDonorId && normalizedDonationId === normalizedDonorId) {
+            return true;
+        }
+
+        const donorPhone = getTextValue(donor.phone, '');
+        if (donationPhone && donorPhone && donationPhone === donorPhone) {
+            return true;
+        }
+
+        const donorEmail = getTextValue(donor.email, '').toLowerCase();
+        if (donationEmail && donorEmail && donationEmail === donorEmail) {
+            return true;
+        }
+
+        const donorName = getTextValue(donor.fullName || donor.name, '').toLowerCase();
+        return Boolean(donationName && donorName && donationName === donorName);
+    }) || null;
+}
+
+function resolveRecentDonationEntry(donation) {
+    const profile = getRecentDonationProfile(donation);
+    return profile
+        ? {
+            ...profile,
+            ...donation,
+            profilePhoto: donation.profilePhoto || profile.profilePhoto || ''
+        }
+        : donation;
+}
+
+function resetBootstrapCarousel(carousel, itemCount) {
+    if (!carousel) return;
+
+    carousel.classList.remove('show-controls');
+    carousel.setAttribute('data-active-index', '0');
+
+    const $ = window.jQuery;
+    if (!$ || !$.fn?.carousel) return;
+
+    try {
+        $(carousel).carousel('dispose');
+    } catch (_) {
+        // Ignore stale instance disposal errors.
+    }
+
+    if (itemCount <= 1) return;
+
+    $(carousel).carousel({
+        interval: Number(carousel.dataset.interval) || 3000,
+        pause: carousel.dataset.pause || 'hover',
+        wrap: true,
+        ride: false
+    });
+    $(carousel).carousel(0);
 }
 
 export function renderRecentDonorsCarousel(donors = []) {
@@ -106,7 +174,8 @@ export function renderRecentDonorsCarousel(donors = []) {
     let itemsHTML = '';
     let indicatorsHTML = '';
 
-    donors.forEach((d, index) => {
+    donors.forEach((entry, index) => {
+        const d = resolveRecentDonationEntry(entry);
         const donationDate = formatDate(d.date);
 
         const donorName = getTextValue(
@@ -131,9 +200,13 @@ export function renderRecentDonorsCarousel(donors = []) {
                 ? 'carousel-item active'
                 : 'carousel-item';
 
+        const avatarMarkup = d.profilePhoto
+            ? `<img src="${d.profilePhoto}" alt="${donorName}" class="recent-card__avatar-image" loading="lazy" />`
+            : initials;
+
         itemsHTML += `
             <div class="${itemClass}">
-                <article class="recent-card mx-auto max-w-2xl w-full float-in">
+                <article class="recent-card mx-auto max-w-2xl w-full">
 
                     <span class="recent-card__halo" aria-hidden="true"></span>
 
@@ -145,7 +218,7 @@ export function renderRecentDonorsCarousel(donors = []) {
                     <div class="recent-card__summary">
 
                         <div class="recent-card__avatar" aria-hidden="true">
-                            ${initials}
+                            ${avatarMarkup}
                         </div>
 
                         <div class="recent-card__summary-copy">
@@ -246,19 +319,18 @@ export function renderRecentDonorsCarousel(donors = []) {
 
     carouselInner.innerHTML = itemsHTML;
     carouselIndicators.innerHTML = indicatorsHTML;
+    resetBootstrapCarousel(carousel, donors.length);
 
     carouselIndicators.classList.toggle(
         'hidden',
         donors.length <= 1
     );
 
-    if (window.registerFloatEls) {
-        window.registerFloatEls(carouselInner);
-    }
-
     if (carousel) {
         setTimeout(() => {
-            carousel.classList.add('show-controls');
+            if (donors.length > 1) {
+                carousel.classList.add('show-controls');
+            }
         }, 150);
     }
 }
