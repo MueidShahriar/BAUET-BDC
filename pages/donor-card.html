@@ -17,7 +17,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* Page loader */
         #page-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center;
@@ -38,9 +37,6 @@
             position: sticky; top: 0; z-index: 50;
         }
 
-        /* ═══════════════════════════════════════════
-           DONOR CARD — Reference-matching design
-           ═══════════════════════════════════════════ */
         .dc-card-outer {
             width: 100%;
             max-width: 420px;
@@ -59,8 +55,6 @@
             height: 100%;
             overflow: hidden;
         }
-
-        /* Geometric background shapes */
         .dc-geo-bg {
             position: absolute; inset: 0; overflow: hidden; pointer-events: none;
         }
@@ -178,7 +172,6 @@
             text-shadow: 0 2px 8px rgba(185,28,28,0.1);
         }
 
-        /* Photo ring */
         .dc-photo-section {
             position: relative; z-index: 3;
             display: flex; justify-content: center;
@@ -220,7 +213,6 @@
             display: none;
         }
 
-        /* Name ribbon banner */
         .dc-name-section {
             position: relative; z-index: 3;
             text-align: center;
@@ -259,7 +251,6 @@
             clip-path: polygon(0 0, 0 100%, 100% 50%);
         }
 
-        /* Blood group badge below ribbon */
         .dc-blood-badge {
             display: inline-flex;
             align-items: center;
@@ -276,7 +267,6 @@
             box-shadow: 0 4px 18px rgba(220,38,38,0.3);
         }
 
-        /* Info area */
         .dc-info-area {
             position: relative; z-index: 3;
             padding: 8px 24px 6px;
@@ -301,7 +291,6 @@
             font-size: 0.65rem;
         }
 
-        /* Footer */
         .dc-footer {
             position: absolute;
             bottom: 0; left: 0; right: 0;
@@ -326,7 +315,6 @@
             color: #fff;
         }
 
-        /* Controls */
         .dc-controls {
             max-width: 420px;
             margin: 20px auto 0;
@@ -591,9 +579,6 @@
             document.getElementById('dc-next-eligible').textContent = nextEligible;
         }
 
-        /* ══════════════════════════════════════════════════
-           Canvas rendering for download (matching design)
-           ══════════════════════════════════════════════════ */
         function renderDonorCardCanvas(donorData, photoSrc) {
             return new Promise(resolve => {
                 const SCALE = 3;
@@ -603,12 +588,9 @@
                 const ctx = canvas.getContext('2d');
                 ctx.scale(SCALE, SCALE);
 
-                // ── White background ──
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, W, H);
 
-                // ── Geometric decorations ──
-                // Center diamond
                 ctx.save();
                 ctx.translate(W/2, H * 0.4);
                 ctx.rotate(Math.PI/4);
@@ -616,7 +598,6 @@
                 ctx.fillRect(-130, -130, 260, 260);
                 ctx.restore();
 
-                // Corner triangles
                 ctx.fillStyle = 'rgba(220,38,38,0.1)';
                 ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(100,0); ctx.lineTo(0,100); ctx.fill();
                 ctx.fillStyle = 'rgba(220,38,38,0.07)';
@@ -626,7 +607,6 @@
                 ctx.fillStyle = 'rgba(220,38,38,0.08)';
                 ctx.beginPath(); ctx.moveTo(W,H); ctx.lineTo(W-90,H); ctx.lineTo(W,H-90); ctx.fill();
 
-                // Diagonal stripes
                 ctx.save();
                 ctx.translate(0, H*0.32); ctx.rotate(-25 * Math.PI/180);
                 ctx.fillStyle = 'rgba(220,38,38,0.08)';
@@ -642,7 +622,6 @@
                 ctx.fillRect(-W*0.3, 10, W*0.3, 3);
                 ctx.restore();
 
-                // ── Blood drops ──
                 const drawBloodDrop = (x, y, scale, rot) => {
                     ctx.save();
                     ctx.translate(x, y);
@@ -665,39 +644,29 @@
                 drawBloodDrop(55, H*0.72, 0.6, -12);
                 drawBloodDrop(W-50, H*0.68, 0.65, 10);
 
-                // ── Header ──
-                // Logo circle
                 const logoR = 18;
                 const logoCX = W/2, logoCY = 32;
                 const logoGrad = ctx.createLinearGradient(logoCX-logoR, logoCY-logoR, logoCX+logoR, logoCY+logoR);
                 logoGrad.addColorStop(0, '#dc2626'); logoGrad.addColorStop(1, '#b91c1c');
                 ctx.fillStyle = logoGrad;
                 ctx.beginPath(); ctx.arc(logoCX, logoCY, logoR, 0, Math.PI*2); ctx.fill();
-                // "+" cross in logo
                 ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.lineCap = 'round';
                 ctx.beginPath(); ctx.moveTo(logoCX-8, logoCY); ctx.lineTo(logoCX+8, logoCY); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(logoCX, logoCY-8); ctx.lineTo(logoCX, logoCY+8); ctx.stroke();
 
-                // Org name
                 ctx.textAlign = 'center';
                 ctx.fillStyle = 'rgba(185,28,28,0.6)'; ctx.font = '700 8px Arial';
                 ctx.letterSpacing = '2px';
                 ctx.fillText('BAUET BDC', W/2, 60);
-                // Title
+               
                 ctx.fillStyle = '#b91c1c'; ctx.font = '900 22px Arial';
                 ctx.fillText('DONOR CARD', W/2, 82);
 
-                // ── Photo ──
                 const photoS = 180;
                 const photoCX = W/2, photoCY = 185;
                 const photoR = photoS/2;
 
-                // Outer red ring
-                ctx.lineWidth = 9;
-                const ringGrad = ctx.createLinearGradient(photoCX-photoR, photoCY-photoR, photoCX+photoR, photoCY+photoR);
-                ringGrad.addColorStop(0, '#dc2626'); ringGrad.addColorStop(0.5, '#b91c1c'); ringGrad.addColorStop(1, '#991b1b');
-                ctx.strokeStyle = ringGrad;
-                ctx.beginPath(); ctx.arc(photoCX, photoCY, photoR+8, 0, Math.PI*2); ctx.stroke();
+                
 
                 // Additional decorative rings
                 ctx.strokeStyle = 'rgba(220,38,38,0.08)'; ctx.lineWidth = 4;
