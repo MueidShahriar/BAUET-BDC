@@ -1,10 +1,44 @@
 import state from './state.js';
-import { normalizeBloodGroup, isDonorEligible, getInitials, getTextValue } from './utils.js';
+import { normalizeBloodGroup, isDonorEligible, getInitials, getTextValue, getDonorEligibilityStatus } from './utils.js';
 
 function getContactHref() {
     const path = window.location.pathname || '';
     const indexHref = path.includes('/pages/') ? '../index.html' : 'index.html';
     return `${indexHref}#contact`;
+}
+
+function formatDate(value) {
+    if (!value) return 'Not recorded yet';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return 'Not recorded yet';
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+}
+
+function getEligibilityMeta(lastDonateDate) {
+    const eligibility = getDonorEligibilityStatus(lastDonateDate);
+
+    if (!eligibility) {
+        return {
+            className: 'donor-status-indicator--unknown',
+            label: 'Not recorded',
+            tooltip: 'Last donation date is not recorded yet.'
+        };
+    }
+
+    if (eligibility.isEligible) {
+        return {
+            className: 'donor-status-indicator--eligible',
+            label: 'Eligible',
+            tooltip: `Eligible to donate. Last donation: ${formatDate(lastDonateDate)}.`
+        };
+    }
+
+    return {
+        className: 'donor-status-indicator--waiting',
+        label: 'Not eligible',
+        tooltip: `Not eligible yet. Eligible again on ${formatDate(eligibility.eligibleDate)}.`
+    };
 }
 
 function renderDonorCardPublic(d) {
@@ -15,6 +49,15 @@ function renderDonorCardPublic(d) {
     const location = getTextValue(d.location, '—');
     const phone = getTextValue(d.phone, '—');
     const contactNote = getTextValue(d.publicComment, 'Contact Admin');
+    const eligibility = getEligibilityMeta(d.lastDonateDate);
+    const statusDot = `
+        <span
+            class="donor-status-indicator ${eligibility.className}"
+            aria-label="${eligibility.label}"
+            data-tooltip="${eligibility.tooltip}"
+            title="${eligibility.tooltip}"
+            tabindex="0">
+        </span>`;
     const avatarHtml = d.profilePhoto
         ? `<img src="${d.profilePhoto}" alt="" class="w-10 h-10 rounded-full object-cover border-2 border-red-200 flex-shrink-0" />`
         : `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-600 to-red-400 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">${initials}</div>`;
@@ -47,7 +90,10 @@ function renderDonorCardPublic(d) {
             <div class="flex-1 min-w-0 mb-2 sm:mb-0">
                 <div class="flex items-center gap-2 mb-1">
                     ${avatarHtml}
-                    <div class="font-bold text-red-700 truncate">${donorName}</div>
+                    <div class="donor-card__name-row">
+                        <div class="font-bold text-red-700 truncate donor-card__name-text">${donorName}</div>
+                        ${statusDot}
+                    </div>
                 </div>
                 <div class="info-stack sm:hidden">
                     <div class="info-row">

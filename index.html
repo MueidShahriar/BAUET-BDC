@@ -45,7 +45,7 @@
     <script src="assets/js/viewport.js" defer></script>
     <script type="module" src="assets/js/app.js"></script>
 
-    <header class="site-header fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
+    <header class="site-header fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur shadow-lg rounded-b-xl">
         <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">
             <div class="flex items-center gap-3">
                 <img src="image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
@@ -122,10 +122,7 @@
     <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6">
         <section id="hero" class="hero-shell relative flex flex-col md:flex-row items-center justify-between pt-4 pb-12 gap-6">
             <div class="hero-copy flex-1 flex flex-col items-center justify-center text-center md:items-start md:text-left">
-                <span class="hero-eyebrow">
-                    <i class="fa-solid fa-heart-circle-plus" aria-hidden="true"></i>
-                    Community-powered emergency support
-                </span>
+               
                 <h1 class="text-4xl sm:text-5xl font-extrabold text-red-700 mb-4 tracking-tight break-words leading-tight hero-title"
                     data-i18n="heroTitle">
                     Donate Blood Save Lives
@@ -151,7 +148,7 @@
             <div class="hero-visual-wrap flex-1 flex justify-center items-center">
                 <div class="hero-visual relative">
                     <img src="image/blood-drop.png" alt="blood drop"
-                        class="w-56 h-56 object-contain drop-shadow-xl animate-bounce-slow" loading="eager" fetchpriority="high" decoding="async" />
+                        class="w-56 h-56 object-contain drop-shadow-xl hero-drop-motion" loading="eager" fetchpriority="high" decoding="async" />
                     <div
                         class="absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-8 bg-red-200 rounded-full blur-xl opacity-60">
                     </div>
@@ -162,7 +159,6 @@
         <section id="recent-donor" class="py-12">
             <div class="section-heading">
                 <div>
-                    <span class="section-kicker">Fresh Activity</span>
                     <h2 class="section-title">Recent donation spotlight</h2>
                     <p class="section-subtitle">A cleaner live feed that keeps the newest community contributions visible at a glance.</p>
                 </div>
@@ -191,7 +187,6 @@
         <section id="dashboard-insights" class="py-12">
             <div class="section-heading flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                 <div class="text-left">
-                    <span class="section-kicker">Analytics Snapshot</span>
                     <h2 class="text-2xl font-extrabold text-red-700" data-i18n="dashboardTitle">Live Donor Insights</h2>
                     <p class="mt-1 text-sm text-gray-600 max-w-2xl" data-i18n="dashboardDescription">These snapshots
                         refresh instantly whenever new donors join or donations are logged.</p>
@@ -262,7 +257,6 @@
         <section id="donor-leaderboard" class="py-12">
             <div class="section-heading flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                 <div class="text-left">
-                    <span class="section-kicker">Recognition Wall</span>
                     <h2 class="text-2xl font-extrabold text-red-700" data-i18n="leaderboardTitle">Top donors of BAUET</h2>
                     <p class="mt-1 text-sm text-gray-600 max-w-2xl" data-i18n="leaderboardSubtitle">Gamified donor reputation based on donations, activity, and response speed.</p>
                 </div>
