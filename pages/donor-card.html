@@ -552,6 +552,18 @@
             return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()}`;
         }
 
+        function addCalendarMonths(dateValue, months) {
+            const date = new Date(dateValue + 'T00:00:00');
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const day = date.getDate();
+            const targetMonthIndex = month + months;
+            const targetYear = year + Math.floor(targetMonthIndex / 12);
+            const targetMonth = ((targetMonthIndex % 12) + 12) % 12;
+            const lastDayOfTargetMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+            return new Date(targetYear, targetMonth, Math.min(day, lastDayOfTargetMonth));
+        }
+
         function populateCard(donorData) {
             const name = donorData.fullName || 'Donor';
             const initials = name.split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0,2).toUpperCase();
@@ -569,8 +581,7 @@
             // Next eligible
             let nextEligible = '—';
             if (donorData.lastDonateDate) {
-                const last = new Date(donorData.lastDonateDate + 'T00:00:00');
-                const nextDate = new Date(last.getTime() + 90 * 24 * 60 * 60 * 1000);
+                const nextDate = addCalendarMonths(donorData.lastDonateDate, 4);
                 nextEligible = nextDate <= new Date() ? 'Eligible Now' : formatDate(donorData.lastDonateDate.split('T')[0]);
                 if (nextDate > new Date()) {
                     const p = n => String(n).padStart(2,'0');

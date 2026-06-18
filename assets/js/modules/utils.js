@@ -192,13 +192,51 @@ export function sortEventsByDate(list, order = 'asc') {
 }
 
 export function isDonorEligible(lastDonationDate) {
-    if (!lastDonationDate) return true;
-    const lastDonation = new Date(lastDonationDate);
-    if (Number.isNaN(lastDonation.getTime())) return true;
-    const waitDays = 120;
-    const msPerDay = 1000 * 60 * 60 * 24;
-    const daysSince = Math.floor((Date.now() - lastDonation.getTime()) / msPerDay);
-    return daysSince >= waitDays;
+    const status = getDonorEligibilityStatus(lastDonationDate);
+    return status ? status.isEligible : true;
+}
+
+export const DONATION_WAIT_MONTHS = 4;
+
+export function parseDonationDate(value) {
+    if (!value) return null;
+    const normalized = typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+        ? `${value}T00:00:00`
+        : value;
+    const date = new Date(normalized);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+export function addCalendarMonths(dateValue, months) {
+    const date = dateValue instanceof Date ? new Date(dateValue.getTime()) : parseDonationDate(dateValue);
+    if (!date || !Number.isFinite(months)) return null;
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const day = date.getDate();
+    const targetMonthIndex = month + months;
+    const targetYear = year + Math.floor(targetMonthIndex / 12);
+    const targetMonth = ((targetMonthIndex % 12) + 12) % 12;
+    const lastDayOfTargetMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+    return new Date(targetYear, targetMonth, Math.min(day, lastDayOfTargetMonth));
+}
+
+export function getNextEligibleDate(lastDonationDate) {
+    const lastDonation = parseDonationDate(lastDonationDate);
+    if (!lastDonation) return null;
+    return addCalendarMonths(lastDonation, DONATION_WAIT_MONTHS);
+}
+
+export function getDonorEligibilityStatus(lastDonationDate) {
+    const eligibleDate = getNextEligibleDate(lastDonationDate);
+    if (!eligibleDate) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const compareDate = new Date(eligibleDate.getTime());
+    compareDate.setHours(0, 0, 0, 0);
+    return {
+        isEligible: today.getTime() >= compareDate.getTime(),
+        eligibleDate
+    };
 }
 
 function getNumeric(value) {

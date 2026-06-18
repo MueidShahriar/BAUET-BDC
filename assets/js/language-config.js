@@ -66,7 +66,7 @@ export const translations = {
         recentNext: "Next",
 
         howEligibilityTitle: "Check Eligibility",
-        howEligibilityText: "Be 18–60 years old, 50kg+, feeling well and fever‑free, with at least 90 days since your last donation. Certain medicines, recent travel and illnesses may defer donation.",
+        howEligibilityText: "Be 18–60 years old, 50kg+, feeling well and fever‑free, with at least 4 months since your last donation. Certain medicines, recent travel and illnesses may defer donation.",
         howRegisterTitle: "Register",
         howRegisterText: "Create your donor profile in minutes and keep your details up to date. Choose privacy options (e.g., hide phone), track donations and get notified about nearby needs and events.",
         howDonateTitle: "Donate & Save",
@@ -140,7 +140,7 @@ export const translations = {
         joinClear: "Clear",
 
         howEligibilityTitle: "Check Eligibility",
-        howEligibilityDesc: "Be 18–60 years old, 50kg+, feeling well and fever‑free, with at least 90 days since your last donation. Certain medicines, recent travel and illnesses may defer donation.",
+        howEligibilityDesc: "Be 18–60 years old, 50kg+, feeling well and fever‑free, with at least 4 months since your last donation. Certain medicines, recent travel and illnesses may defer donation.",
         howEligibilityLink: "Learn more →",
         howRegisterTitle: "Register",
         howRegisterDesc: "Create your donor profile in minutes and keep your details up to date. Choose privacy options (e.g., hide phone), track donations and get notified about nearby needs and events.",
@@ -343,7 +343,7 @@ export const translations = {
         recentNext: "পরবর্তী",
 
         howEligibilityTitle: "যোগ্যতা পরীক্ষা করুন",
-        howEligibilityText: "১৮-৬০ বছর বয়সী হন, ৫০ কেজি+, সুস্থ বোধ করুন এবং জ্বরমুক্ত থাকুন, আপনার শেষ রক্তদান থেকে কমপক্ষে ৯০ দিন। কিছু ওষুধ, সাম্প্রতিক ভ্রমণ এবং অসুস্থতা রক্তদান স্থগিত করতে পারে।",
+        howEligibilityText: "১৮-৬০ বছর বয়সী হন, ৫০ কেজি+, সুস্থ বোধ করুন এবং জ্বরমুক্ত থাকুন, আপনার শেষ রক্তদানের পর কমপক্ষে ৪ মাস হতে হবে। কিছু ওষুধ, সাম্প্রতিক ভ্রমণ এবং অসুস্থতা রক্তদান স্থগিত করতে পারে।",
         howRegisterTitle: "নিবন্ধন করুন",
         howRegisterText: "মিনিটের মধ্যে আপনার দাতা প্রোফাইল তৈরি করুন এবং আপনার বিবরণ আপডেট রাখুন। গোপনীয়তা বিকল্প চয়ন করুন (যেমন, ফোন লুকান), রক্তদান ট্র্যাক করুন এবং কাছাকাছি প্রয়োজন এবং ইভেন্ট সম্পর্কে বিজ্ঞপ্তি পান।",
         howDonateTitle: "রক্তদান করুন এবং বাঁচান",
@@ -417,7 +417,7 @@ export const translations = {
         joinClear: "পরিষ্কার করুন",
 
         howEligibilityTitle: "যোগ্যতা পরীক্ষা করুন",
-        howEligibilityDesc: "১৮-৬০ বছর বয়সী, ৫০ কেজি+, সুস্থ এবং জ্বরমুক্ত থাকুন, আপনার শেষ রক্তদানের পর থেকে কমপক্ষে ৯০ দিন পার হতে হবে। নির্দিষ্ট ওষুধ, সাম্প্রতিক ভ্রমণ এবং অসুস্থতা রক্তদান স্থগিত করতে পারে।",
+        howEligibilityDesc: "১৮-৬০ বছর বয়সী, ৫০ কেজি+, সুস্থ এবং জ্বরমুক্ত থাকুন, আপনার শেষ রক্তদানের পর থেকে কমপক্ষে ৪ মাস পার হতে হবে। নির্দিষ্ট ওষুধ, সাম্প্রতিক ভ্রমণ এবং অসুস্থতা রক্তদান স্থগিত করতে পারে।",
         howEligibilityLink: "আরও জানুন →",
         howRegisterTitle: "নিবন্ধন করুন",
         howRegisterDesc: "মিনিটের মধ্যে আপনার দাতা প্রোফাইল তৈরি করুন এবং আপনার বিবরণ আপডেট রাখুন। গোপনীয়তা বিকল্প চয়ন করুন (যেমন ফোন লুকান), রক্তদান ট্র্যাক করুন এবং কাছাকাছি চাহিদা এবং ইভেন্ট সম্পর্কে বিজ্ঞপ্তি পান।",

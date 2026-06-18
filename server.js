@@ -50,7 +50,7 @@ RULES:
 ELIGIBILITY:
 - Age: 18–65
 - Weight: minimum 50 kg
-- Donation interval: 120 days for whole blood
+- Donation interval: 4 months for whole blood
 - Hemoglobin requirements: follow local screening at donation time
 
 WEBSITE PAGES:

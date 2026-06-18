@@ -27,7 +27,12 @@ import { initFeedback } from "./modules/feedback.js";
 import { initHeader, initMobileMenu } from "./modules/header.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
 import { initChatbot } from "./modules/chatbot.js";
-import { getDonationCountForDonor, normalizeDonorId } from "./modules/utils.js";
+import {
+  getDonationCountForDonor,
+  normalizeDonorId,
+  formatDateDisplay,
+  getDonorEligibilityStatus,
+} from "./modules/utils.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -156,26 +161,15 @@ function formatDate(dateStr) {
 }
 
 function isDonorEligible(lastDonateDate) {
-  if (!lastDonateDate) return "Unknown";
-
-  const last = new Date(lastDonateDate + "T00:00:00");
-  const now = new Date();
-
-  const diffDays = Math.floor((now - last) / (1000 * 60 * 60 * 24));
-
-  if (diffDays >= 120) return "Eligible";
-
-  return `${120 - diffDays} days left`;
+  const status = getDonorEligibilityStatus(lastDonateDate);
+  if (!status) return "Unknown";
+  if (status.isEligible) return "Eligible";
+  return "Waiting";
 }
 
 function getEligibleDate(lastDonateDate) {
-  if (!lastDonateDate) return "No donation date";
-
-  const date = new Date(lastDonateDate + "T00:00:00");
-
-  date.setDate(date.getDate() + 120);
-
-  return date.toLocaleDateString("en-GB");
+  const status = getDonorEligibilityStatus(lastDonateDate);
+  return status ? formatDateDisplay(status.eligibleDate) : "No donation date";
 }
 
 function populateProfile(data, email) {
@@ -223,18 +217,11 @@ function populateProfile(data, email) {
     );
 
     if (eligibleDateEl) {
-      // If eligible → don't show date
       if (elig === "Eligible") {
         eligibleDateEl.textContent = "";
-      }
-
-      // If not eligible → show eligible date
-      else if (elig !== "Unknown") {
-        eligibleDateEl.textContent = `ELIGIBLE ON: ${getEligibleDate(data.lastDonateDate)}`;
-      }
-
-      // If unknown
-      else {
+      } else if (elig !== "Unknown") {
+        eligibleDateEl.textContent = `NEXT ELIGIBLE DATE: ${getEligibleDate(data.lastDonateDate)}`;
+      } else {
         eligibleDateEl.textContent = "—";
       }
     }

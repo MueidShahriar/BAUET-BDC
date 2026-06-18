@@ -197,9 +197,9 @@ function formatDonorResults(donors, bloodGroup, lang) {
     }
 
     let tip;
-    if (lang === 'bangla') tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ সকল দাতা যোগ্য (শেষ রক্তদানের পর ১২০+ দিন পার হয়েছে)</div>`;
-    else if (lang === 'banglish') tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ Sob donor eligible (last donation theke 120+ din hoyeche)</div>`;
-    else tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ All donors are eligible (120+ days since last donation)</div>`;
+    if (lang === 'bangla') tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ সকল দাতা যোগ্য (শেষ রক্তদানের পর ৪ মাস পূর্ণ হয়েছে)</div>`;
+    else if (lang === 'banglish') tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ Sob donor eligible (last donation er por 4 months complete hoyeche)</div>`;
+    else tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ All donors are eligible (4 months have passed since last donation)</div>`;
 
     return header + list + footer + tip;
 }
@@ -346,12 +346,12 @@ const KNOWLEDGE_BASE = [
 
     
     { keywords: ['who can donate', 'eligible', 'eligibility', 'can i donate', 'requirements', 'criteria', 'qualify'],
-    answer: 'Generally, anyone aged 18–65, weighing at least 50 kg (110 lbs), and in good health can donate blood. You must not have donated in the last 120 days (about 4 months). Conditions like recent surgery, pregnancy, certain medications, or chronic illnesses may temporarily or permanently defer you.',
-    answerBn: 'সাধারণত ১৮-৬৫ বছর বয়সী, কমপক্ষে ৫০ কেজি ওজনের এবং সুস্থ যেকোনো ব্যক্তি রক্তদান করতে পারেন। শেষ রক্তদানের পর কমপক্ষে ১২০ দিন (প্রায় ৪ মাস) অপেক্ষা করতে হবে। সাম্প্রতিক অস্ত্রোপচার, গর্ভাবস্থা, কিছু ওষুধ বা দীর্ঘস্থায়ী রোগ সাময়িক বা স্থায়ীভাবে বাধা হতে পারে।',
-    answerBl: 'Generally 18-65 age, weight 50kg+, ebong healthy hole blood donate kora jay. Last donation theke 120 din gap lagbe. Surgery/pregnancy/medication/long-term illness thakle temporarily wait korte hoy.' },
+    answer: 'Generally, anyone aged 18–65, weighing at least 50 kg (110 lbs), and in good health can donate blood. You must not have donated within the last 4 months. Conditions like recent surgery, pregnancy, certain medications, or chronic illnesses may temporarily or permanently defer you.',
+    answerBn: 'সাধারণত ১৮-৬৫ বছর বয়সী, কমপক্ষে ৫০ কেজি ওজনের এবং সুস্থ যেকোনো ব্যক্তি রক্তদান করতে পারেন। শেষ রক্তদানের পর কমপক্ষে ৪ মাস অপেক্ষা করতে হবে। সাম্প্রতিক অস্ত্রোপচার, গর্ভাবস্থা, কিছু ওষুধ বা দীর্ঘস্থায়ী রোগ সাময়িক বা স্থায়ীভাবে বাধা হতে পারে।',
+    answerBl: 'Generally 18-65 age, weight 50kg+, ebong healthy hole blood donate kora jay. Last donation theke 4 months gap lagbe. Surgery/pregnancy/medication/long-term illness thakle temporarily wait korte hoy.' },
     { keywords: ['কে দিতে পারে', 'যোগ্যতা', 'রক্তদান করতে পারব', 'রক্ত দিতে পারবো', 'আমি কি দিতে পারি', 'কি কি লাগে', 'শর্ত'],
-    answer: 'Anyone aged 18-65, at least 50 kg, and in good health can donate. Must wait 120 days between donations.',
-    answerBn: '১৮-৬৫ বছর বয়সী, কমপক্ষে ৫০ কেজি ওজনের এবং সুস্থ যেকোনো ব্যক্তি রক্তদান করতে পারেন। দুটি রক্তদানের মধ্যে কমপক্ষে ১২০ দিন (প্রায় ৪ মাস) বিরতি থাকতে হবে।' },
+    answer: 'Anyone aged 18-65, at least 50 kg, and in good health can donate. Must wait 4 months between whole blood donations.',
+    answerBn: '১৮-৬৫ বছর বয়সী, কমপক্ষে ৫০ কেজি ওজনের এবং সুস্থ যেকোনো ব্যক্তি রক্তদান করতে পারেন। দুটি রক্তদানের মধ্যে কমপক্ষে ৪ মাস বিরতি থাকতে হবে।' },
 
     
     { keywords: ['blood type', 'blood group', 'types of blood', 'how many blood groups', 'blood groups list'],
@@ -364,8 +364,8 @@ const KNOWLEDGE_BASE = [
 
     
     { keywords: ['how often', 'frequency', 'how many times', 'gap between', 'interval', 'কতদিন পর', 'কতবার', 'বিরতি'],
-    answer: 'You can donate whole blood every 120 days (about 4 months). Platelet donations can be made every 7 days, up to 24 times a year. Double red cell donations can be made every 168 days.',
-    answerBn: 'প্রতি ১২০ দিন (প্রায় ৪ মাস) পর পর সম্পূর্ণ রক্তদান করা যায়। প্লেটলেট দান প্রতি ৭ দিনে করা যায়, বছরে সর্বোচ্চ ২৪ বার। ডাবল রেড সেল দান প্রতি ১৬৮ দিনে করা যায়।' },
+    answer: 'You can donate whole blood every 4 months. Platelet donations can be made every 7 days, up to 24 times a year. Double red cell donations can be made every 168 days.',
+    answerBn: 'প্রতি ৪ মাস পর পর সম্পূর্ণ রক্তদান করা যায়। প্লেটলেট দান প্রতি ৭ দিনে করা যায়, বছরে সর্বোচ্চ ২৪ বার। ডাবল রেড সেল দান প্রতি ১৬৮ দিনে করা যায়।' },
 
     
     { keywords: ['benefits', 'why donate', 'advantage', 'good for health', 'healthy', 'কেন দেব', 'উপকারিতা', 'সুবিধা', 'লাভ'],
@@ -1051,7 +1051,7 @@ export function initChatbot() {
     
     const fab = document.createElement('div');
     fab.id = 'chatbot-fab';
-    fab.innerHTML = `<button id="chatbot-toggle" aria-label="Blood Donation Assistant" title="Blood Donation Assistant" style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border:none;cursor:pointer;box-shadow:0 6px 24px rgba(220,38,38,0.35);display:flex;align-items:center;justify-content:center;transition:all 0.3s;font-size:1.2rem;position:relative">
+    fab.innerHTML = `<button id="chatbot-toggle" aria-label="Blood Donation Assistant" title="Blood Donation Assistant" style="width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,#b91c1c,#dc2626 55%,#fb7185);color:#fff;border:none;cursor:pointer;box-shadow:0 18px 34px rgba(220,38,38,0.28);display:flex;align-items:center;justify-content:center;transition:all 0.3s;font-size:1.2rem;position:relative">
         <i class="fa-solid fa-robot"></i>
         <span style="position:absolute;top:-2px;right:-2px;width:10px;height:10px;background:#10b981;border-radius:50%;border:2px solid #fff"></span>
     </button>`;
@@ -1060,41 +1060,41 @@ export function initChatbot() {
     
     const chatWindow = document.createElement('div');
     chatWindow.id = 'chatbot-window';
-    chatWindow.style.cssText = 'position:fixed;bottom:136px;right:24px;width:360px;max-width:calc(100vw - 32px);height:480px;max-height:calc(100vh - 180px);background:#fff;border-radius:1.25rem;box-shadow:0 20px 60px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.05);z-index:46;display:none;flex-direction:column;overflow:hidden;font-family:Inter,sans-serif;';
+    chatWindow.style.cssText = 'position:fixed;bottom:140px;right:24px;width:370px;max-width:calc(100vw - 32px);height:500px;max-height:calc(100vh - 180px);background:rgba(255,255,255,0.96);border-radius:1.4rem;box-shadow:0 28px 70px rgba(15,23,42,0.18),0 0 0 1px rgba(255,255,255,0.4);z-index:46;display:none;flex-direction:column;overflow:hidden;font-family:Inter,sans-serif;backdrop-filter:blur(18px);';
     chatWindow.innerHTML = `
-        <div style="background:linear-gradient(135deg,#b91c1c,#dc2626,#ef4444);padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;flex-shrink:0">
-            <div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <div style="background:linear-gradient(135deg,#991b1b,#dc2626 58%,#fb7185);padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;flex-shrink:0">
+            <div style="width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2)">
                 <i class="fa-solid fa-robot" style="color:#fff;font-size:1.05rem"></i>
             </div>
             <div style="flex:1;min-width:0">
-                <div style="font-size:0.92rem;font-weight:700;color:#fff">Blood Donation Assistant</div>
-                <div style="font-size:0.7rem;color:rgba(255,255,255,0.75);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;background:#4ade80;border-radius:50%;display:inline-block"></span> Online</div>
+                <div style="font-size:0.95rem;font-weight:800;color:#fff;letter-spacing:-0.02em">Blood Donation Assistant</div>
+                <div style="font-size:0.72rem;color:rgba(255,255,255,0.8);display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;background:#4ade80;border-radius:50%;display:inline-block"></span> Live donor help and website guidance</div>
             </div>
             <button id="chatbot-close" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
                 <i class="fa-solid fa-xmark" style="font-size:0.85rem"></i>
             </button>
         </div>
-        <div id="chatbot-messages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem;background:#f9fafb;scroll-behavior:smooth">
+        <div id="chatbot-messages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem;background:linear-gradient(180deg,#fff7f7 0%,#f8fafc 100%);scroll-behavior:smooth">
             <div style="display:flex;gap:0.5rem;align-items:flex-start">
-                <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#dc2626,#ef4444);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">
+                <div style="width:30px;height:30px;border-radius:12px;background:linear-gradient(135deg,#dc2626,#ef4444);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;box-shadow:0 10px 22px rgba(220,38,38,0.18)">
                     <i class="fa-solid fa-robot" style="color:#fff;font-size:0.65rem"></i>
                 </div>
-                <div style="background:#fff;border-radius:0 0.85rem 0.85rem 0.85rem;padding:0.7rem 0.9rem;font-size:0.82rem;color:#374151;line-height:1.5;box-shadow:0 1px 3px rgba(0,0,0,0.06);max-width:85%">
+                <div style="background:rgba(255,255,255,0.95);border-radius:0 1rem 1rem 1rem;padding:0.8rem 0.95rem;font-size:0.82rem;color:#374151;line-height:1.6;box-shadow:0 16px 30px rgba(15,23,42,0.08);max-width:85%;border:1px solid rgba(255,255,255,0.7)">
                     Hello! 👋 I'm your <strong>Blood Donation Assistant</strong>. I can:<br>
                     🔍 <strong>Find donors</strong> — just tell me the blood group!<br>
                     💬 Answer questions about blood donation, eligibility & health.
                 </div>
             </div>
         </div>
-        <div style="padding:0.75rem;background:#fff;border-top:1px solid #f3f4f6;flex-shrink:0">
+        <div style="padding:0.85rem;background:rgba(255,255,255,0.96);border-top:1px solid rgba(241,245,249,0.95);flex-shrink:0">
             <form id="chatbot-form" style="display:flex;gap:0.5rem;align-items:center">
-                <input id="chatbot-input" type="text" placeholder="Ask about blood donation..." autocomplete="off" style="flex:1;padding:0.6rem 0.9rem;border:1.5px solid #e5e7eb;border-radius:0.75rem;font-size:0.82rem;outline:none;transition:border-color 0.2s;font-family:Inter,sans-serif;background:#f9fafb" onfocus="this.style.borderColor='#fca5a5';this.style.background='#fff'" onblur="this.style.borderColor='#e5e7eb';this.style.background='#f9fafb'" />
-                <button type="submit" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <input id="chatbot-input" type="text" placeholder="Ask about donors, eligibility, or the website..." autocomplete="off" style="flex:1;padding:0.75rem 0.95rem;border:1.5px solid #e5e7eb;border-radius:0.95rem;font-size:0.82rem;outline:none;transition:border-color 0.2s;font-family:Inter,sans-serif;background:#f9fafb" onfocus="this.style.borderColor='#fca5a5';this.style.background='#fff'" onblur="this.style.borderColor='#e5e7eb';this.style.background='#f9fafb'" />
+                <button type="submit" style="width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;box-shadow:0 14px 28px rgba(220,38,38,0.22)" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
                     <i class="fa-solid fa-paper-plane" style="font-size:0.8rem"></i>
                 </button>
             </form>
             <div style="text-align:center;margin-top:0.4rem">
-                <span style="font-size:0.62rem;color:#9ca3af">Powered by Gemini AI • Donor Finder + Website Guide</span>
+                <span style="font-size:0.64rem;color:#94a3b8">Powered by Gemini AI • Donor Finder • Website Guide</span>
             </div>
         </div>
     `;
@@ -1300,6 +1300,7 @@ export function initChatbot() {
         @keyframes think-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .chatbot-streaming::after { content: "▋"; display: inline-block; margin-left: 2px; color: #dc2626; animation: chatbot-cursor-blink 1s step-end infinite; }
         @keyframes chatbot-cursor-blink { 50% { opacity: 0; } }
+        #chatbot-toggle:hover { transform: translateY(-2px); box-shadow: 0 22px 40px rgba(220,38,38,0.35) !important; }
         #chatbot-messages::-webkit-scrollbar { width: 4px; }
         #chatbot-messages::-webkit-scrollbar-track { background: transparent; }
         #chatbot-messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }

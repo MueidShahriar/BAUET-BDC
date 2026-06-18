@@ -6,7 +6,9 @@ import {
     getInitials,
     getTextValue,
     getDonorIdNumber,
-    computeDonorReputation
+    computeDonorReputation,
+    getDonorEligibilityStatus,
+    formatDateDisplay
 } from './utils.js';
 import { openModal, closeModal, showModalMessage, attachConfirmHandler } from './modals.js';
 
@@ -99,12 +101,11 @@ function renderDonorCardAdmin(d) {
     const repBadge = reputation.badge
         ? `<span class="donor-badge ${reputation.badge.className}">${reputation.badge.icon} ${repBadgeLabel}</span>`
         : '';
-    const isEligible = d.lastDonateDate
-        ? (Math.floor((new Date() - new Date(d.lastDonateDate + 'T00:00:00')) / (1000*60*60*24)) >= 90)
-        : null;
-    const eligibleBadge = isEligible === null ? ''
-        : isEligible ? '<span class="admin-member-badge admin-member-badge--eligible"><i class="fa-solid fa-circle-check"></i> Eligible</span>'
-        : '<span class="admin-member-badge admin-member-badge--waiting"><i class="fa-solid fa-hourglass-half"></i> Waiting</span>';
+    const eligibility = getDonorEligibilityStatus(d.lastDonateDate);
+    const eligibleBadge = !eligibility ? ''
+        : eligibility.isEligible
+            ? '<span class="admin-member-badge admin-member-badge--eligible"><i class="fa-solid fa-circle-check"></i> Eligible</span>'
+            : `<span class="admin-member-badge admin-member-badge--waiting"><i class="fa-solid fa-hourglass-half"></i> Eligible on ${formatDateDisplay(eligibility.eligibleDate)}</span>`;
     const avatarContent = d.profilePhoto
         ? `<img src="${d.profilePhoto}" alt="${initials}" style="width:100%;height:100%;object-fit:cover;border-radius:14px">`
         : initials;
