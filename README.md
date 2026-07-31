@@ -1,283 +1,209 @@
-# 🩸 BAUET Blood Donation Club
+# BAUET Blood Donation Community
 
-**A Community-Powered Blood Donation Management Platform**
+A professional blood donation management platform built to help the BAUET community coordinate donor discovery, streamline event management, and improve emergency response through a modern web experience.
 
-A fully client-side web application designed to **connect voluntary blood donors with patients in urgent need** and to **manage community-driven blood donation events efficiently**. The entire system runs in the browser with **Firebase Realtime Database & Authentication** — no backend server required.
+[Live Demo](https://blood-donation-community.vercel.app)
 
-Live Site: [blood-donation-community.vercel.app](https://blood-donation-community.vercel.app)
+## Introduction
 
-Install the web app: [Open the live app](https://blood-donation-community.vercel.app) and use your browser's "Install app" or "Add to Home Screen" option.
+BAUET Blood Donation Community is a community-centered web application that connects voluntary blood donors with people in urgent need. The platform combines a responsive frontend, realtime Firebase data, and an AI-assisted support experience to make donor registration, donor search, event coordination, and community operations more reliable and efficient.
 
----
+The project is designed for both public users and administrators. Public users can register, maintain profiles, search for eligible donors, explore upcoming events, and access donation guidance. Administrators can oversee members, log recent donations, manage events, review feedback, and monitor community activity through a centralized dashboard.
 
-## Key Features
+## Highlights
 
-### Donor Registration & Authentication
-- Secure email/password registration & login
-- Profile management with personal details, blood group, location
-- Last donation tracking with automatic eligibility indicator (120-day rule)
-- Change password from profile page
-- Account deletion option
-
-### Smart Donor Search
-- Filter donors by blood group (A+, A−, B+, B−, O+, O−, AB+, AB−)
-- Toggle to show only currently eligible donors
-- Available on the public Search page and inside the Admin Dashboard (Find Donors tab)
-
-### Admin Dashboard
-- Overview cards for total members, admins, donations, and events
-- Click overview cards to open the right tab and filter the list
-- Create, update, and delete donation events
-- Edit and manage all donor profiles
-- Promote or demote admins
-- Log verified recent donations (auto-syncs to donor profile)
-- Download Monthly PDF report with charts and donation data (includes donor contact when available)
-- Feedback inbox for community messages
-
-### Recent Donation Tracking
-- Admin records recent donations by donor ID or manual entry
-- Recent donation details are shown on the donor profile
-- Admin recent donation list shows contact number when provided
-
-### Live Analytics
-- Real-time visual charts powered by Chart.js:
-   - Donor age group distribution
-   - Blood group availability breakdown
-   - Monthly donation trends
-- Animated stat counters (Registered Donors, Lives Helped, Events)
-
-### Visitor Tracking
-- Total page views counter (incremented once per session on home page only)
-- Real-time online users count using Firebase presence system
-- Displayed above the footer on every page
-- Dedicated Visitor Statistics page with full details
-
-### PWA Ready
-- Web manifest support for installable experience
-
-### Certificates & Donor Card
-- Generate personalized blood donation certificates
-- Download digital donor ID card
-
-### Bilingual Interface
-- Full English & Bangla language support
-- One-click language toggle across all pages
-
-### AI Chatbot Assistant
-- Smart donor finder by blood group
-- Answers blood donation, eligibility, and health questions
-- Supports Bangla, Banglish, and English
-
-### Feedback System
-- Collect visitor feedback from any page
-- Timestamped entries stored in Firebase
-
-### Responsive Design
-- Fully responsive across mobile, tablet, and desktop
-- Mobile hamburger menu with smooth transitions
-- Back-to-top button and scroll animations
-
----
-
-## Project Structure
-
-```
-BAUET Blood Donation Club/
-├── index.html
-├── manifest.webmanifest
-├── pages/
-│   ├── 404.html
-│   ├── about.html
-│   ├── admin.html
-│   ├── certificate.html
-│   ├── donationGuide.html
-│   ├── donor-card.html
-│   ├── donor.html
-│   ├── events.html
-│   ├── join.html
-│   ├── pdf.html
-│   ├── preloader.html
-│   ├── profile.html
-│   ├── search.html
-│   └── visitor-stats.html
-├── assets/
-│   ├── css/
-│   │   ├── about.css
-│   │   ├── common.css
-│   │   ├── donationGuide.css
-│   │   ├── events.css
-│   │   ├── index.css
-│   │   ├── join.css
-│   │   ├── main.css
-│   │   └── profile.css
-│   └── js/
-│       ├── app.js
-│       ├── certificate.js
-│       ├── chart-config.js
-│       ├── firebase-config.js
-│       ├── language-config.js
-│       ├── language-ui.js
-│       ├── page-common.js
-│       ├── pdf-report.js
-│       ├── profile.js
-│       ├── viewport.js
-│       ├── pages/
-│       │   ├── events.js
-│       │   ├── join.js
-│       │   ├── search.js
-│       │   ├── static-page.js
-│       │   └── visitor-stats.js
-│       └── modules/
-│           ├── admin.js
-│           ├── auth.js
-│           ├── back-to-top.js
-│           ├── carousel.js
-│           ├── certificate.js
-│           ├── chart-config.js
-│           ├── chatbot.js
-│           ├── dashboard.js
-│           ├── events-render.js
-│           ├── feedback.js
-│           ├── firebase-config.js
-│           ├── float-observer.js
-│           ├── footer.js
-│           ├── header.js
-│           ├── join-form.js
-│           ├── language-config.js
-│           ├── language-ui.js
-│           ├── modals.js
-│           ├── pdf-report.js
-│           ├── preloader.js
-│           ├── search.js
-│           ├── state.js
-│           ├── stats-counter.js
-│           ├── utils.js
-│           └── visitor-tracker.js
-└── image/
-      ├── blood-drop.png
-      └── sign.png
-```
-
----
+- Responsive homepage with live donation activity, analytics, leaderboard, and community statistics
+- Donor registration and authentication with profile management
+- Blood group and location-based donor search
+- Donation eligibility awareness based on last donation date
+- Admin dashboard for events, members, donations, and feedback
+- Realtime charts for donor demographics and donation trends
+- Visitor tracking and online presence monitoring
+- Bilingual experience with English and Bangla support
+- Progressive Web App support for installable usage
+- AI assistant for donation guidance and website help
+- Certificate and donor card generation
 
 ## Technology Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Frontend | HTML5, Vanilla JavaScript (ES Modules) |
-| Styling | Tailwind CSS (CDN), Bootstrap 4 utilities, Custom CSS |
-| Backend | Firebase v10 (Realtime Database, Authentication, Analytics) |
-| Charts | Chart.js 4.4.x |
-| PDF Export | jsPDF 2.5.x |
-| Hosting | Vercel (static deployment) |
-| Icons | Font Awesome 6.5.x |
-| Fonts | Google Fonts (Inter, Dancing Script) |
+| --- | --- |
+| Frontend | HTML5, Tailwind CSS via CDN, Bootstrap utilities, vanilla JavaScript |
+| Realtime Services | Firebase Realtime Database, Firebase Authentication |
+| Data Visualization | Chart.js |
+| AI Assistant Server | Node.js, Express, Google Generative AI SDK |
+| Deployment | Static hosting for frontend, Node-compatible hosting for server |
 
----
+## Architecture Overview
 
-## Firebase Database Structure
+The application is structured as a mostly static frontend with modular JavaScript, supported by Firebase for authentication and realtime data storage. A lightweight Node.js server powers the AI assistant endpoint used by the chat experience.
 
-```json
-{
-   "donors": {
-      "<uid>": {
-         "fullName": "",
-         "email": "",
-         "bloodGroup": "",
-         "location": "",
-         "phone": "",
-         "role": "member",
-         "donorId": "BDC-001",
-         "lastDonateDate": "YYYY-MM-DD",
-         "lastDonationInfo": {
-            "date": "YYYY-MM-DD",
-            "bloodGroup": "",
-            "location": "",
-            "department": "",
-            "batch": "",
-            "age": "",
-            "height": "",
-            "weight": "",
-            "donorId": "BDC-001"
-         },
-         "isPhoneHidden": false,
-         "publicComment": ""
-      }
-   },
-   "events": { "<eventId>": { "title": "", "date": "", "location": "", "time": "", "description": "" } },
-   "recentDonations": {
-      "<id>": {
-         "name": "",
-         "bloodGroup": "",
-         "location": "",
-         "department": "",
-         "batch": "",
-         "age": "",
-         "height": "",
-         "weight": "",
-         "phone": "",
-         "date": "",
-         "donorId": ""
-      }
-   },
-   "stats": { "livesHelped": 0, "donorIdCounter": 0 },
-   "feedback": { "<id>": { "name": "", "email": "", "message": "", "timestamp": "" } },
-   "visitorTracking": {
-      "totalViews": 0,
-      "presence": { "<sessionId>": true }
-   }
-}
+Core responsibilities are divided as follows:
+
+- `index.html` and the `pages/` directory provide the user-facing screens
+- `assets/css/` contains page-specific and shared styling
+- `assets/js/` contains application logic, shared modules, and page controllers
+- Firebase stores donors, events, recent donations, feedback, and visitor data
+- `server.js` handles chat requests for the AI assistant
+
+## Project Structure
+
+```text
+Blood-Donation-Community/
+├── index.html
+├── server.js
+├── package.json
+├── manifest.webmanifest
+├── service-worker.js
+├── assets/
+│   ├── css/
+│   └── js/
+├── pages/
+├── image/
+├── firebase-rules/
+└── README.md
 ```
 
----
+## Key Pages
 
-## Getting Started
+| Page | Purpose |
+| --- | --- |
+| `index.html` | Landing page with hero section, recent donation feed, charts, leaderboard, and community stats |
+| `pages/join.html` | Donor registration and onboarding |
+| `pages/search.html` | Public donor discovery by blood group and location |
+| `pages/events.html` | Public event listing and event details |
+| `pages/profile.html` | Logged-in donor profile management |
+| `pages/admin.html` | Centralized admin dashboard |
+| `pages/leaderboard.html` | Community donor leaderboard |
+| `pages/visitor-stats.html` | Visitor analytics and presence insights |
 
-1. Clone the repository
-    ```bash
-    git clone https://github.com/mueidshahriar/Blood-Donation-Community.git
-    cd Blood-Donation-Community
-    ```
+## Core Features
 
-2. Set up Firebase
-    - Create a project at [Firebase Console](https://console.firebase.google.com)
-    - Enable Authentication (Email/Password)
-    - Create a Realtime Database
-   - Copy your config into `assets/js/modules/firebase-config.js`
+### Donor Management
 
-3. Run locally
-   - Use a local server (ES Modules require it)
-   - Then open `index.html` in the browser
+- Secure donor sign-up and login flow
+- Editable donor profiles with blood group, contact, and location details
+- Donor ID tracking
+- Last donation record support for eligibility-aware experience
 
----
+### Smart Search
+
+- Search donors by blood group
+- Filter donors by location
+- Support for finding more suitable active donors quickly in urgent cases
+
+### Admin Dashboard
+
+- Manage donor records and roles
+- Create, update, and remove blood donation events
+- Record recent donations
+- Review feedback submissions
+- Access summary metrics across the platform
+
+### Analytics and Community Visibility
+
+- Live charts for age groups, blood group distribution, and monthly donation activity
+- Homepage metrics for donors, lives helped, and events
+- Donor leaderboard and recent donation visibility
+
+### Experience Enhancements
+
+- Bangla and English interface support
+- Installable PWA experience
+- Certificate generation and donor card support
+- AI assistant for FAQs, donation guidance, and site navigation help
+
+## Data Model Summary
+
+The Firebase Realtime Database primarily stores the following top-level collections:
+
+- `donors`
+- `events`
+- `recentDonations`
+- `stats`
+- `feedback`
+- `visitorTracking`
+
+These records support donor discovery, community reporting, homepage analytics, visitor presence, and administrative workflows.
+
+## Local Development Setup
+
+### Prerequisites
+
+- Node.js and npm
+- A Firebase project with Realtime Database and Email/Password Authentication enabled
+- A Google Generative AI API key for the assistant
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/mueidshahriar/Blood-Donation-Community.git
+cd Blood-Donation-Community
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Firebase
+
+Add your Firebase client configuration to the frontend Firebase configuration file used by the project.
+
+Required Firebase services:
+
+- Firebase Authentication with Email/Password
+- Firebase Realtime Database
+
+### 4. Configure environment variables
+
+Create a `.env` file in the project root:
+
+```env
+GEMINI_API_KEY=your_api_key_here
+PORT=3000
+```
+
+### 5. Start the local server
+
+```bash
+npm run dev
+```
+
+After the server starts, open the local application URL in your browser.
+
+## AI Assistant
+
+The AI assistant is served through `server.js` and is intended to help users with:
+
+- Blood donation FAQs
+- Eligibility guidance
+- Website navigation support
+- Bangla, Banglish, and English conversational responses
+
+The assistant requires a valid `GEMINI_API_KEY` in the environment configuration.
+
+## Deployment Notes
+
+- The frontend can be deployed on any static hosting platform
+- Firebase handles authentication and realtime application data
+- The AI assistant requires a separate running Node.js server or a compatible server runtime
+- If frontend and server are deployed separately, ensure the chat endpoint configuration matches the deployed backend
 
 ## Contributing
 
-Contributions are welcome!
+Contributions are welcome. To contribute:
 
-1. Fork the repository
-2. Create a new branch
-    ```bash
-    git checkout -b feature/your-feature-name
-    ```
-3. Commit and push your changes
-4. Submit a Pull Request with a short description
-
----
-
-## License
-
-This project is released under the MIT License — free to use, modify, and distribute.
-
----
+1. Create a new branch for your work.
+2. Implement your changes with clear, focused commits.
+3. Test the affected flows before submitting.
+4. Open a pull request with a concise summary of the update.
 
 ## Contact
 
 Md. Mueid Shahriar
+
 - Email: [mdmueidshahriar16@gmail.com](mailto:mdmueidshahriar16@gmail.com)
 - GitHub: [github.com/mueidshahriar](https://github.com/mueidshahriar)
-- Live: [blood-donation-community.vercel.app](https://blood-donation-community.vercel.app)
-
----
-
-Together, we can save lives — one donation at a time.
+- Live Demo: [blood-donation-community.vercel.app](https://blood-donation-community.vercel.app)
