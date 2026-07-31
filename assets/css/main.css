@@ -1654,6 +1654,12 @@ body.admin-mode header {
     background: linear-gradient(90deg, rgba(99, 102, 241, 0.95), rgba(79, 70, 229, 0.95)) !important;
     color: #fff;
 }
+
+body.admin-mode header.scrolled {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.97), rgba(79, 70, 229, 0.97)) !important;
+    color: #fff !important;
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.16) !important;
+}
 body.admin-mode header a,
 body.admin-mode header button {
     color: #fff !important;
@@ -1670,8 +1676,17 @@ body.admin-mode header .bg-red-600 {
 body.admin-mode header .hover\:bg-red-700:hover {
     background-color: #4f46e5 !important;
 }
-body.admin-mode #mobile-menu {
-    background: linear-gradient(90deg, rgba(99, 102, 241, 0.95), rgba(79, 70, 229, 0.95)) !important;
+body.admin-mode .nav-link--active {
+    background: rgba(255, 255, 255, 0.14) !important;
+    color: #fff !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+body.admin-mode .nav-link--active::after {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.65));
+}
+body.admin-mode #mobile-menu,
+body.admin-mode #mobile-menu > div {
+    background: linear-gradient(180deg, rgba(91, 109, 246, 0.98), rgba(67, 56, 202, 0.98)) !important;
 }
 body.admin-mode #menu-toggle {
     background-color: #ffe4e6 !important;
@@ -1687,11 +1702,22 @@ body.admin-mode #menu-toggle:hover {
     box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5), inset 0 0 0 2px rgba(79, 70, 229, .25);
 }
 body.admin-mode #mobile-menu a,
-body.admin-mode #mobile-login-btn {
-    color: #fff !important;
+body.admin-mode #mobile-menu button {
+    color: rgba(255, 255, 255, 0.97) !important;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: none;
 }
-body.admin-mode #mobile-menu a:hover {
-    background-color: rgba(255, 255, 255, 0.10) !important;
+body.admin-mode #mobile-menu a:hover,
+body.admin-mode #mobile-menu button:hover {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+body.admin-mode #admin-mobile-link,
+body.admin-mode #mobile-logout-btn {
+    display: flex !important;
+    align-items: center;
 }
 body.admin-mode #nav-about-link,
 body.admin-mode #mobile-about-link,

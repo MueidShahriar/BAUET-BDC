@@ -658,7 +658,6 @@
                 ctx.fillStyle = 'rgba(185,28,28,0.6)'; ctx.font = '700 8px Arial';
                 ctx.letterSpacing = '2px';
                 ctx.fillText('BAUET BDC', W/2, 60);
-               
                 ctx.fillStyle = '#b91c1c'; ctx.font = '900 22px Arial';
                 ctx.fillText('DONOR CARD', W/2, 82);
 
@@ -666,7 +665,12 @@
                 const photoCX = W/2, photoCY = 185;
                 const photoR = photoS/2;
 
-                
+                // Outer red ring
+                ctx.lineWidth = 9;
+                const ringGrad = ctx.createLinearGradient(photoCX-photoR, photoCY-photoR, photoCX+photoR, photoCY+photoR);
+                ringGrad.addColorStop(0, '#dc2626'); ringGrad.addColorStop(0.5, '#b91c1c'); ringGrad.addColorStop(1, '#991b1b');
+                ctx.strokeStyle = ringGrad;
+                ctx.beginPath(); ctx.arc(photoCX, photoCY, photoR+8, 0, Math.PI*2); ctx.stroke();
 
                 // Additional decorative rings
                 ctx.strokeStyle = 'rgba(220,38,38,0.08)'; ctx.lineWidth = 4;

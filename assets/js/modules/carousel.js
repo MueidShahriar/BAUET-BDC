@@ -209,12 +209,6 @@ export function renderRecentDonorsCarousel(donors = []) {
                 <article class="recent-card mx-auto max-w-2xl w-full">
 
                     <span class="recent-card__halo" aria-hidden="true"></span>
-
-                    <div class="recent-card__chip">
-                        <i class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i>
-                        Recent Donation
-                    </div>
-
                     <div class="recent-card__summary">
 
                         <div class="recent-card__avatar" aria-hidden="true">
