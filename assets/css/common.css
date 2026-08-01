@@ -878,6 +878,32 @@ img {
     background: #ffffff; 
 }
 
+@media (max-width: 767px) {
+    section#join .field-icon-left .fi,
+    section#join .field-icon-right .fr {
+        width: 2.15rem;
+        height: 2.15rem;
+        border-radius: 999px;
+        background: #ffffff;
+        border: 1px solid rgba(226, 232, 240, 0.95);
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(-50%);
+    }
+
+    section#join .field-icon-left input,
+    section#join .field-icon-left select,
+    section#join .field-icon-left textarea {
+        padding-left: 3rem !important;
+    }
+
+    section#join .field-icon-left label.absolute {
+        left: 3rem !important;
+    }
+}
+
 .field-optional {
     font-size: 0.65rem;
     font-weight: 600;

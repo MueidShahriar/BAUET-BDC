@@ -4,7 +4,8 @@ import {
     formatDateDisplay,
     getInitials,
     getTextValue,
-    normalizeBloodGroup
+    normalizeBloodGroup,
+    getDefaultAvatarImageMarkup
 } from './utils.js';
 
 const tickerControllers = new Map();
@@ -32,7 +33,7 @@ function renderLeaderboardCard(entry, rank) {
     const badgeLabel = getLeaderboardBadgeLabel(badge);
     const avatar = donor.profilePhoto
         ? `<img src="${donor.profilePhoto}" alt="${initials}" class="leaderboard-avatar__img" />`
-        : `<span class="leaderboard-avatar__text">${initials}</span>`;
+        : getDefaultAvatarImageMarkup(donor.gender, 'leaderboard-avatar__img');
     const medalClass = rank === 1 ? 'leaderboard-medal--gold'
         : rank === 2 ? 'leaderboard-medal--silver'
         : rank === 3 ? 'leaderboard-medal--bronze'
@@ -71,7 +72,7 @@ function renderTickerCard(entry, rank) {
     const badgeLabel = getLeaderboardBadgeLabel(badge);
     const avatar = donor.profilePhoto
         ? `<img src="${donor.profilePhoto}" alt="${initials}" class="ticker-avatar__img" />`
-        : `<span class="ticker-avatar__text">${initials}</span>`;
+        : getDefaultAvatarImageMarkup(donor.gender, 'ticker-avatar__img');
     const medalClass = rank === 1 ? 'ticker-rank--gold'
         : rank === 2 ? 'ticker-rank--silver'
         : rank === 3 ? 'ticker-rank--bronze'

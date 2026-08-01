@@ -5,6 +5,9 @@ import {
     onDisconnect
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+const PRESENCE_ACTIVE_WINDOW_MS = 45000;
+const PRESENCE_HEARTBEAT_MS = 15000;
+
 function getSessionId() {
     let sid = sessionStorage.getItem('bdc_session_id');
     if (!sid) {
@@ -26,34 +29,44 @@ export function initVisitorTracker(database, isHomePage = false) {
     
     const myPresenceRef = ref(database, `visitorTracking/presence/${sessionId}`);
     const connectedRef = ref(database, '.info/connected');
+    let heartbeatTimer = null;
+
+    const writePresence = () => set(myPresenceRef, {
+        updatedAt: Date.now(),
+        path: window.location.pathname || '/'
+    }).catch(() => {});
 
     onValue(connectedRef, (snap) => {
         if (snap.val() === true) {
-            set(myPresenceRef, true).catch(() => {});
+            writePresence();
             onDisconnect(myPresenceRef).remove();
+            if (heartbeatTimer) window.clearInterval(heartbeatTimer);
+            heartbeatTimer = window.setInterval(writePresence, PRESENCE_HEARTBEAT_MS);
         }
     });
 
     const allPresenceRef = ref(database, 'visitorTracking/presence');
     onValue(allPresenceRef, (snap) => {
         const data = snap.val();
-        const count = data ? Object.keys(data).length : 0;
+        const now = Date.now();
+        const count = data
+            ? Object.values(data).filter((entry) => {
+                if (entry && typeof entry === 'object' && typeof entry.updatedAt === 'number') {
+                    return now - entry.updatedAt <= PRESENCE_ACTIVE_WINDOW_MS;
+                }
+                return Boolean(entry);
+            }).length
+            : 0;
         onlineEls.forEach(el => { el.textContent = count; });
         if (onlineSingle) onlineSingle.textContent = count;
     });
 
     
     if (viewEls.length || viewSingle) {
-        const VIEW_FLAG = 'bdc_home_view_counted';
         const viewsRef = ref(database, 'visitorTracking/totalViews');
 
-        if (isHomePage && !sessionStorage.getItem(VIEW_FLAG)) {
-            runTransaction(viewsRef, (current) => {
-                return (current || 0) + 1;
-            }).then(() => {
-                sessionStorage.setItem(VIEW_FLAG, '1');
-            }).catch(err => console.error('View count transaction error:', err));
-        }
+        runTransaction(viewsRef, (current) => (current || 0) + 1)
+            .catch(err => console.error('View count transaction error:', err));
 
         onValue(viewsRef, (snap) => {
             const views = snap.val() || 0;
@@ -62,4 +75,8 @@ export function initVisitorTracker(database, isHomePage = false) {
             if (viewSingle) viewSingle.textContent = text;
         });
     }
+
+    window.addEventListener('pagehide', () => {
+        if (heartbeatTimer) window.clearInterval(heartbeatTimer);
+    }, { once: true });
 }

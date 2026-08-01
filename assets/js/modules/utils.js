@@ -61,6 +61,25 @@ export function getInitials(value, fallback = '?') {
     return initials || fallback;
 }
 
+export function getDefaultAvatarMarkup(gender, className = 'default-avatar-glyph') {
+    const normalizedGender = getTextValue(gender, '').toLowerCase();
+    const iconClass = normalizedGender === 'female'
+        ? 'fa-solid fa-person-dress'
+        : normalizedGender === 'male'
+            ? 'fa-solid fa-person'
+            : 'fa-solid fa-user';
+    return `<i class="${className} ${iconClass}" aria-hidden="true"></i>`;
+}
+
+export function getDefaultAvatarImageMarkup(gender, className = 'default-avatar-image') {
+    const normalizedGender = getTextValue(gender, '').toLowerCase();
+    const imagePath = normalizedGender === 'female'
+        ? '../../../image/female.png'
+        : '../../../image/male.png';
+    const imageUrl = new URL(imagePath, import.meta.url).href;
+    return `<img src="${imageUrl}" class="${className}" alt="" aria-hidden="true" />`;
+}
+
 export function getDonorIdNumber(value) {
     if (value == null) return null;
     if (typeof value === 'number' && Number.isFinite(value)) {

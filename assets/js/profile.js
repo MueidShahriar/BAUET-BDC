@@ -32,6 +32,7 @@ import {
   normalizeDonorId,
   formatDateDisplay,
   getDonorEligibilityStatus,
+  getDefaultAvatarMarkup,
 } from "./modules/utils.js";
 
 const app = initializeApp(firebaseConfig);
@@ -178,7 +179,10 @@ function populateProfile(data, email) {
   const loc = data.location || "—";
   const role = data.role || "member";
 
-  if (avatarText) avatarText.textContent = getInitials(name);
+  if (avatarText) {
+    avatarText.innerHTML = getDefaultAvatarMarkup(data.gender, "profile-avatar-icon");
+    avatarText.setAttribute("aria-hidden", "true");
+  }
 
   if (profileAvatarImg && data.profilePhoto) {
     profileAvatarImg.src = data.profilePhoto;

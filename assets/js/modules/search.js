@@ -1,5 +1,5 @@
 import state from './state.js';
-import { normalizeBloodGroup, isDonorEligible, getInitials, getTextValue, getDonorEligibilityStatus } from './utils.js';
+import { normalizeBloodGroup, isDonorEligible, getInitials, getTextValue, getDonorEligibilityStatus, getDefaultAvatarImageMarkup } from './utils.js';
 
 function getContactHref() {
     const path = window.location.pathname || '';
@@ -59,8 +59,8 @@ function renderDonorCardPublic(d) {
             tabindex="0">
         </span>`;
     const avatarHtml = d.profilePhoto
-        ? `<img src="${d.profilePhoto}" alt="" class="w-10 h-10 rounded-full object-cover border-2 border-red-200 flex-shrink-0" />`
-        : `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-600 to-red-400 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">${initials}</div>`;
+        ? `<img src="${d.profilePhoto}" alt="" class="w-10 h-10 rounded-full object-cover border border-slate-200 flex-shrink-0 bg-white" />`
+        : getDefaultAvatarImageMarkup(d.gender, 'w-10 h-10 rounded-full object-cover border border-slate-200 flex-shrink-0 bg-white donor-card__avatar-image');
     const contactHref = getContactHref();
     const contactDesktop = d.isPhoneHidden
         ? `<a href="${contactHref}" class="flex items-center gap-1 text-red-700 hover:text-red-800 transition-colors">

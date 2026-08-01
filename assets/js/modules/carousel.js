@@ -1,5 +1,5 @@
 import state from './state.js';
-import { getInitials, getTextValue, normalizeDonorId } from './utils.js';
+import { getInitials, getTextValue, normalizeDonorId, getDefaultAvatarImageMarkup } from './utils.js';
 
 export function setRecentLoading(isLoading) {
     state.recentLoaderState = Boolean(isLoading);
@@ -202,7 +202,7 @@ export function renderRecentDonorsCarousel(donors = []) {
 
         const avatarMarkup = d.profilePhoto
             ? `<img src="${d.profilePhoto}" alt="${donorName}" class="recent-card__avatar-image" loading="lazy" />`
-            : initials;
+            : getDefaultAvatarImageMarkup(d.gender, 'recent-card__avatar-image');
 
         itemsHTML += `
             <div class="${itemClass}">

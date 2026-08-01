@@ -560,7 +560,7 @@ body::-webkit-scrollbar-track {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: inherit;
+    border-radius: 50%;
     display: block;
 }
 .recent-card__headline {
@@ -668,7 +668,7 @@ body::-webkit-scrollbar-track {
     .recent-card__avatar {
         width: 3rem;
         height: 3rem;
-        border-radius: 14px;
+        border-radius: 999px;
         font-size: 1.05rem;
     }
     .recent-card__stats {
@@ -983,7 +983,7 @@ section#join .how-card.tint-emerald label.absolute {
 .admin-member-search-panel__btn--primary {
     background: linear-gradient(120deg, var(--admin), var(--admin-hover));
     color: #fff;
-    box-shadow: 0 10px 25px rgba(225, 29, 72, 0.22);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
 }
 .admin-member-search-panel__btn--primary:hover {
     transform: translateY(-1px);
@@ -1010,11 +1010,11 @@ section#join .how-card.tint-emerald label.absolute {
 }
 
 .admin-panel-card {
-    background: #fff;
+    background: #ffffff;
     border-radius: 1rem;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.06);
     padding: 1.75rem;
-    border: 1px solid rgba(0,0,0,0.04);
+    border: 1px solid rgba(226, 232, 240, 0.95);
 }
 .admin-panel-card__header {
     display: flex;
@@ -1022,30 +1022,30 @@ section#join .how-card.tint-emerald label.absolute {
     gap: 1rem;
     margin-bottom: 1.75rem;
     padding-bottom: 1.25rem;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.95);
 }
 .admin-panel-card__icon {
     width: 48px;
     height: 48px;
     border-radius: 14px;
-    background: linear-gradient(145deg, rgba(225,29,72,0.15), rgba(225,29,72,0.05));
+    background: #ffffff;
     color: #dc2626;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: 1.15rem;
     flex-shrink: 0;
-    box-shadow: inset 0 0 0 1px rgba(225,29,72,0.08);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(226, 232, 240, 0.95);
 }
 .admin-panel-card__icon--amber {
-    background: linear-gradient(145deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));
+    background: #ffffff;
     color: #d97706;
-    box-shadow: inset 0 0 0 1px rgba(245,158,11,0.1);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(226, 232, 240, 0.95);
 }
 .admin-panel-card__icon--emerald {
-    background: linear-gradient(145deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05));
+    background: #ffffff;
     color: #059669;
-    box-shadow: inset 0 0 0 1px rgba(16,185,129,0.1);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04), inset 0 0 0 1px rgba(226, 232, 240, 0.95);
 }
 .admin-panel-card__title {
     font-size: 1.15rem;
@@ -1093,11 +1093,11 @@ section#join .how-card.tint-emerald label.absolute {
 .admin-btn--primary {
     background: linear-gradient(135deg, #dc2626, #b91c1c);
     color: #fff;
-    box-shadow: 0 4px 14px rgba(220,38,38,0.25);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
 }
 .admin-btn--primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(220,38,38,0.35);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
 }
 .admin-btn--ghost {
     background: #fff;
@@ -1112,7 +1112,7 @@ section#join .how-card.tint-emerald label.absolute {
 .admin-list-section {
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid rgba(226, 232, 240, 0.95);
 }
 .admin-list-section__title {
     font-size: 0.92rem;
@@ -1137,16 +1137,16 @@ section#join .how-card.tint-emerald label.absolute {
     display: flex;
     align-items: stretch;
     gap: 1rem;
-    background: #fff;
-    border: 1px solid #f3f4f6;
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.95);
     border-radius: 14px;
     padding: 1rem 1.15rem;
     transition: all 0.2s ease;
     position: relative;
 }
 .admin-event-card:hover {
-    border-color: rgba(225,29,72,0.15);
-    box-shadow: 0 4px 16px rgba(225,29,72,0.07);
+    border-color: rgba(203, 213, 225, 0.95);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 .admin-event-card--past {
     opacity: 0.55;
@@ -1159,22 +1159,22 @@ section#join .how-card.tint-emerald label.absolute {
     align-items: center;
     justify-content: center;
     border-radius: 12px;
-    background: linear-gradient(160deg, #fef2f2, #fff1f2);
-    border: 1px solid rgba(225,29,72,0.1);
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.95);
     padding: 0.5rem 0.25rem;
     text-align: center;
 }
 .admin-event-card__month {
     font-size: 0.65rem;
     font-weight: 700;
-    color: #dc2626;
+    color: #64748b;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }
 .admin-event-card__day {
     font-size: 1.35rem;
     font-weight: 800;
-    color: #991b1b;
+    color: #111827;
     line-height: 1.1;
 }
 .admin-event-card__body {
@@ -1222,30 +1222,38 @@ section#join .how-card.tint-emerald label.absolute {
     display: flex;
     align-items: flex-start;
     gap: 1rem;
-    background: #fff;
-    border: 1px solid #f3f4f6;
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.95);
     border-radius: 14px;
     padding: 1.15rem;
     transition: all 0.2s ease;
 }
 .admin-member-card:hover {
-    border-color: rgba(16,185,129,0.2);
-    box-shadow: 0 4px 16px rgba(16,185,129,0.06);
+    border-color: rgba(203, 213, 225, 0.95);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 .admin-member-card__avatar {
     flex-shrink: 0;
     width: 48px;
     height: 48px;
     border-radius: 14px;
-    background: linear-gradient(145deg, #dc2626, #f87171);
-    color: #fff;
+    background: #ffffff;
+    color: #334155;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.95rem;
     font-weight: 800;
     letter-spacing: 0.02em;
-    box-shadow: 0 4px 12px rgba(220,38,38,0.2);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+.admin-member-card__avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    display: block;
 }
 .admin-member-card__body {
     flex: 1;
@@ -2055,6 +2063,7 @@ canvas {
         width: 2.6rem;
         height: 2.6rem;
         font-size: 0.98rem;
+        border-radius: 999px;
     }
     .recent-card__stats {
         grid-template-columns: 1fr;

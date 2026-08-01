@@ -8,7 +8,9 @@ import {
     getDonorIdNumber,
     computeDonorReputation,
     getDonorEligibilityStatus,
-    formatDateDisplay
+    formatDateDisplay,
+    getDefaultAvatarMarkup,
+    getDefaultAvatarImageMarkup
 } from './utils.js';
 import { openModal, closeModal, showModalMessage, attachConfirmHandler } from './modals.js';
 
@@ -107,8 +109,8 @@ function renderDonorCardAdmin(d) {
             ? '<span class="admin-member-badge admin-member-badge--eligible"><i class="fa-solid fa-circle-check"></i> Eligible</span>'
             : `<span class="admin-member-badge admin-member-badge--waiting"><i class="fa-solid fa-hourglass-half"></i> Eligible on ${formatDateDisplay(eligibility.eligibleDate)}</span>`;
     const avatarContent = d.profilePhoto
-        ? `<img src="${d.profilePhoto}" alt="${initials}" style="width:100%;height:100%;object-fit:cover;border-radius:14px">`
-        : initials;
+        ? `<img src="${d.profilePhoto}" alt="${initials}" class="admin-member-card__avatar-image">`
+        : getDefaultAvatarImageMarkup(d.gender, 'admin-member-card__avatar-image');
     const donorId = normalizeDonorId(d.donorId) || d.donorId || '—';
     const isAdminMember = (d.role || 'member') === 'admin';
     const roleBadge = isAdminMember

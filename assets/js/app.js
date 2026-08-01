@@ -62,6 +62,7 @@ const eventsRef        = ref(database, 'events');
 const statsRef         = ref(database, 'stats');
 const recentDonationsRef = ref(database, 'recentDonations');
 const feedbackRef      = ref(database, 'feedback');
+const DEFAULT_RECENT_DONATION_CENTER = 'Mojumdar Clinic, Bagatipara';
 
 const downloadMonthlyReportPdf = createMonthlyReportDownloader({
     getRecentDonations: () => Array.isArray(state.recentDonationsList) ? [...state.recentDonationsList] : [],
@@ -99,6 +100,29 @@ function refreshLeaderboard() {
     renderDonorLeaderboard(state.donorsList || [], state.recentDonationsList || [], { limit });
     renderDonorTicker(state.donorsList || [], state.recentDonationsList || []);
     initLeaderboardFilters(state.donorsList || [], state.recentDonationsList || []);
+}
+
+function getRecentDonationCenterForDonor(donor) {
+    const lastInfo = donor?.lastDonationInfo || {};
+    return (
+        lastInfo.location?.toString().trim()
+        || DEFAULT_RECENT_DONATION_CENTER
+    );
+}
+
+function findDonorForRecentDonationInput(rawId) {
+    const trimmedInput = (rawId || '').toString().trim();
+    const normalizedInput = normalizeDonorId(trimmedInput);
+    if (!trimmedInput && !normalizedInput) return null;
+    return state.donorsList.find(donor => {
+        const normalizedDonorId = normalizeDonorId(donor?.donorId || donor?.rawDonorId);
+        return (
+            (normalizedInput && normalizedDonorId === normalizedInput)
+            || donor?.donorId === trimmedInput
+            || donor?.rawDonorId === trimmedInput
+            || donor?.id === trimmedInput
+        );
+    }) || null;
 }
 
 function switchAdminTab(tabName) {
@@ -710,24 +734,23 @@ window.onload = function () {
         const editId = fd.get('recent-donor-id')?.toString().trim();
         const donorIdRaw = fd.get('donor-id')?.toString().trim() || '';
         const donorIdInput = normalizeDonorId(donorIdRaw);
-        const matchedDonor = donorIdInput
-            ? state.donorsList.find(d => normalizeDonorId(d.donorId) === donorIdInput)
-            : (donorIdRaw ? state.donorsList.find(d => d.id === donorIdRaw) : null);
+        const matchedDonor = findDonorForRecentDonationInput(donorIdRaw);
         const donorData = {
             name: fd.get('donor-name'), bloodGroup: fd.get('donor-blood-group'),
             location: fd.get('donor-location'), department: fd.get('donor-department'),
             batch: fd.get('donor-batch'), age: fd.get('donor-age'),
             weight: fd.get('donor-weight'),
             phone: fd.get('donor-number'), date: fd.get('donation-date'),
-            donorId: donorIdInput || normalizeDonorId(matchedDonor?.donorId)
+            donorId: donorIdInput || normalizeDonorId(matchedDonor?.donorId || matchedDonor?.rawDonorId)
         };
         if (matchedDonor) {
             const lastInfo = matchedDonor.lastDonationInfo || {};
             if (!donorData.name) donorData.name = matchedDonor.fullName || matchedDonor.name || '';
             if (!donorData.bloodGroup) donorData.bloodGroup = matchedDonor.bloodGroup || '';
-            if (!donorData.location) donorData.location = matchedDonor.location || '';
+            if (!donorData.location) donorData.location = getRecentDonationCenterForDonor(matchedDonor);
             if (!donorData.department) donorData.department = matchedDonor.department || lastInfo.department || '';
             if (!donorData.batch) donorData.batch = matchedDonor.batch || lastInfo.batch || '';
+            if (!donorData.age) donorData.age = matchedDonor.age || lastInfo.age || '';
             if (!donorData.phone) donorData.phone = matchedDonor.phone || '';
             if (!donorData.weight) donorData.weight = matchedDonor.weight || lastInfo.weight || '';
         }
@@ -749,7 +772,7 @@ window.onload = function () {
                 batch: donorData.batch || '',
                 age: donorData.age || '',
                 weight: donorData.weight || '',
-                donorId: donorData.donorId || normalizeDonorId(matchedDonor.donorId)
+                donorId: donorData.donorId || normalizeDonorId(matchedDonor.donorId || matchedDonor.rawDonorId)
             }
         } : null;
         if (editId) {
@@ -796,9 +819,7 @@ window.onload = function () {
         if (recentDonorIdField && normalizedId && recentDonorIdField.value.trim() !== normalizedId) {
             recentDonorIdField.value = normalizedId;
         }
-        const match = normalizedId
-            ? state.donorsList.find(d => normalizeDonorId(d.donorId) === normalizedId)
-            : state.donorsList.find(d => d.id === rawId);
+        const match = findDonorForRecentDonationInput(rawId);
         if (!match) return;
         const lastInfo = match.lastDonationInfo || {};
         const nameF = document.getElementById('donor-name');
@@ -806,15 +827,17 @@ window.onload = function () {
         const locF = document.getElementById('donor-location');
         const deptF = document.getElementById('donor-department');
         const batchF = document.getElementById('donor-batch');
+        const ageF = document.getElementById('donor-age');
         const numberF = document.getElementById('donor-number');
         const weightF = document.getElementById('donor-weight');
-        if (nameF && !nameF.value) nameF.value = match.fullName || '';
-        if (bgF && !bgF.value) bgF.value = match.bloodGroup || '';
-        if (locF && !locF.value) locF.value = match.location || '';
-        if (deptF && !deptF.value) deptF.value = match.department || lastInfo.department || '';
-        if (batchF && !batchF.value) batchF.value = match.batch || lastInfo.batch || '';
-        if (numberF && !numberF.value) numberF.value = match.phone || '';
-        if (weightF && !weightF.value) weightF.value = match.weight || lastInfo.weight || '';
+        if (nameF) nameF.value = match.fullName || match.name || '';
+        if (bgF) bgF.value = match.bloodGroup || '';
+        if (locF) locF.value = getRecentDonationCenterForDonor(match);
+        if (deptF) deptF.value = match.department || lastInfo.department || '';
+        if (batchF) batchF.value = match.batch || lastInfo.batch || '';
+        if (ageF) ageF.value = match.age || lastInfo.age || '';
+        if (numberF) numberF.value = match.phone || '';
+        if (weightF) weightF.value = match.weight || lastInfo.weight || '';
     };
     recentDonorIdField?.addEventListener('input', fillRecentDonorFromId);
     recentDonorIdField?.addEventListener('change', fillRecentDonorFromId);
