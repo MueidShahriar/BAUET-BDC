@@ -4367,4 +4367,40 @@ body::after {
     background: linear-gradient(180deg, #dc2626, #b91c1c) !important;
 }
 
+@media (max-width: 768px) {
+    .admin-overview-grid {
+        display: none !important;
+    }
+}
+
+@media (max-width: 768px) {
+
+    #admin-recent-donor-form {
+        padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+
+    #admin-recent-donor-form .field-icon-left {
+        padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+
+    #admin-recent-donor-form .field-icon-left + .field-icon-left {
+        margin-top: 1rem;
+    }
+
+    .admin-member-search-panel {
+        padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+}
 }
