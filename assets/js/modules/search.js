@@ -62,7 +62,8 @@ function renderDonorCardPublic(d) {
         ? `<img src="${d.profilePhoto}" alt="" class="w-10 h-10 rounded-full object-cover border border-slate-200 flex-shrink-0 bg-white" />`
         : getDefaultAvatarImageMarkup(d.gender, 'w-10 h-10 rounded-full object-cover border border-slate-200 flex-shrink-0 bg-white donor-card__avatar-image');
     const contactHref = getContactHref();
-    const contactDesktop = d.isPhoneHidden
+    const isPhoneHidden = Boolean(d.isPhoneHidden) || String(d.gender || '').trim().toLowerCase() === 'female';
+    const contactDesktop = isPhoneHidden
         ? `<a href="${contactHref}" class="flex items-center gap-1 text-red-700 hover:text-red-800 transition-colors">
             <i class="fa-solid fa-circle-info text-red-500"></i>
             <span class="text-xs font-semibold no-underline">${contactNote}</span>
@@ -72,7 +73,7 @@ function renderDonorCardPublic(d) {
                 <span class="font-bold">Contact:</span>
                 <a class="text-xs text-gray-600 underline" href="${phone === '—' ? contactHref : `tel:${phone}`}">${phone}</a>
            </div>`;
-    const contactMobileRow = d.isPhoneHidden
+    const contactMobileRow = isPhoneHidden
         ? `<div class="info-row sm:hidden">
                 <i class="icon fa-solid fa-circle-info text-red-500"></i>
                 <div class="info-text">

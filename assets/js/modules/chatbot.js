@@ -20,14 +20,15 @@ function isBangla(text) {
 }
 
 function isBanglish(text) {
-    const banglishWords = ['ami', 'amr', 'amar', 'tumi', 'tomar', 'apni', 'apnar', 'kemon', 'kothay', 'keno', 'ki', 'holo', 'hobe', 'hoy', 'kore', 'korbo', 'korte', 'korlam', 'korsi', 'chai', 'ache', 'achen', 'thik', 'bhai', 'vai', 'bol', 'bolo', 'bolun', 'rokte', 'rokto', 'rokter', 'blood', 'daan', 'dan', 'parbo', 'parbe', 'parben', 'jodi', 'tahole', 'amader', 'oder', 'tader', 'shob', 'sob', 'keu', 'karo', 'jano', 'janen', 'bujhi', 'bujhen', 'dite', 'nite', 'lagbe', 'dorkar', 'sahajjo', 'help', 'poribar', 'poribarer', 'shastho', 'shasthyo', 'rog', 'rogi', 'hospital', 'daktar', 'doctor', 'oshudh', 'kivabe', 'kemne', 'onek', 'ektu', 'aktu', 'please', 'plz', 'doya', 'janaben', 'janao', 'group', 'grp', 'donate', 'dibo', 'dibi', 'debe', 'nibo', 'nebo', 'hae', 'haa', 'na', 'nah', 'aro', 'ar', 'ba', 'ebong', 'kintu', 'tobe', 'je', 'jar', 'eta', 'ota', 'sheta', 'kota', 'kothai', 'weak', 'durbol', 'problem', 'somossa', 'shomossa', 'jabe', 'dewa', 'deya', 'deowa', 'rakte', 'din', 'dilen', 'dilam', 'pari', 'paro', 'paren', 'possible', 'age', 'boyosh', 'ojon', 'weight', 'kg', 'hemoglobin', 'iron', 'tablet', 'medicine', 'oshudh', 'khete', 'khabo', 'khaben', 'khawar', 'pore', 'agey', 'age', 'shomoy', 'somoy', 'time', 'koto', 'kokhon', 'kobe', 'theke', 'jonno', 'jonne', 'dhoroner', 'type', 'negative', 'positive', 'thalassemia', 'cancer', 'diabetes', 'sugar', 'pressure', 'bp', 'anemia', 'infection', 'fever', 'jor', 'gaye', 'matha', 'ghora', 'byatha', 'betha', 'lage', 'lagche', 'shurjo', 'safe', 'nirapod', 'khatarnak', 'risk', 'bhoy', 'bhoi', 'test', 'poriksha', 'report', 'normal', 'abnormal', 'donor', 'donner', 'donar', 'khuje', 'khujte', 'khuji', 'paoa', 'pawa', 'contact', 'number', 'phone', 'call', 'akjon', 'ekjon', 'jon', 'er', 'dao', 'daw', 'den', 'name', 'koi', 'koy', 'kobe', 'kotha'];
+    const banglishWords = ['ami', 'amr', 'amar', 'tumi', 'tomar', 'apni', 'apnar', 'kemon', 'kmn', 'aso', 'acho', 'accho', 'asen', 'achen', 'kothay', 'keno', 'ki', 'holo', 'hobe', 'hoy', 'kore', 'korbo', 'korte', 'korlam', 'korsi', 'chai', 'ache', 'achen', 'thik', 'bhai', 'vai', 'bol', 'bolo', 'bolun', 'rokte', 'rokto', 'rokter', 'blood', 'daan', 'dan', 'parbo', 'parbe', 'parben', 'jodi', 'tahole', 'amader', 'oder', 'tader', 'shob', 'sob', 'keu', 'karo', 'jano', 'janen', 'bujhi', 'bujhen', 'dite', 'nite', 'lagbe', 'dorkar', 'sahajjo', 'help', 'poribar', 'poribarer', 'shastho', 'shasthyo', 'rog', 'rogi', 'hospital', 'daktar', 'doctor', 'oshudh', 'kivabe', 'kemne', 'onek', 'ektu', 'aktu', 'please', 'plz', 'doya', 'janaben', 'janao', 'group', 'grp', 'donate', 'dibo', 'dibi', 'debe', 'nibo', 'nebo', 'hae', 'haa', 'na', 'nah', 'aro', 'ar', 'ba', 'ebong', 'kintu', 'tobe', 'je', 'jar', 'eta', 'ota', 'sheta', 'kota', 'kothai', 'weak', 'durbol', 'problem', 'somossa', 'shomossa', 'jabe', 'dewa', 'deya', 'deowa', 'rakte', 'din', 'dilen', 'dilam', 'pari', 'paro', 'paren', 'possible', 'age', 'boyosh', 'ojon', 'weight', 'kg', 'hemoglobin', 'iron', 'tablet', 'medicine', 'oshudh', 'khete', 'khabo', 'khaben', 'khawar', 'pore', 'agey', 'age', 'shomoy', 'somoy', 'time', 'koto', 'kokhon', 'kobe', 'theke', 'jonno', 'jonne', 'dhoroner', 'type', 'negative', 'positive', 'thalassemia', 'cancer', 'diabetes', 'sugar', 'pressure', 'bp', 'anemia', 'infection', 'fever', 'jor', 'gaye', 'matha', 'ghora', 'byatha', 'betha', 'lage', 'lagche', 'shurjo', 'safe', 'nirapod', 'khatarnak', 'risk', 'bhoy', 'bhoi', 'test', 'poriksha', 'report', 'normal', 'abnormal', 'donor', 'donner', 'donar', 'khuje', 'khujte', 'khuji', 'paoa', 'pawa', 'contact', 'number', 'phone', 'call', 'akjon', 'ekjon', 'jon', 'er', 'dao', 'daw', 'den', 'name', 'koi', 'koy', 'kobe', 'kotha'];
     const words = text.toLowerCase().split(/\s+/);
     const matched = words.filter(w => banglishWords.includes(w)).length;
-    return matched >= 2 || (matched >= 1 && words.length <= 5);
+    return matched >= 2;
 }
 
 function detectLang(text) {
     if (isBangla(text)) return 'bangla';
+    if (/\b(?:i|you|we|they|he|she|it|need|want|can|could|would|should|do|does|did|is|are|was|were|what|when|where|why|how|please|find|search|show|give|tell|about|with|the)\b/i.test(text)) return 'english';
     if (isBanglish(text)) return 'banglish';
     return 'english';
 }
@@ -155,6 +156,16 @@ function findDonorsByGroup(bloodGroup) {
     });
 }
 
+function isDonorPhoneHidden(donor) {
+    return Boolean(donor?.isPhoneHidden) || String(donor?.gender || '').trim().toLowerCase() === 'female';
+}
+
+function getHiddenPhoneLabel(lang) {
+    if (lang === 'bangla') return 'যোগাযোগের জন্য অ্যাডমিনের সাথে কথা বলুন';
+    if (lang === 'banglish') return 'Contact er jonno admin er sathe jogajog korun';
+    return 'Contact admin for donor communication';
+}
+
 function formatDonorResults(donors, bloodGroup, lang) {
     const searchHref = getSearchHref();
     if (!donors || donors.length === 0) {
@@ -176,7 +187,7 @@ function formatDonorResults(donors, bloodGroup, lang) {
     const maxShow = 120;
     const list = donors.slice(0, maxShow).map((d, i) => {
         const name = d.fullName || d.name || 'Unknown';
-        const phone = d.phone || d.contact || 'N/A';
+        const phone = isDonorPhoneHidden(d) ? getHiddenPhoneLabel(lang) : (d.phone || d.contact || 'N/A');
         const loc = d.location || d.area || '';
         const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString('en-GB') : '';
         let row = `<div style="background:#f9fafb;border-radius:0.5rem;padding:0.5rem 0.65rem;margin-top:0.35rem;border-left:3px solid #dc2626">`;
@@ -216,7 +227,7 @@ function formatFallbackDonorResults(donors, bloodGroup, lang) {
     const maxShow = 120;
     const list = donors.slice(0, maxShow).map((d, i) => {
         const name = d.fullName || d.name || 'Unknown';
-        const phone = d.phone || d.contact || 'N/A';
+        const phone = isDonorPhoneHidden(d) ? getHiddenPhoneLabel(lang) : (d.phone || d.contact || 'N/A');
         const loc = d.location || d.area || '';
         let row = `<div style="background:#fff1f2;border-radius:0.5rem;padding:0.5rem 0.65rem;margin-top:0.35rem;border-left:3px solid #f97316">`;
         row += `<div style="font-weight:600;color:#111827">${i + 1}. ${name}</div>`;
@@ -958,6 +969,21 @@ function getAIFallbackMessage(lang) {
     return 'The AI reply service is unavailable right now, so I cannot generate a natural response at the moment. Please try again shortly, or send a more specific question and I will help with the information available.';
 }
 
+function getConversationalFallback(question, lang) {
+    const q = normalizeQuestionForKB(question);
+    const isWellbeingQuestion = /\b(how are you|how r u|kmn aso|kemon acho|kemon asen|kemon achen)\b/.test(q);
+
+    if (isWellbeingQuestion) {
+        if (lang === 'bangla') return 'আমি ভালো আছি, ধন্যবাদ! আপনি কেমন আছেন? রক্তদান, ডোনার খোঁজা বা ওয়েবসাইটের যেকোনো বিষয়ে বলুন, আমি সাহায্য করছি।';
+        if (lang === 'banglish') return 'Ami bhalo achi, dhonnobad! Apni kmn asen? Blood donation, donor search, ba website niye ja jante chan bolun, ami help korchi.';
+        return 'I am doing well, thank you. How are you? Ask me anything about blood donation, finding donors, or using this website.';
+    }
+
+    if (lang === 'bangla') return 'আমি রক্তদান, ডোনার খোঁজা এবং এই ওয়েবসাইট ব্যবহার নিয়ে সাহায্য করতে পারি। প্রশ্নটা একটু বিস্তারিত লিখলে আমি সবচেয়ে ভালোভাবে উত্তর দিতে পারব।';
+    if (lang === 'banglish') return 'Ami blood donation, donor search, ar ei website use kora niye help korte pari. Question ta ektu details e likhle ami best vabe answer dite parbo.';
+    return 'I can help with blood donation, donor search, and using this website. Please share a little more detail and I will give you the most useful answer.';
+}
+
 async function getAnswer(question, options = {}) {
     const { skipAI = false } = options;
     loadPersistedChatState();
@@ -1019,10 +1045,7 @@ async function getAnswer(question, options = {}) {
         return reply;
     }
 
-    const clarify = getClarifyFallback(lang);
-    const aiFallback = getAIFallbackMessage(lang);
-    const liveAgent = getLiveAgentFallback(lang);
-    const reply = maybePersonalizeReply(`${aiFallback}<br><br>${clarify}<br><br>${liveAgent}`);
+    const reply = maybePersonalizeReply(getConversationalFallback(question, lang));
     addToHistory('user', question);
     addToHistory('model', stripHtml(reply));
     return reply;
@@ -1235,33 +1258,16 @@ export function initChatbot() {
                 await typeAssistantMessage(assistantMessage, answer, 8);
             } else {
                 const ragContext = buildKBContext(question) + buildDonorContext(question);
-                let assistantMessage = null;
-                let firstChunkReceived = false;
-
-                const answer = await askGeminiStream(question, ragContext, (fullText) => {
-                    if (!firstChunkReceived) {
-                        const elapsed = Date.now() - startTime;
-                        if (elapsed < minimumThinkingTime) {
-                            return;
-                        }
-                        firstChunkReceived = true;
-                        removeTypingIndicator();
-                        assistantMessage = createAssistantMessage('');
-                    }
-                    if (!firstChunkReceived) return;
-                    updateAssistantMessage(assistantMessage, formatPlainTextForHtml(fullText), true);
-                });
+                const answer = await askGeminiStream(question, ragContext);
 
                 if (answer) {
                     const elapsed = Date.now() - startTime;
-                    if (!firstChunkReceived && elapsed < minimumThinkingTime) {
+                    if (elapsed < minimumThinkingTime) {
                         await sleep(minimumThinkingTime - elapsed);
                     }
-                    if (!assistantMessage) {
-                        removeTypingIndicator();
-                        assistantMessage = createAssistantMessage('');
-                    }
-                    updateAssistantMessage(assistantMessage, formatPlainTextForHtml(answer), false);
+                    removeTypingIndicator();
+                    const assistantMessage = createAssistantMessage('');
+                    await typeAssistantMessage(assistantMessage, answer, 10);
                 } else {
                     const elapsed = Date.now() - startTime;
                     if (elapsed < minimumThinkingTime) {

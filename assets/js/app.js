@@ -134,14 +134,17 @@ function switchAdminTab(tabName) {
 
 function resetAdminMemberSearchInputs() {
     const nameInput = document.getElementById('admin-member-search-name');
+    const phoneInput = document.getElementById('admin-member-search-phone');
     const bloodSelect = document.getElementById('admin-member-search-blood');
     if (nameInput) nameInput.value = '';
+    if (phoneInput) phoneInput.value = '';
     if (bloodSelect) bloodSelect.value = '';
 }
 
 function applyAdminMemberRoleFilter(role) {
     state.memberSearchRole = role || '';
     state.memberSearchName = '';
+    state.memberSearchPhone = '';
     state.memberSearchBlood = '';
     resetAdminMemberSearchInputs();
     renderAdminMembersList(deleteMember, promoteMemberToAdmin, demoteAdminToMember);
@@ -849,9 +852,9 @@ window.onload = function () {
         const fd = new FormData(adminMemberForm);
         const memberId = fd.get('id');
         const updatedData = {
-            fullName: fd.get('fullName'), email: fd.get('email') || '', phone: fd.get('phone'), bloodGroup: fd.get('bloodGroup'),
+            fullName: fd.get('fullName'), email: fd.get('email') || '', phone: fd.get('phone'), bloodGroup: fd.get('bloodGroup'), gender: fd.get('gender') || 'Other',
             location: fd.get('location'), department: fd.get('department'), batch: fd.get('batch'), lastDonateDate: fd.get('lastDonateDate'),
-            isPhoneHidden: fd.get('isPhoneHidden') === 'on', publicComment: fd.get('publicComment')
+            isPhoneHidden: fd.get('gender') === 'Female' || fd.get('isPhoneHidden') === 'on', publicComment: fd.get('publicComment')
         };
         if (memberId) {
             update(ref(database, 'donors/' + memberId), updatedData)
@@ -864,9 +867,9 @@ window.onload = function () {
     document.getElementById('admin-member-search-btn')?.addEventListener('click', () => applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember));
     document.getElementById('admin-member-search-reset')?.addEventListener('click', () => resetAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember));
     document.getElementById('admin-member-search-blood')?.addEventListener('change', () => applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember));
-    document.getElementById('admin-member-search-name')?.addEventListener('keydown', ev => {
+    ['admin-member-search-name', 'admin-member-search-phone'].forEach(id => document.getElementById(id)?.addEventListener('keydown', ev => {
         if (ev.key === 'Enter') { ev.preventDefault(); applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember); }
-    });
+    }));
 
     document.getElementById('admin-monthly-report-btn')?.addEventListener('click', () =>
         downloadMonthlyReportPdf(document.getElementById('admin-monthly-report-btn'))

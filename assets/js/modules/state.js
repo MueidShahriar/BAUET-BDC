@@ -4,6 +4,7 @@ const state = {
     eventsList: [],
     feedbackList: [],
     memberSearchName: '',
+    memberSearchPhone: '',
     memberSearchBlood: '',
     memberSearchRole: '',
     eventSearchTerm: '',

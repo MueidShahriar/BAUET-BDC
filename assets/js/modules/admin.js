@@ -97,6 +97,7 @@ function renderDonorCardAdmin(d) {
     const noteRow = note ? `<span style="color:#dc2626"><i class="fa-solid fa-note-sticky"></i> Additional Notes: ${note}</span>` : '';
     const ageValue = getTextValue(d.age ?? d.lastDonationInfo?.age, '');
     const ageRow = ageValue ? `<span><i class="fa-solid fa-user"></i> Age: ${ageValue}</span>` : '';
+    const gender = getTextValue(d.gender, 'Not recorded');
     const initials = getInitials(donorName, '?');
     const reputation = computeDonorReputation(d, state.recentDonationsList || []);
     const repBadgeLabel = reputation.badge ? t(reputation.badge.key) : '—';
@@ -141,6 +142,7 @@ function renderDonorCardAdmin(d) {
                 <div class="admin-member-card__info">
                     <span><i class="fa-solid fa-envelope"></i> ${getTextValue(d.email, '—')}</span>
                     <span><i class="fa-solid fa-phone"></i> ${phone}</span>
+                    <span><i class="fa-solid fa-venus-mars"></i> Gender: ${gender}</span>
                     <span><i class="fa-solid fa-location-dot"></i> Current Location: ${getTextValue(d.location, '—')}</span>
                     <span><i class="fa-solid fa-building-columns"></i> Department: ${getTextValue(d.department, '—')}</span>
                     <span><i class="fa-solid fa-layer-group"></i> Batch: ${getTextValue(d.batch, '—')}</span>
@@ -286,16 +288,19 @@ function isFuzzyNameMatch(query, target) {
 
 function getFilteredAdminMembers() {
     const nameFilter = state.memberSearchName.trim();
+    const phoneFilter = state.memberSearchPhone.replace(/\D/g, '');
     const bloodFilter = state.memberSearchBlood.trim().toUpperCase();
     const roleFilter = state.memberSearchRole || '';
     const filtered = state.donorsList.filter(member => {
         const memberName = getTextValue(member.fullName || member.name, '');
+        const memberPhone = getTextValue(member.phone || member.contact, '').replace(/\D/g, '');
         const memberBloodGroup = getTextValue(member.bloodGroup, '').toUpperCase();
         const memberRole = member.role || 'member';
         const matchesName = !nameFilter || isFuzzyNameMatch(nameFilter, memberName);
+        const matchesPhone = !phoneFilter || memberPhone.includes(phoneFilter);
         const matchesBlood = !bloodFilter || memberBloodGroup === bloodFilter;
         const matchesRole = !roleFilter || memberRole === roleFilter;
-        return matchesName && matchesBlood && matchesRole;
+        return matchesName && matchesPhone && matchesBlood && matchesRole;
     });
     return [...filtered].sort((a, b) => {
         const aId = getDonorIdNumber(a.donorId ?? a.rawDonorId) || 0;
@@ -308,18 +313,20 @@ function getFilteredAdminMembers() {
 }
 
 function hasActiveMemberSearchFilters() {
-    return Boolean(state.memberSearchName.trim() || state.memberSearchBlood.trim() || state.memberSearchRole);
+    return Boolean(state.memberSearchName.trim() || state.memberSearchPhone.trim() || state.memberSearchBlood.trim() || state.memberSearchRole);
 }
 
 function updateAdminMemberSearchStatus() {
     const statusEl = document.getElementById('admin-member-search-status');
     if (!statusEl) return;
     const nameFilter = state.memberSearchName.trim();
+    const phoneFilter = state.memberSearchPhone.trim();
     const bloodFilter = state.memberSearchBlood.trim();
     const roleFilter = state.memberSearchRole;
     const parts = [];
     if (roleFilter) parts.push(`Role: ${roleFilter.charAt(0).toUpperCase() + roleFilter.slice(1)}`);
     if (nameFilter) parts.push(`Name matches "${nameFilter}"`);
+    if (phoneFilter) parts.push(`Number matches "${phoneFilter}"`);
     if (bloodFilter) parts.push(`Blood group: ${bloodFilter}`);
     const label = parts.length ? parts.join(' • ') : 'Showing all members';
     statusEl.textContent = label;
@@ -337,7 +344,7 @@ export function renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMe
     const filteredMembers = getFilteredAdminMembers();
     if (!filteredMembers.length) {
         const emptyMessage = hasActiveMemberSearchFilters()
-            ? 'No members match your search. Adjust the name or blood group filters or reset the search to view all members.'
+            ? 'No members match your search. Adjust the name, number, or blood group filters, or reset the search to view all members.'
             : 'No member records found yet. Once donors register, they\'ll appear here automatically.';
         membersListDiv.innerHTML = `<div class="rounded-lg border border-dashed border-red-200 bg-red-50/40 p-6 text-center text-sm text-red-600">${emptyMessage}</div>`;
         return;
@@ -353,6 +360,7 @@ export function renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMe
                 document.getElementById('admin-member-email').value = memberData.email || '';
                 document.getElementById('admin-member-phone').value = memberData.phone || '';
                 document.getElementById('admin-member-bloodGroup').value = memberData.bloodGroup || '';
+                document.getElementById('admin-member-gender').value = memberData.gender || 'Other';
                 document.getElementById('admin-member-location').value = memberData.location || '';
                 document.getElementById('admin-member-department').value = memberData.department || '';
                 document.getElementById('admin-member-batch').value = memberData.batch || '';
@@ -390,19 +398,24 @@ export function renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMe
 
 export function applyAdminMemberSearchFilters(deleteMemberFn, promoteMemberFn, demoteMemberFn) {
     const nameInput = document.getElementById('admin-member-search-name');
+    const phoneInput = document.getElementById('admin-member-search-phone');
     const bloodSelect = document.getElementById('admin-member-search-blood');
     state.memberSearchName = (nameInput?.value || '').trim();
+    state.memberSearchPhone = (phoneInput?.value || '').trim();
     state.memberSearchBlood = (bloodSelect?.value || '').trim();
     renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn);
 }
 
 export function resetAdminMemberSearchFilters(deleteMemberFn, promoteMemberFn, demoteMemberFn) {
     state.memberSearchName = '';
+    state.memberSearchPhone = '';
     state.memberSearchBlood = '';
     state.memberSearchRole = '';
     const nameInput = document.getElementById('admin-member-search-name');
+    const phoneInput = document.getElementById('admin-member-search-phone');
     const bloodSelect = document.getElementById('admin-member-search-blood');
     if (nameInput) nameInput.value = '';
+    if (phoneInput) phoneInput.value = '';
     if (bloodSelect) bloodSelect.value = '';
     renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn);
 }

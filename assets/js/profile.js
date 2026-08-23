@@ -32,7 +32,7 @@ import {
   normalizeDonorId,
   formatDateDisplay,
   getDonorEligibilityStatus,
-  getDefaultAvatarMarkup,
+  getDefaultAvatarImageUrl,
 } from "./modules/utils.js";
 
 const app = initializeApp(firebaseConfig);
@@ -179,20 +179,13 @@ function populateProfile(data, email) {
   const loc = data.location || "—";
   const role = data.role || "member";
 
-  if (avatarText) {
-    avatarText.innerHTML = getDefaultAvatarMarkup(data.gender, "profile-avatar-icon");
-    avatarText.setAttribute("aria-hidden", "true");
-  }
-
-  if (profileAvatarImg && data.profilePhoto) {
-    profileAvatarImg.src = data.profilePhoto;
+  if (profileAvatarImg) {
+    profileAvatarImg.src = data.profilePhoto || getDefaultAvatarImageUrl(data.gender);
     profileAvatarImg.style.display = "block";
-    if (avatarText) avatarText.style.display = "none";
-    if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = "flex";
-  } else if (profileAvatarImg) {
-    profileAvatarImg.style.display = "none";
-    if (avatarText) avatarText.style.display = "";
-    if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = "none";
+  }
+  if (avatarText) avatarText.style.display = "none";
+  if (profilePhotoRemoveBtn) {
+    profilePhotoRemoveBtn.style.display = data.profilePhoto ? "flex" : "none";
   }
   if (displayName) displayName.textContent = name;
   if (displayBlood)
@@ -503,6 +496,8 @@ profileForm?.addEventListener("submit", (e) => {
     role: fd.get("role")?.toString().trim() || "member",
   };
 
+  updatedData.isPhoneHidden = updatedData.gender === "Female" || Boolean(currentDonorData.isPhoneHidden);
+
   if (currentDonorData.profilePhoto) {
     updatedData.profilePhoto = currentDonorData.profilePhoto;
   }
@@ -558,10 +553,10 @@ profilePhotoRemoveBtn?.addEventListener("click", async () => {
   try {
     await remove(ref(database, "donors/" + currentUser.uid + "/profilePhoto"));
     if (profileAvatarImg) {
-      profileAvatarImg.src = "";
-      profileAvatarImg.style.display = "none";
+      profileAvatarImg.src = getDefaultAvatarImageUrl(currentDonorData.gender);
+      profileAvatarImg.style.display = "block";
     }
-    if (avatarText) avatarText.style.display = "";
+    if (avatarText) avatarText.style.display = "none";
     if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = "none";
     currentDonorData.profilePhoto = null;
     showToast("Profile photo removed.", "success");

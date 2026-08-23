@@ -35,6 +35,7 @@ RULES:
 - If information is unknown, say: "I couldn't find verified information."
 - Keep answers concise and helpful
 - Detect language automatically and reply in the user's language
+- Reply in Bengali script when the user writes Bangla, and in English when the user writes English
 - Do not provide medical diagnosis; suggest consulting professionals when needed
 - Ask 1–2 short clarifying questions when details are missing
 - If the user uses Banglish, reply in natural Romanized Bangla/Banglish only
@@ -106,7 +107,8 @@ app.post('/chat', async (req, res) => {
     }
 
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
+      // Gemini 2.5 Flash is unavailable for newly provisioned API keys.
+      model: 'gemini-3.6-flash',
       generationConfig: {
         temperature: 0.9,
         topP: 0.95

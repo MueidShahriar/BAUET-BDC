@@ -71,12 +71,16 @@ export function getDefaultAvatarMarkup(gender, className = 'default-avatar-glyph
     return `<i class="${className} ${iconClass}" aria-hidden="true"></i>`;
 }
 
-export function getDefaultAvatarImageMarkup(gender, className = 'default-avatar-image') {
+export function getDefaultAvatarImageUrl(gender) {
     const normalizedGender = getTextValue(gender, '').toLowerCase();
     const imagePath = normalizedGender === 'female'
         ? '../../../image/female.png'
         : '../../../image/male.png';
-    const imageUrl = new URL(imagePath, import.meta.url).href;
+    return new URL(imagePath, import.meta.url).href;
+}
+
+export function getDefaultAvatarImageMarkup(gender, className = 'default-avatar-image') {
+    const imageUrl = getDefaultAvatarImageUrl(gender);
     return `<img src="${imageUrl}" class="${className}" alt="" aria-hidden="true" />`;
 }
 

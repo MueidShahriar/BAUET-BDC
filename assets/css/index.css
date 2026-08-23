@@ -2046,6 +2046,33 @@ img,
     gap: 1.25rem;
 }
 
+/* Make the quick-search fields distinct from the surrounding panel. */
+[data-panel="members"] .admin-member-search-panel__grid input,
+[data-panel="members"] .admin-member-search-panel__grid select {
+    min-height: 54px;
+    border: 2px solid #cbd5e1 !important;
+    background: #f8fafc !important;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.07);
+    color: #111827;
+}
+
+[data-panel="members"] .admin-member-search-panel__grid input:hover,
+[data-panel="members"] .admin-member-search-panel__grid select:hover {
+    border-color: #94a3b8 !important;
+    background: #fff !important;
+}
+
+[data-panel="members"] .admin-member-search-panel__grid input:focus,
+[data-panel="members"] .admin-member-search-panel__grid select:focus {
+    border-color: #e11d48 !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 4px rgba(251, 113, 133, 0.16) !important;
+}
+
+[data-panel="members"] .admin-member-search-panel__grid .field-icon-left > label.absolute {
+    background: #f8fafc;
+}
+
 .admin-member-search-panel__actions {
     display: flex;
     flex-direction: column;
@@ -2195,6 +2222,50 @@ img,
 .admin-form-grid>.admin-form-actions,
 .admin-form-grid>.flex.items-center {
     grid-column: 1 / -1;
+}
+
+/* Keep the member select controls visually consistent with the floating-label inputs. */
+#admin-member-form .admin-member-select-field {
+    gap: 0.45rem;
+}
+
+#admin-member-form .admin-member-select-field > label {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+#admin-member-form .admin-member-select-field .input-wrap {
+    position: relative;
+}
+
+#admin-member-form .admin-member-select-field .fi {
+    position: absolute;
+    z-index: 1;
+    left: 0.95rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+#admin-member-form .admin-member-select-field select {
+    width: 100%;
+    min-height: 52px;
+    padding: 0.72rem 2.8rem 0.72rem 2.7rem !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 0.75rem;
+    background-color: #fff;
+    color: #111827;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#admin-member-form .admin-member-select-field select:focus {
+    border-color: #fda4af !important;
+    box-shadow: 0 0 0 3px rgba(254, 205, 211, 0.55);
+    outline: none;
 }
 
 .admin-panel-card>.admin-member-search-panel {
@@ -4776,5 +4847,61 @@ canvas {
     box-shadow: none !important;
     border-radius: 0 !important;
 }
-   
+}
+
+/* Align field icons to their controls and reserve enough text space beside them. */
+.field-icon-left {
+    position: relative;
+}
+
+.field-icon-left .input-wrap {
+    position: relative;
+}
+
+.field-icon-left > .fi,
+.field-icon-left .input-wrap > .fi {
+    position: absolute;
+    z-index: 1;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.field-icon-left input,
+.field-icon-left select,
+.field-icon-left textarea {
+    padding-left: 3rem !important;
+}
+
+/* Preserve contrast for the report action in compact dashboard layouts. */
+#admin-monthly-report-btn {
+    background: linear-gradient(135deg, #e11d48, #be123c) !important;
+    color: #fff !important;
+    border: 1px solid #be123c !important;
+    font-weight: 800 !important;
+}
+
+#admin-monthly-report-btn i,
+#admin-monthly-report-btn span {
+    color: #fff !important;
+    font-weight: 800 !important;
+}
+
+@media (max-width: 768px) {
+    #admin-panel [data-panel="members"] #admin-member-form .admin-member-select-field select {
+        min-height: 52px !important;
+        padding: 0.72rem 2.8rem 0.72rem 2.7rem !important;
+        border: 2px solid #e5e7eb !important;
+        border-radius: 0.75rem !important;
+        background-color: #fff !important;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-member-form .admin-member-select-field .fi {
+        left: 0.95rem;
+        top: 50%;
+        transform: translateY(-50%);
+    }
 }
