@@ -14,6 +14,21 @@ import {
 } from './utils.js';
 import { openModal, closeModal, showModalMessage, attachConfirmHandler } from './modals.js';
 
+function scrollToMemberEditForm() {
+    const form = document.getElementById('admin-member-form');
+    if (!form) return;
+    const headerOffset = document.querySelector('header')?.offsetHeight || 0;
+    const formTop = form.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({
+        top: Math.max(0, formTop - headerOffset - 16),
+        behavior: 'smooth'
+    });
+    const firstField = document.getElementById('admin-member-fullname');
+    if (firstField) {
+        window.setTimeout(() => firstField.focus(), 250);
+    }
+}
+
 function renderRecentDonationCardAdmin(d) {
     const donationDate = d.date ? (() => { const _d = new Date(d.date + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : '—';
     const donorName = getTextValue(d.name || d.donorName || d.fullName, 'Unknown');
@@ -369,7 +384,7 @@ export function renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMe
                 if (hidePhoneField) hidePhoneField.checked = memberData.isPhoneHidden || false;
                 const commentField = document.getElementById('admin-member-comment');
                 if (commentField) commentField.value = memberData.publicComment || '';
-                document.getElementById('admin-member-form').scrollIntoView({ behavior: 'smooth' });
+                scrollToMemberEditForm();
             }
         });
     });

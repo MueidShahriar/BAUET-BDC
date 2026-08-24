@@ -1,7 +1,7 @@
 import state from './state.js';
 import { openModal, closeModal, showModalMessage } from './modals.js';
 import { t } from './language-ui.js';
-import { getInitials, getTextValue } from './utils.js';
+import { getTextValue, getDefaultAvatarImageUrl } from './utils.js';
 
 function getAuthRedirectOverlay() {
     let overlay = document.getElementById('auth-redirect-overlay');
@@ -86,28 +86,18 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             
             function applyUserUiUpdates(resolvedUserData) {
                 state.currentUserProfile = { ...resolvedUserData, uid: state.currentUser?.uid || null };
-                const photoUrl = resolvedUserData.profilePhoto || '';
+                const photoUrl = resolvedUserData.profilePhoto || getDefaultAvatarImageUrl(resolvedUserData.gender);
                 const displayName = getTextValue(resolvedUserData.fullName || resolvedUserData.name, 'User');
-                const initials = getInitials(displayName, 'U');
                 if (loginBtn) {
-                    if (photoUrl) {
-                        loginBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '" class="nav-avatar"><span class="sr-only">' + t('btnProfile') + '</span>';
-                        loginBtn.classList.add('nav-avatar-btn');
-                    } else {
-                        loginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Profile" class="inline-icon"><span class="sr-only">' + t('btnProfile') + '</span>';
-                        loginBtn.classList.remove('nav-avatar-btn');
-                    }
+                    loginBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '" class="nav-avatar"><span class="sr-only">' + t('btnProfile') + '</span>';
+                    loginBtn.classList.add('nav-avatar-btn');
                     loginBtn.setAttribute('aria-label', t('btnProfile'));
                     loginBtn.setAttribute('title', t('btnProfile'));
                     loginBtn.dataset.state = 'loggedin';
                     loginBtn.removeAttribute('data-i18n');
                 }
                 if (mobileProfileBtn) {
-                    if (photoUrl) {
-                        mobileProfileBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '">';
-                    } else {
-                        mobileProfileBtn.innerHTML = '<span class="mobile-profile-btn__initials">' + initials + '</span>';
-                    }
+                    mobileProfileBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '">';
                     mobileProfileBtn.classList.remove('hidden');
                     mobileProfileBtn.setAttribute('aria-label', t('btnProfile'));
                     mobileProfileBtn.setAttribute('title', t('btnProfile'));
@@ -143,28 +133,18 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                     window.location.assign(getProfileHref());
                 }
             }
-            const photoUrl = userData.profilePhoto || '';
+            const photoUrl = userData.profilePhoto || getDefaultAvatarImageUrl(userData.gender);
             const displayName = getTextValue(userData.fullName || userData.name, 'User');
-            const initials = getInitials(displayName, 'U');
             if (loginBtn) {
-                if (photoUrl) {
-                    loginBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '" class="nav-avatar"><span class="sr-only">' + t('btnProfile') + '</span>';
-                    loginBtn.classList.add('nav-avatar-btn');
-                } else {
-                    loginBtn.innerHTML = '<img src="' + assetPrefix + 'image/login.png" alt="Profile" class="inline-icon"><span class="sr-only">' + t('btnProfile') + '</span>';
-                    loginBtn.classList.remove('nav-avatar-btn');
-                }
+                loginBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '" class="nav-avatar"><span class="sr-only">' + t('btnProfile') + '</span>';
+                loginBtn.classList.add('nav-avatar-btn');
                 loginBtn.setAttribute('aria-label', t('btnProfile'));
                 loginBtn.setAttribute('title', t('btnProfile'));
                 loginBtn.dataset.state = 'loggedin';
                 loginBtn.removeAttribute('data-i18n');
             }
             if (mobileProfileBtn) {
-                if (photoUrl) {
-                    mobileProfileBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '">';
-                } else {
-                    mobileProfileBtn.innerHTML = '<span class="mobile-profile-btn__initials">' + initials + '</span>';
-                }
+                mobileProfileBtn.innerHTML = '<img src="' + photoUrl + '" alt="' + t('btnProfile') + '">';
                 mobileProfileBtn.classList.remove('hidden');
                 mobileProfileBtn.setAttribute('aria-label', t('btnProfile'));
                 mobileProfileBtn.setAttribute('title', t('btnProfile'));
