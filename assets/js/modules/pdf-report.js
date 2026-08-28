@@ -488,6 +488,23 @@ export function createMonthlyReportDownloader({
         );
       }
       const fileName = `monthly-donation-report-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}.pdf`;
+      const totalPages = doc.getNumberOfPages();
+
+      for (let page = 1; page <= totalPages; page++) {
+        doc.setPage(page);
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(107, 114, 128);
+
+        doc.text(
+          `Page ${page} of ${totalPages}`,
+          pageWidth / 2,
+          pageHeight - 10,
+          { align: "center" },
+        );
+      }
+
       doc.save(fileName);
     } catch (error) {
       console.error("Failed to generate monthly report:", error);
