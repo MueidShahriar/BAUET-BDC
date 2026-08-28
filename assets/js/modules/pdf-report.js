@@ -246,9 +246,6 @@ export function createMonthlyReportDownloader({
             
             const summaryLines = [
                 `Total donations: ${totalDonations}`,
-                `Matched to months: ${countedByMonths}/${totalDonations || 0}`,
-                `Entries without date: ${undated.length}`,
-                peakIndex >= 0 && peakValue > 0 ? `Peak month: ${chartLabels.months[peakIndex]} (${peakValue})` : 'Peak month: No monthly records'
             ];
             writeSummaryBox(summaryLines);
             
