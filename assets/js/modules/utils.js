@@ -155,6 +155,10 @@ export function toggleEmptyState(elementId, hasData) {
     el.classList.toggle('hidden', hasData);
 }
 
+export function isDonorActive(donor) {
+    return donor?.isActive !== false;
+}
+
 export function buildDonorIndex(list, state) {
     state.donorsByGroup = new Map();
     list.forEach((d) => {

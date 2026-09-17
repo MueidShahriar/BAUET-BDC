@@ -42,6 +42,7 @@ function getEligibilityMeta(lastDonateDate) {
 }
 
 function renderDonorCardPublic(d) {
+    const isInactive = d.isActive === false;
     const lastDate = d.lastDonateDate ? (() => { const _d = new Date(d.lastDonateDate); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : '-';
     const donorName = getTextValue(d.fullName || d.name, 'Unknown Donor');
     const initials = getInitials(donorName, 'D');
@@ -87,7 +88,7 @@ function renderDonorCardPublic(d) {
                 </div>
            </div>`;
     return `
-        <div class="donor-card bg-white p-4 rounded-lg shadow-sm flex flex-col sm:flex-row sm:items-center justify-between">
+        <div class="donor-card ${isInactive ? 'donor-card--inactive' : ''} bg-white p-4 rounded-lg shadow-sm flex flex-col sm:flex-row sm:items-center justify-between">
             <div class="flex-1 min-w-0 mb-2 sm:mb-0">
                 <div class="flex items-center gap-2 mb-1">
                     ${avatarHtml}

@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v6';
 const STATIC_CACHE_NAME = `bdc-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE_NAME = `bdc-runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [

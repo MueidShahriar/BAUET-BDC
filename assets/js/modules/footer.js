@@ -1,5 +1,3 @@
-
-
 const FOOTER_HTML = (isHomePage, inPagesDir) => {
     const assetPrefix = inPagesDir ? '../' : '';
     const pagesPrefix = inPagesDir ? '' : 'pages/';

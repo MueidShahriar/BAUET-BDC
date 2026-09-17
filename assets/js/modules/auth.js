@@ -50,7 +50,7 @@ function getAdminHref() {
     return path.includes('/pages/') ? 'admin.html' : 'pages/admin.html';
 }
 
-export function updateLoginButtonState(database, ref, onValue, renderAdminMembersList, renderAdminEventsList, deleteMemberFn, deleteEventFn, afterRoleResolvedFn, promoteMemberFn, demoteMemberFn) {
+export function updateLoginButtonState(database, ref, onValue, renderAdminMembersList, renderAdminEventsList, deleteMemberFn, deleteEventFn, afterRoleResolvedFn, promoteMemberFn, demoteMemberFn, toggleMemberStatusFn) {
     if (state.isAuthRedirecting) return;
     const assetPrefix = window.location.pathname.includes('/pages/') ? '../' : '';
     const isAdminPage = /\/(pages\/)?admin\.html$/i.test(window.location.pathname || '');
@@ -115,7 +115,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                     mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
                     adminMobileLink?.classList.remove('hidden');
                     if (adminDesktopLink) { adminDesktopLink.classList.remove('hidden'); }
-                    renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn);
+                    renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn, toggleMemberStatusFn);
                     renderAdminEventsList(deleteEventFn);
                 } else {
                     adminPanel?.classList.add('hidden');

@@ -1631,7 +1631,8 @@ img,
 
 .donor-card {
     position: relative;
-    overflow: hidden;
+    /* Let the eligibility tooltip sit above the card instead of being clipped. */
+    overflow: visible;
 }
 
 .donor-card__name-row {
@@ -2595,6 +2596,12 @@ img,
     border: 1px solid rgba(107, 114, 128, 0.2);
 }
 
+.admin-member-badge--inactive {
+    background: rgba(107, 114, 128, 0.12);
+    color: #6b7280;
+    border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
 .admin-member-card__info {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -2629,6 +2636,12 @@ img,
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+}
+
+/* Public search: inactive donors stay visible, but are clearly unavailable. */
+.donor-card--inactive {
+    filter: grayscale(1) blur(1.5px);
+    opacity: 0.58;
 }
 
 .admin-action-btn {
@@ -2685,6 +2698,28 @@ img,
 .admin-action-btn--demote:hover {
     background: #ffedd5;
     color: #9a3412;
+    transform: translateY(-1px);
+}
+
+.admin-action-btn--deactivate {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.admin-action-btn--deactivate:hover {
+    background: #ffedd5;
+    color: #9a3412;
+    transform: translateY(-1px);
+}
+
+.admin-action-btn--activate {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.admin-action-btn--activate:hover {
+    background: #d1fae5;
+    color: #047857;
     transform: translateY(-1px);
 }
 

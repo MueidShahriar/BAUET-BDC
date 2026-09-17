@@ -44,7 +44,7 @@ import {
     clearAdminEventForm, clearAdminRecentDonorForm, clearAdminMemberForm,
     applyAdminMemberSearchFilters, resetAdminMemberSearchFilters, initAdminTabs,
     renderAdminRecentDonationsList, renderAdminFeedbackList
-} from "./modules/admin.js";
+} from "./modules/admin.js?v=3";
 import { updateLoginButtonState, initAuth } from "./modules/auth.js";
 import { initJoinForm } from "./modules/join-form.js";
 import { initFeedback } from "./modules/feedback.js";
@@ -147,7 +147,7 @@ function applyAdminMemberRoleFilter(role) {
     state.memberSearchPhone = '';
     state.memberSearchBlood = '';
     resetAdminMemberSearchInputs();
-    renderAdminMembersList(deleteMember, promoteMemberToAdmin, demoteAdminToMember);
+    renderAdminMembersList(deleteMember, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus);
 }
 
 function initAdminOverviewActions() {
@@ -229,6 +229,38 @@ function deleteMember(memberId) {
             .then(() => { closeModal(modal); showModalMessage('success-modal', 'Member profile deleted successfully!', 'Success'); })
             .catch(error => { closeModal(modal); showModalMessage('success-modal', `Failed to delete member data: ${error.message}`, 'Error'); });
     }, { title: 'Delete Member', message: 'Deleting this member profile is permanent and cannot be undone.' });
+}
+
+function toggleMemberStatus(memberId, memberData) {
+    if (!state.currentUser || state.currentUserRole !== 'admin') {
+        showModalMessage('success-modal', 'You do not have permission to perform this action.', 'Permission Denied');
+        return;
+    }
+    if (!memberId || !memberData) return;
+    const isActive = memberData.isActive !== false;
+    const memberName = memberData.fullName || memberData.name || 'this member';
+    const nextStatus = !isActive;
+    attachConfirmHandler(() => {
+        const modal = document.getElementById('delete-confirm-modal');
+        update(ref(database, 'donors/' + memberId), { isActive: nextStatus })
+            .then(() => {
+                closeModal(modal);
+                showModalMessage('success-modal', `${memberName} has been ${nextStatus ? 'activated' : 'deactivated'}.`, 'Success');
+            })
+            .catch(error => {
+                closeModal(modal);
+                showModalMessage('success-modal', `Failed to update member status: ${error.message}`, 'Error');
+            });
+    }, {
+        title: nextStatus ? 'Activate Member' : 'Deactivate Member',
+        message: nextStatus
+            ? `Activate ${memberName} and show this donor in public search?`
+            : `Deactivate ${memberName}? The record will remain in the admin dashboard but disappear from public donor search.`,
+        confirmText: nextStatus ? 'Activate' : 'Deactivate',
+        confirmClass: nextStatus
+            ? 'px-5 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700'
+            : 'px-5 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600'
+    });
 }
 
 function promoteMemberToAdmin(memberId, memberData) {
@@ -394,7 +426,7 @@ function deleteFeedback(feedbackId) {
 
 function callUpdateLogin() {
     updateLoginButtonState(database, ref, onValue,
-    renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent, () => ensureUniqueDonorIds(), promoteMemberToAdmin, demoteAdminToMember);
+    renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent, () => ensureUniqueDonorIds(), promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus);
 }
 
 function setSearchErrorState(message) {
@@ -523,7 +555,7 @@ onValue(donorsRef, (snapshot) => {
             if (eligibleOnly) filtered = filtered.filter(d => isDonorEligible(d.lastDonateDate));
             renderSearchResults(filtered);
         }
-        renderAdminMembersList(deleteMember, promoteMemberToAdmin, demoteAdminToMember);
+        renderAdminMembersList(deleteMember, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus);
         refreshDashboardCharts();
         setCountTarget('donor-count', state.donorsList.length);
         updateAdminOverviewCounts({ donors: memberCount, admins: adminCount });
@@ -864,11 +896,11 @@ window.onload = function () {
     });
     document.getElementById('clear-member-btn')?.addEventListener('click', clearAdminMemberForm);
 
-    document.getElementById('admin-member-search-btn')?.addEventListener('click', () => applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember));
-    document.getElementById('admin-member-search-reset')?.addEventListener('click', () => resetAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember));
-    document.getElementById('admin-member-search-blood')?.addEventListener('change', () => applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember));
+    document.getElementById('admin-member-search-btn')?.addEventListener('click', () => applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus));
+    document.getElementById('admin-member-search-reset')?.addEventListener('click', () => resetAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus));
+    document.getElementById('admin-member-search-blood')?.addEventListener('change', () => applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus));
     ['admin-member-search-name', 'admin-member-search-phone'].forEach(id => document.getElementById(id)?.addEventListener('keydown', ev => {
-        if (ev.key === 'Enter') { ev.preventDefault(); applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember); }
+        if (ev.key === 'Enter') { ev.preventDefault(); applyAdminMemberSearchFilters(deleteMember, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus); }
     }));
 
     document.getElementById('admin-monthly-report-btn')?.addEventListener('click', () =>
