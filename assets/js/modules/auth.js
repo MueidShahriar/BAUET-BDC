@@ -61,12 +61,12 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
     const adminBadge = document.getElementById('admin-badge');
     const adminMobileLink = document.getElementById('admin-mobile-link');
     const adminDesktopLink = document.getElementById('nav-dashboard-link');
-    const leaderboardSection = document.getElementById('donor-leaderboard');
+    const leaderboardSections = document.querySelectorAll('#donor-leaderboard, #leaderboard-section, [data-public-leaderboard]');
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
     const mobileProfileBtn = document.getElementById('mobile-profile-btn');
     
-    const navLinkIds = ['nav-home-link','nav-about-link','nav-how-link','nav-events-link','nav-join-link','nav-search-link','nav-contact-link'];
-    const mobileNavIds = ['mobile-home-link','mobile-about-link','mobile-how-link','mobile-events-link','mobile-join-link','mobile-search-link','mobile-contact-link'];
+    const navLinkIds = ['nav-home-link','nav-about-link','nav-how-link','nav-events-link','nav-join-link','nav-search-link','nav-leaderboard-link','nav-contact-link'];
+    const mobileNavIds = ['mobile-home-link','mobile-about-link','mobile-how-link','mobile-events-link','mobile-join-link','mobile-search-link','mobile-leaderboard-link','mobile-contact-link'];
     if (!loginBtn && !mobileLoginBtn) return;
     if (state.currentUser) {
         if (mobileLogoutBtn) { mobileLogoutBtn.classList.remove('hidden'); mobileLogoutBtn.classList.add('block'); }
@@ -81,6 +81,11 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 state.currentUserRole = isAdminFlag ? 'admin' : (userData.role || 'member');
 
                 
+                applyUserUiUpdates(userData);
+            }, () => {
+                // Non-admin accounts are not allowed to read the admins collection.
+                // Their donor profile still supplies the existing member-role fallback.
+                state.currentUserRole = userData.role || 'member';
                 applyUserUiUpdates(userData);
             }, { onlyOnce: true });
             
@@ -109,7 +114,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 if (state.currentUserRole === 'admin') {
                     adminPanel?.classList.remove('hidden');
                     document.body.classList.add('admin-mode');
-                    if (adminPanel && leaderboardSection) leaderboardSection.classList.add('hidden');
+                    leaderboardSections.forEach(section => section.classList.add('hidden'));
                     if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
                     navLinkIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
                     mobileNavIds.forEach(id => document.getElementById(id)?.classList.add('hidden'));
@@ -120,7 +125,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
                 } else {
                     adminPanel?.classList.add('hidden');
                     document.body.classList.remove('admin-mode');
-                    leaderboardSection?.classList.remove('hidden');
+                    leaderboardSections.forEach(section => section.classList.remove('hidden'));
                     if (adminBadge) { adminBadge.classList.add('hidden'); adminBadge.classList.remove('inline-flex'); }
                     adminMobileLink?.classList.add('hidden');
                     if (adminDesktopLink) { adminDesktopLink.classList.add('hidden'); }
@@ -172,7 +177,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         state.currentUserProfile = null;
         adminPanel?.classList.add('hidden');
         document.body.classList.remove('admin-mode');
-        leaderboardSection?.classList.remove('hidden');
+        leaderboardSections.forEach(section => section.classList.remove('hidden'));
         adminBadge?.classList.add('hidden');
         adminMobileLink?.classList.add('hidden');
         if (adminDesktopLink) { adminDesktopLink.classList.add('hidden'); }
@@ -237,11 +242,16 @@ export function initAuth({
                 showAuthRedirectOverlay();
                 if (typeof updateLoginFn === 'function') updateLoginFn();
                 closeModal(loginModal);
-                const roleRef = ref(database, `donors/${state.currentUser.uid}/role`);
-                onValue(roleRef, (snapshot) => {
-                    const role = snapshot.val() || 'member';
-                    const target = role === 'admin' ? getAdminHref() : getProfileHref();
-                    window.location.assign(target);
+                const userRef = ref(database, `donors/${state.currentUser.uid}`);
+                onValue(userRef, (userSnapshot) => {
+                    const userData = userSnapshot.val() || {};
+                    const adminRef = ref(database, `admins/${state.currentUser.uid}`);
+                    onValue(adminRef, (adminSnapshot) => {
+                        const isAdmin = Boolean(adminSnapshot.val()) || userData.role === 'admin';
+                        window.location.assign(isAdmin ? getAdminHref() : getProfileHref());
+                    }, () => {
+                        window.location.assign(userData.role === 'admin' ? getAdminHref() : getProfileHref());
+                    }, { onlyOnce: true });
                 }, { onlyOnce: true });
             })
             .catch((error) => {

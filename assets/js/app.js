@@ -15,7 +15,7 @@ import { initLanguageSystem, t } from "./modules/language-ui.js";
 import { createMonthlyReportDownloader } from "./modules/pdf-report.js";
 
 import state from "./modules/state.js";
-import { initPreloader } from "./modules/preloader.js";
+import { initPreloader, finishPreloader } from "./modules/preloader.js";
 import { initHeader, initMobileMenu } from "./modules/header.js";
 import { initFloatObserver } from "./modules/float-observer.js";
 import { initBackToTop } from "./modules/back-to-top.js";
@@ -426,7 +426,12 @@ function deleteFeedback(feedbackId) {
 
 function callUpdateLogin() {
     updateLoginButtonState(database, ref, onValue,
-    renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent, () => ensureUniqueDonorIds(), promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus);
+    renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent, (role) => {
+        ensureUniqueDonorIds();
+        if (/\/(pages\/)?admin\.html$/i.test(window.location.pathname || '') && role === 'admin') {
+            finishPreloader();
+        }
+    }, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus);
 }
 
 function setSearchErrorState(message) {
@@ -705,7 +710,8 @@ function initContactScroll() {
 }
 
 window.onload = function () {
-    runInitStep('preloader', () => initPreloader());
+    const isAdminPage = /\/(pages\/)?admin\.html$/i.test(window.location.pathname || '');
+    runInitStep('preloader', () => initPreloader({ waitForAuth: isAdminPage }));
     runInitStep('header', () => initHeader());
     runInitStep('language system', () => initLanguageSystem());
     window.addEventListener('languageChanged', () => callUpdateLogin());

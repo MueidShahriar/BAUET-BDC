@@ -15,6 +15,11 @@ function formatDate(value) {
     return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
 }
 
+function normalizePhone(value) {
+    const digits = String(value || '').replace(/\D/g, '');
+    return digits.replace(/^880(?=1\d{9})/, '0');
+}
+
 function getEligibilityMeta(lastDonateDate) {
     const eligibility = getDonorEligibilityStatus(lastDonateDate);
 
@@ -180,15 +185,19 @@ export function renderSearchResults(filteredDonors) {
 export function runSearch() {
     const searchResults = document.getElementById('search-results');
     const searchBlood = document.getElementById('search-blood');
+    const searchPhone = document.getElementById('search-phone');
+    const searchGender = document.getElementById('search-gender');
     const eligibleOnlyCheckbox = document.getElementById('eligible-only');
     if (!searchResults) return;
     const blood = searchBlood?.value;
+    const phoneQuery = normalizePhone(searchPhone?.value);
+    const gender = String(searchGender?.value || '').trim().toLowerCase();
     const showEligibleOnly = eligibleOnlyCheckbox?.checked;
     if (state.searchRunTimeout) {
         clearTimeout(state.searchRunTimeout);
         state.searchRunTimeout = null;
     }
-    if (blood === 'select') {
+    if (blood === 'select' && !phoneQuery && !gender && !showEligibleOnly) {
         searchResults.innerHTML = '<div class="text-gray-500 italic">No results yet. Perform a search to display donor entries here.</div>';
         setSearchLoading(false);
         return;
@@ -197,6 +206,12 @@ export function runSearch() {
     searchResults.innerHTML = '';
     const normalized = normalizeBloodGroup(blood);
     let filtered = (blood && blood !== 'all' && blood !== 'select') ? (state.donorsByGroup.get(normalized) || []) : state.donorsList;
+    if (phoneQuery) {
+        filtered = filtered.filter(d => normalizePhone(d.phone || d.contact).includes(phoneQuery));
+    }
+    if (gender) {
+        filtered = filtered.filter(d => String(d.gender || '').trim().toLowerCase() === gender);
+    }
     if (showEligibleOnly) {
         filtered = filtered.filter(d => isDonorEligible(d.lastDonateDate));
     }
@@ -206,6 +221,8 @@ export function runSearch() {
 export function initSearch() {
     const searchForm = document.getElementById('search-form');
     const searchBlood = document.getElementById('search-blood');
+    const searchPhone = document.getElementById('search-phone');
+    const searchGender = document.getElementById('search-gender');
     const eligibleOnlyCheckbox = document.getElementById('eligible-only');
     const searchResults = document.getElementById('search-results');
     state.searchLoaderEl = document.getElementById('search-loading');
@@ -216,5 +233,7 @@ export function initSearch() {
     });
     eligibleOnlyCheckbox?.addEventListener('change', runSearch);
     searchBlood?.addEventListener('change', runSearch);
+    searchPhone?.addEventListener('input', runSearch);
+    searchGender?.addEventListener('change', runSearch);
     if (searchResults) runSearch();
 }

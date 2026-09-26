@@ -8,12 +8,9 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
+app.use(express.static(__dirname));
 
 const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
-  console.warn('GEMINI_API_KEY is missing. Set it in .env');
-}
-
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
 
 const SYSTEM_PROMPT = `You are BAUET Blood Donation Assistant for BAUET Blood Donation Community (BAUET BDC).
@@ -102,7 +99,7 @@ app.post('/chat', async (req, res) => {
       return;
     }
     if (!genAI) {
-      res.status(500).json({ reply: 'Server is missing GEMINI_API_KEY.' });
+      res.status(503).json({ reply: 'Chatbot is not configured. Add GEMINI_API_KEY to the server environment to enable it.' });
       return;
     }
 

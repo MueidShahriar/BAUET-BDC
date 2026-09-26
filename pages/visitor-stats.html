@@ -300,8 +300,8 @@
   "visitorTracking": {
     "totalViews": 1234,
     "presence": {
-      "sess_17089...a3f": true,
-      "sess_17089...b7e": true
+      "sess_17089...a3f": { "updatedAt": 1708900000000, "path": "/index.html" },
+      "sess_17089...b7e": { "updatedAt": 1708900000000, "path": "/pages/search.html" }
     }
   }
 }</code></pre>
@@ -317,21 +317,19 @@
     "visitorTracking": {
       "totalViews": {
         ".read": true,
-        ".write": true,
-        ".validate": "newData.isNumber()"
+        ".write": "newData.isNumber() && newData.val() >= 0"
       },
       "presence": {
+        ".read": true,
         "$sessionId": {
-          ".read": true,
-          ".write": true,
-          ".validate": "newData.val() === true"
+          ".write": "newData.val() === null || (newData.hasChildren(['updatedAt', 'path']) && newData.child('updatedAt').isNumber() && newData.child('path').isString())"
         }
       }
     }
   }
 }</code></pre>
             <p class="mt-3 text-xs text-gray-400 leading-relaxed">
-                These rules allow anyone to read/write visitor tracking data (required for anonymous tracking on a static site). The validation ensures only valid data types are stored.
+                These rules allow anonymous, session-based tracking on the static site while restricting presence records to an expiry timestamp and page path. Session IDs are random and contain no member identity.
             </p>
         </div>
     </main>

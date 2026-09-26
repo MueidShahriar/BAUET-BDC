@@ -36,6 +36,28 @@
     "admins": {
       ".read": "root.child('admins').child(auth.uid).val() === true",
       ".write": "root.child('admins').child(auth.uid).val() === true"
+    },
+
+    "visitorTracking": {
+      "presence": {
+        ".read": true,
+        "$sessionId": {
+          ".write": "newData.val() === null || (newData.hasChildren(['updatedAt', 'path']) && newData.child('updatedAt').isNumber() && newData.child('path').isString())",
+          "updatedAt": {
+            ".validate": "newData.isNumber()"
+          },
+          "path": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "totalViews": {
+        ".read": true,
+        ".write": "newData.isNumber() && newData.val() >= 0"
+      }
     }
   }
 }

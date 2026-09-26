@@ -687,6 +687,18 @@ function getGenericBloodDonationFallback(question, lang) {
     return 'I can help with blood donation topics. You can ask specifically about eligibility, preparation, after-donation care, food, blood groups, or donor search.';
 }
 
+function isDonationPreparationQuestion(question) {
+    const q = normalizeQuestionForKB(question);
+    const hasDonationContext = ['blood', 'donation', 'donate', 'rokto', 'রক্ত', 'দানে', 'রক্তদান'].some(word => q.includes(word));
+    const asksBefore = ['before', 'prepar', 'আগে', 'পূর্বে', 'প্রস্তুতি'].some(word => q.includes(word));
+    return hasDonationContext && asksBefore;
+}
+
+function getDonationPreparationAnswer(question, lang) {
+    if (!isDonationPreparationQuestion(question)) return null;
+    return getKBAnswer(KNOWLEDGE_BASE.find((entry) => entry.keywords.includes('prepare')), lang);
+}
+
 function buildKBContext(question) {
     const normalizedQuestion = normalizeQuestionForKB(question);
     const qWords = normalizedQuestion.split(/\s+/).filter(w => w.length > 0);
@@ -972,11 +984,19 @@ function getAIFallbackMessage(lang) {
 function getConversationalFallback(question, lang) {
     const q = normalizeQuestionForKB(question);
     const isWellbeingQuestion = /\b(how are you|how r u|kmn aso|kemon acho|kemon asen|kemon achen)\b/.test(q);
+    const isAboutAssistantQuestion = /\b(ki koro|ki korte paro|what do you do|what can you do|who are you|tumi ke|apni ke)\b/.test(q)
+        || q.includes('কি করো') || q.includes('কি করতে পারো') || q.includes('আপনি কে') || q.includes('তুমি কে');
 
     if (isWellbeingQuestion) {
         if (lang === 'bangla') return 'আমি ভালো আছি, ধন্যবাদ! আপনি কেমন আছেন? রক্তদান, ডোনার খোঁজা বা ওয়েবসাইটের যেকোনো বিষয়ে বলুন, আমি সাহায্য করছি।';
         if (lang === 'banglish') return 'Ami bhalo achi, dhonnobad! Apni kmn asen? Blood donation, donor search, ba website niye ja jante chan bolun, ami help korchi.';
         return 'I am doing well, thank you. How are you? Ask me anything about blood donation, finding donors, or using this website.';
+    }
+
+    if (isAboutAssistantQuestion) {
+        if (lang === 'bangla') return 'আমি BAUET BDC-এর Blood Donation Assistant। আমি রক্তদানের যোগ্যতা, প্রস্তুতি, রক্তের গ্রুপ, ডোনার খোঁজা এবং এই ওয়েবসাইট ব্যবহারে সাহায্য করতে পারি।';
+        if (lang === 'banglish') return 'Ami BAUET BDC-er Blood Donation Assistant. Ami blood donation eligibility, preparation, blood group, donor search, ar ei website use korte help korte pari.';
+        return 'I am the BAUET BDC Blood Donation Assistant. I can help with donation eligibility, preparation, blood groups, donor search, and using this website.';
     }
 
     if (lang === 'bangla') return 'আমি রক্তদান, ডোনার খোঁজা এবং এই ওয়েবসাইট ব্যবহার নিয়ে সাহায্য করতে পারি। প্রশ্নটা একটু বিস্তারিত লিখলে আমি সবচেয়ে ভালোভাবে উত্তর দিতে পারব।';
@@ -991,6 +1011,13 @@ async function getAnswer(question, options = {}) {
     const bloodGroup = extractBloodGroup(question);
     const wantsDonor = isDonorIntent(question);
     const softDonor = bloodGroup && ['donor', 'rokto', 'blood', 'lagbe', 'dorkar', 'chai', 'রক্ত', 'দাতা', 'ডোনার'].some(w => question.toLowerCase().includes(w));
+
+    const preparationAnswer = getDonationPreparationAnswer(question, lang);
+    if (preparationAnswer) {
+        addToHistory('user', question);
+        addToHistory('model', stripHtml(preparationAnswer));
+        return preparationAnswer;
+    }
 
     
     if (bloodGroup && (wantsDonor || softDonor)) {
@@ -1256,6 +1283,15 @@ export function initChatbot() {
                 removeTypingIndicator();
                 const assistantMessage = createAssistantMessage('');
                 await typeAssistantMessage(assistantMessage, answer, 8);
+            } else if (isDonationPreparationQuestion(question)) {
+                const answer = await getAnswer(question, { skipAI: true });
+                const elapsed = Date.now() - startTime;
+                if (elapsed < minimumThinkingTime) {
+                    await sleep(minimumThinkingTime - elapsed);
+                }
+                removeTypingIndicator();
+                const assistantMessage = createAssistantMessage('');
+                await typeAssistantMessage(assistantMessage, answer, 10);
             } else {
                 const ragContext = buildKBContext(question) + buildDonorContext(question);
                 const answer = await askGeminiStream(question, ragContext);

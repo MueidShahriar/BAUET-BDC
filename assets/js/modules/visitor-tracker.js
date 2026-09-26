@@ -31,6 +31,8 @@ export function initVisitorTracker(database, isHomePage = false) {
     const connectedRef = ref(database, '.info/connected');
     let heartbeatTimer = null;
 
+    // A session is one browser tab. sessionStorage preserves its id across a refresh,
+    // so mounting this module again cannot create an additional online record.
     const writePresence = () => set(myPresenceRef, {
         updatedAt: Date.now(),
         path: window.location.pathname || '/'
@@ -61,6 +63,12 @@ export function initVisitorTracker(database, isHomePage = false) {
         if (onlineSingle) onlineSingle.textContent = count;
     });
 
+    // Resume a stale heartbeat as soon as a backgrounded tab becomes active again.
+    const refreshPresenceWhenVisible = () => {
+        if (document.visibilityState === 'visible') writePresence();
+    };
+    document.addEventListener('visibilitychange', refreshPresenceWhenVisible);
+
     
     if (viewEls.length || viewSingle) {
         const viewsRef = ref(database, 'visitorTracking/totalViews');
@@ -78,5 +86,12 @@ export function initVisitorTracker(database, isHomePage = false) {
 
     window.addEventListener('pagehide', () => {
         if (heartbeatTimer) window.clearInterval(heartbeatTimer);
+        document.removeEventListener('visibilitychange', refreshPresenceWhenVisible);
+        // onDisconnect covers crashes and connection loss; remove also handles normal navigation.
+        myPresenceRef && removePresence();
     }, { once: true });
+
+    function removePresence() {
+        set(myPresenceRef, null).catch(() => {});
+    }
 }

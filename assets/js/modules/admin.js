@@ -17,16 +17,53 @@ import { openModal, closeModal, showModalMessage, attachConfirmHandler } from '.
 function scrollToMemberEditForm() {
     const form = document.getElementById('admin-member-form');
     if (!form) return;
-    const headerOffset = document.querySelector('header')?.offsetHeight || 0;
-    const formTop = form.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({
-        top: Math.max(0, formTop - headerOffset - 16),
-        behavior: 'smooth'
+    // Wait for the browser to finish the button click/layout work before measuring.
+    requestAnimationFrame(() => {
+        const headerOffset = document.querySelector('header')?.offsetHeight || 0;
+        const formTop = form.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({
+            top: Math.max(0, formTop - headerOffset - 16),
+            behavior: 'smooth'
+        });
+        const firstField = document.getElementById('admin-member-fullname');
+        if (firstField) window.setTimeout(() => firstField.focus({ preventScroll: true }), 300);
     });
-    const firstField = document.getElementById('admin-member-fullname');
-    if (firstField) {
-        window.setTimeout(() => firstField.focus(), 250);
-    }
+}
+
+function getMemberLocation(member) {
+    const candidates = [
+        member?.location,
+        member?.currentLocation,
+        member?.area,
+        member?.address,
+        member?.currentAddress,
+        member?.presentAddress,
+        member?.district,
+        member?.lastDonationInfo?.location
+    ];
+    const location = candidates.find(value => typeof value === 'string' && value.trim());
+    return location ? location.trim() : '';
+}
+
+function getMemberLastDonationInfo(member) {
+    return member?.lastDonationInfo && typeof member.lastDonationInfo === 'object'
+        ? member.lastDonationInfo
+        : {};
+}
+
+function getMemberDepartment(member) {
+    const lastInfo = getMemberLastDonationInfo(member);
+    return getTextValue(member?.department || lastInfo.department, '');
+}
+
+function getMemberBatch(member) {
+    const lastInfo = getMemberLastDonationInfo(member);
+    return getTextValue(member?.batch || lastInfo.batch, '');
+}
+
+function getMemberLastDonationDate(member) {
+    const lastInfo = getMemberLastDonationInfo(member);
+    return getTextValue(member?.lastDonateDate || lastInfo.lastDonateDate || lastInfo.date, '');
 }
 
 function renderRecentDonationCardAdmin(d) {
@@ -166,7 +203,7 @@ function renderDonorCardAdmin(d) {
                     <span><i class="fa-solid fa-envelope"></i> ${getTextValue(d.email, '—')}</span>
                     <span><i class="fa-solid fa-phone"></i> ${phone}</span>
                     <span><i class="fa-solid fa-venus-mars"></i> Gender: ${gender}</span>
-                    <span><i class="fa-solid fa-location-dot"></i> Current Location: ${getTextValue(d.location, '—')}</span>
+                    <span><i class="fa-solid fa-location-dot"></i> Current Location: ${getMemberLocation(d) || '—'}</span>
                     <span><i class="fa-solid fa-building-columns"></i> Department: ${getTextValue(d.department, '—')}</span>
                     <span><i class="fa-solid fa-layer-group"></i> Batch: ${getTextValue(d.batch, '—')}</span>
                     <span><i class="fa-solid fa-calendar-check"></i> Last: ${lastDate}</span>
@@ -180,7 +217,7 @@ function renderDonorCardAdmin(d) {
             </div>
             <div class="admin-member-card__actions">
                 ${roleActionButton}
-                <button data-member-id="${d.id}" class="edit-member-btn admin-action-btn admin-action-btn--edit" title="Edit">
+                <button type="button" data-member-id="${d.id}" class="edit-member-btn admin-action-btn admin-action-btn--edit" title="Edit" aria-label="Edit ${donorName}">
                     <i class="fa-solid fa-pen-to-square" data-member-id="${d.id}"></i>
                 </button>
                 <button data-member-id="${d.id}" class="delete-member-btn admin-action-btn admin-action-btn--delete" title="Delete">
@@ -376,7 +413,9 @@ export function renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMe
     membersListDiv.innerHTML = filteredMembers.map(renderDonorCardAdmin).join('');
     membersListDiv.querySelectorAll('.edit-member-btn').forEach(button => {
         button.addEventListener('click', (ev) => {
-            const memberId = ev.target.closest('[data-member-id]')?.dataset.memberId || ev.target.dataset.memberId;
+            ev.preventDefault();
+            ev.stopPropagation();
+            const memberId = ev.currentTarget.dataset.memberId;
             const memberData = state.donorsList.find(d => d.id === memberId);
             if (memberData) {
                 document.getElementById('admin-member-id').value = memberData.id;
@@ -385,10 +424,10 @@ export function renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMe
                 document.getElementById('admin-member-phone').value = memberData.phone || '';
                 document.getElementById('admin-member-bloodGroup').value = memberData.bloodGroup || '';
                 document.getElementById('admin-member-gender').value = memberData.gender || 'Other';
-                document.getElementById('admin-member-location').value = memberData.location || '';
-                document.getElementById('admin-member-department').value = memberData.department || '';
-                document.getElementById('admin-member-batch').value = memberData.batch || '';
-                document.getElementById('admin-member-lastDonateDate').value = memberData.lastDonateDate || '';
+                document.getElementById('admin-member-location').value = getMemberLocation(memberData);
+                document.getElementById('admin-member-department').value = getMemberDepartment(memberData);
+                document.getElementById('admin-member-batch').value = getMemberBatch(memberData);
+                document.getElementById('admin-member-lastDonateDate').value = getMemberLastDonationDate(memberData);
                 const hidePhoneField = document.getElementById('admin-member-hide-phone');
                 if (hidePhoneField) hidePhoneField.checked = memberData.isPhoneHidden || false;
                 const commentField = document.getElementById('admin-member-comment');

@@ -1584,6 +1584,43 @@ body.admin-mode #mobile-menu button:hover {
     color: #f1f5f9;
 }
 
+.footer-developer-socials {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.footer-developer-socials a {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer-developer-socials a.social-linkedin {
+    color: #a855f7;
+    background: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.2);
+}
+
+.footer-developer-socials a.social-whatsapp {
+    color: #a855f7;
+    background: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.2);
+}
+
+.footer-developer-socials a:hover {
+    transform: translateY(-2px) scale(1.05);
+}
+
 .footer-socials {
     display: flex;
     align-items: center;
@@ -1679,6 +1716,15 @@ body.admin-mode #mobile-menu button:hover {
     .footer-grid .footer-brand {
         grid-column: 1 / -1;
     }
+    .footer-bottom {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.25rem;
+    }
+    .footer-developer-socials {
+        justify-content: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1698,11 +1744,15 @@ body.admin-mode #mobile-menu button:hover {
     }
     .footer-bottom {
         flex-direction: column;
-        text-align: left;
-        gap: 0.5rem;
+        align-items: center;
+        text-align: center;
+        gap: 0.25rem;
     }
     .footer-socials {
         justify-content: flex-start;
+    }
+    .footer-developer-socials {
+        justify-content: center;
     }
 }
 
