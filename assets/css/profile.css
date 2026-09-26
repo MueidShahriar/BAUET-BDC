@@ -304,6 +304,11 @@
     gap: 0.4rem;
 }
 
+.pf-field > .pf-label {
+    margin: 0;
+    line-height: 1.25;
+}
+
 .pf-label-icon {
     color: #e11d48;
     font-size: 0.7rem;
@@ -347,6 +352,11 @@
 select.pf-input {
     cursor: pointer;
     appearance: none;
+    height: 2.65rem;
+    min-height: 2.65rem;
+    line-height: 1.25;
+    font-size: 0.88rem;
+    box-sizing: border-box;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
