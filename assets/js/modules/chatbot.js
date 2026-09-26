@@ -704,8 +704,8 @@ function isDeveloperQuestion(question) {
     const directPatterns = [
         /who\s+(?:develop(?:ed|er)?|creat(?:ed|or)?|built|made)\s+(?:you|this|the\s+(?:website|site|chatbot|bot|app))/i,
         /(?:who|which person)\s+(?:is|was)\s+(?:your|the)\s+(?:developer|creator|maker)/i,
-        /(?:tomake|tomay|tmy|tmi|tumar|tomar|apnake|apnar|ei)\s+(?:ke|k|kara)?\s*(?:develop|create|ban|bana|toiri|made|build)/i,
-        /(?:ke|k|kara)\s+(?:tomake|tomay|tmy|tmi|apnake|ei website|ei site|chatbot|bot)\s+(?:develop|create|ban|bana|toiri|made|build)/i,
+        /(?:tomake|tomay|tumar|tomar|apnake|apnar|ei)\s+(?:ke|kara)\s+(?:develop|create|ban|toiri|made|build)/i,
+        /(?:ke|kara)\s+(?:tomake|tomay|apnake|ei website|ei site|chatbot|bot)\s+(?:develop|create|ban|toiri|made|build)/i,
         /(?:তোমাকে|তোমায়|আপনাকে|এই ওয়েবসাইট|এই ওয়েবসাইট|এই সাইট|চ্যাটবট|বট).*(?:কে|কারা).*(?:তৈরি|বানিয়েছে|বানিয়েছে|ডেভেলপ|উন্নয়ন)/i,
         /(?:কে|কারা).*(?:তোমাকে|তোমায়|আপনাকে|এই ওয়েবসাইট|এই ওয়েবসাইট|এই সাইট|চ্যাটবট|বট).*(?:তৈরি|বানিয়েছে|বানিয়েছে|ডেভেলপ|উন্নয়ন)/i,
         /(?:তোমার|আপনার|এই ওয়েবসাইটের|এই ওয়েবসাইটের|চ্যাটবটের).*(?:ডেভেলপার|নির্মাতা|স্রষ্টা|তৈরি করেছে|কে)/i
@@ -714,7 +714,7 @@ function isDeveloperQuestion(question) {
 
     const developerTerms = [
         'developer', 'developed by', 'develop korse', 'develop korche', 'develop koreche',
-        'creator', 'created by', 'maker', 'made by', 'built by', 'banayse', 'banayche', 'banaise', 'banayse',
+        'creator', 'created by', 'maker', 'made by', 'built by', 'banayse', 'banayche',
         'banিয়েছে', 'banaiছে', 'toiri korse', 'toiri koreche', 'ডেভেলপার', 'ডেভেলপ', 'নির্মাতা',
         'স্রষ্টা', 'তৈরি করেছে', 'বানিয়েছে', 'বানিয়েছে', 'কে বানিয়েছে', 'কে তৈরি করেছে'
     ];

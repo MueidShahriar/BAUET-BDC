@@ -2229,14 +2229,22 @@ img,
 
 /* Keep the member select controls visually consistent with the floating-label inputs. */
 #admin-member-form .admin-member-select-field {
+    position: relative;
     gap: 0.45rem;
 }
 
 #admin-member-form .admin-member-select-field > label {
+    position: absolute;
+    top: -0.55rem;
+    left: 0.85rem;
+    z-index: 2;
+    padding: 0 0.35rem;
     margin: 0;
-    font-size: 0.82rem;
+    background: #fff;
+    font-size: 0.92rem;
     font-weight: 600;
-    color: #4b5563;
+    line-height: 1.1;
+    color: #e11d48;
 }
 
 #admin-member-form .admin-member-select-field .input-wrap {
@@ -5031,4 +5039,33 @@ canvas {
 
 #dashboard-insights h2 {
     margin-bottom: 0.25rem;
+}
+
+#admin-member-form input:not([type="hidden"]),
+#admin-member-form .admin-member-select-field select {
+    height: 56px !important;
+    min-height: 56px !important;
+    box-sizing: border-box !important;
+}
+
+#admin-member-form .admin-member-select-field select {
+    padding: 0.75rem 3rem 0.75rem 3.25rem !important;
+    line-height: 1.25 !important;
+}
+
+#admin-member-form .admin-member-select-field .fi {
+    left: 1rem !important;
+    z-index: 2;
+}
+
+@media (max-width: 768px) {
+    #admin-member-form input:not([type="hidden"]),
+    #admin-member-form .admin-member-select-field select {
+        height: 52px !important;
+        min-height: 52px !important;
+    }
+
+    #admin-member-form .admin-member-select-field select {
+        padding-left: 3.25rem !important;
+    }
 }

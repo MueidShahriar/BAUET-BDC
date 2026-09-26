@@ -563,6 +563,13 @@
                                         class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Member
                                         name</label>
                                 </div>
+                                <div class="field-icon-left">
+                                    <i class="fi fa-solid fa-phone"></i>
+                                    <input id="admin-member-search-phone" type="search" inputmode="tel" placeholder=" "
+                                        class="peer block w-full rounded-lg border-2 border-white bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                    <label for="admin-member-search-phone"
+                                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone number</label>
+                                </div>
                                 <div class="field-icon-left flex flex-col">
                                     <label for="admin-member-search-blood" class="text-sm text-gray-600 mb-2">Blood
                                         group</label>
@@ -624,9 +631,8 @@
                                 </div>
                             </div>
                            
-                            <div class="field-icon-left flex flex-col">
-                                <label for="admin-member-bloodGroup" class="text-sm text-gray-600 mb-2">Blood
-                                    group</label>
+                            <div class="field-icon-left flex flex-col admin-member-select-field">
+                                <label for="admin-member-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
                                 <div class="input-wrap">
                                     <i class="fi fa-solid fa-droplet"></i>
                                     <select name="bloodGroup" id="admin-member-bloodGroup" required
@@ -640,6 +646,18 @@
                                         <option>O-</option>
                                         <option>AB+</option>
                                         <option>AB-</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field-icon-left flex flex-col admin-member-select-field">
+                                <label for="admin-member-gender" class="text-sm text-gray-600 mb-2">Gender</label>
+                                <div class="input-wrap">
+                                    <i class="fi fa-solid fa-venus-mars"></i>
+                                    <select name="gender" id="admin-member-gender"
+                                        class="block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
                                     </select>
                                 </div>
                             </div>
@@ -723,22 +741,6 @@
                                                 <option value="O-">O-</option>
                                                 <option value="AB+">AB+</option>
                                                 <option value="AB-">AB-</option>
-                                            </select>
-                                        </div>
-                                        <div class="field-icon-left w-full sm:flex-1 sm:min-w-[10rem]">
-                                            <i class="fi fa-solid fa-phone" style="top: 1.15rem"></i>
-                                            <input id="search-phone" type="tel" inputmode="tel" autocomplete="tel"
-                                                aria-label="Phone number" placeholder="Phone number"
-                                                class="w-full h-9 pl-10 pr-3 rounded-lg border border-gray-100 bg-white text-gray-700 text-sm" />
-                                        </div>
-                                        <div class="field-icon-left w-full sm:flex-1 sm:min-w-[10rem]">
-                                            <i class="fi fa-solid fa-venus-mars" style="top: 1.15rem"></i>
-                                            <select id="search-gender" aria-label="Gender"
-                                                class="w-full h-9 pl-10 pr-3 rounded-lg border border-gray-100 bg-white text-gray-700 text-sm">
-                                                <option value="">All genders</option>
-                                                <option value="Male">Male</option>
-                                                <option value="Female">Female</option>
-                                                <option value="Other">Other</option>
                                             </select>
                                         </div>
                                     </form>

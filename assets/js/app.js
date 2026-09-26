@@ -63,20 +63,6 @@ const statsRef         = ref(database, 'stats');
 const recentDonationsRef = ref(database, 'recentDonations');
 const feedbackRef      = ref(database, 'feedback');
 const DEFAULT_RECENT_DONATION_CENTER = 'Mojumdar Clinic, Bagatipara';
-const adminInitialDataReady = {
-    donors: false,
-    events: false,
-    stats: false,
-    recentDonations: false
-};
-
-function finishAdminPreloaderWhenReady() {
-    const isAdminPage = /\/(pages\/)?admin\.html$/i.test(window.location.pathname || '');
-    if (isAdminPage && state.currentUserRole === 'admin'
-        && Object.values(adminInitialDataReady).every(Boolean)) {
-        finishPreloader();
-    }
-}
 
 const downloadMonthlyReportPdf = createMonthlyReportDownloader({
     getRecentDonations: () => Array.isArray(state.recentDonationsList) ? [...state.recentDonationsList] : [],
@@ -443,7 +429,7 @@ function callUpdateLogin() {
     renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent, (role) => {
         ensureUniqueDonorIds();
         if (/\/(pages\/)?admin\.html$/i.test(window.location.pathname || '') && role === 'admin') {
-            finishAdminPreloaderWhenReady();
+            finishPreloader();
         }
     }, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus);
 }
@@ -580,19 +566,13 @@ onValue(donorsRef, (snapshot) => {
         updateAdminOverviewCounts({ donors: memberCount, admins: adminCount });
         refreshLeaderboard();
         ensureUniqueDonorIds();
-        adminInitialDataReady.donors = true;
-        finishAdminPreloaderWhenReady();
     } catch (error) {
         console.error('Failed to process donors:', error);
         setSearchErrorState('Donor data could not be shown right now. Please refresh and try again.');
-        adminInitialDataReady.donors = true;
-        finishAdminPreloaderWhenReady();
     }
 }, err => {
     console.error("Failed to load donors:", err);
     setSearchErrorState('Donor data could not be loaded right now.');
-    adminInitialDataReady.donors = true;
-    finishAdminPreloaderWhenReady();
 });
 
 onValue(eventsRef, (snapshot) => {
@@ -609,13 +589,7 @@ onValue(eventsRef, (snapshot) => {
     if (state.currentUserRole === 'admin') renderAdminEventsList(deleteEvent);
     setCountTarget('event-count', state.eventsList.length);
     updateAdminOverviewCounts({ events: state.eventsList.length });
-    adminInitialDataReady.events = true;
-    finishAdminPreloaderWhenReady();
-}, err => {
-    console.error("Failed to load events:", err);
-    adminInitialDataReady.events = true;
-    finishAdminPreloaderWhenReady();
-});
+}, err => console.error("Failed to load events:", err));
 
 onValue(statsRef, (snapshot) => {
     const d = snapshot.val();
@@ -624,13 +598,7 @@ onValue(statsRef, (snapshot) => {
         setCountTarget('lives-helped-count', state.livesHelped);
         updateAdminOverviewCounts({ donations: state.livesHelped });
     }
-    adminInitialDataReady.stats = true;
-    finishAdminPreloaderWhenReady();
-}, err => {
-    console.error("Failed to load stats:", err);
-    adminInitialDataReady.stats = true;
-    finishAdminPreloaderWhenReady();
-});
+}, err => console.error("Failed to load stats:", err));
 
 onValue(recentDonationsRef, (snapshot) => {
     try {
@@ -662,16 +630,12 @@ onValue(recentDonationsRef, (snapshot) => {
         }
         setRecentLoading(false);
         refreshLeaderboard();
-        adminInitialDataReady.recentDonations = true;
-        finishAdminPreloaderWhenReady();
     } catch (error) {
         console.error('Failed to process recent donations:', error);
         state.recentDonationsList = [];
         renderRecentDonorsCarousel([]);
         setRecentLoading(false);
         refreshLeaderboard();
-        adminInitialDataReady.recentDonations = true;
-        finishAdminPreloaderWhenReady();
     }
 }, err => {
     console.error("Failed to load recent donations:", err);
@@ -679,8 +643,6 @@ onValue(recentDonationsRef, (snapshot) => {
     renderRecentDonorsCarousel([]);
     setRecentLoading(false);
     refreshLeaderboard();
-    adminInitialDataReady.recentDonations = true;
-    finishAdminPreloaderWhenReady();
 });
 
 onValue(feedbackRef, (snapshot) => {

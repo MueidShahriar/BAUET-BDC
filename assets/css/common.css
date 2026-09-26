@@ -682,6 +682,16 @@ img {
     box-shadow: 0 14px 28px rgba(225, 29, 72, 0.2);
 }
 
+@media (min-width: 768px) {
+    header nav > div:has(> #login-btn) {
+        margin-left: auto;
+    }
+
+    header nav > div:has(> #login-btn) #login-btn {
+        margin-left: auto;
+    }
+}
+
 .section-heading {
     margin-bottom: 1.5rem;
 }

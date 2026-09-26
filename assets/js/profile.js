@@ -18,6 +18,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { firebaseConfig } from "./modules/firebase-config.js";
 import state from "./modules/state.js";
+import { finishPreloader } from "./modules/preloader.js";
 import {
   initLanguageSystem,
   updatePageLanguage,
@@ -39,7 +40,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-const loader = document.getElementById("page-loader");
 const notLoggedIn = document.getElementById("not-logged-in");
 const profileContent = document.getElementById("profile-content");
 const profileForm = document.getElementById("profile-form");
@@ -107,13 +107,7 @@ initFeedback(feedbackRef, push);
 initChatbot();
 
 function hideLoader() {
-  if (loader) {
-    loader.classList.add("fade-out");
-    document.body.classList.remove("loading");
-    setTimeout(() => {
-      loader.style.display = "none";
-    }, 500);
-  }
+  finishPreloader();
 }
 
 function getHomeHref() {
@@ -316,9 +310,19 @@ function refreshDonationCount() {
 
 let currentUser = null;
 let currentDonorData = {};
+let authStateResolved = false;
 let recentDonationsList = [];
 
+setTimeout(() => {
+  if (!authStateResolved) {
+    hideLoader();
+    notLoggedIn?.classList.remove("hidden");
+    profileContent?.classList.add("hidden");
+  }
+}, 4500);
+
 onAuthStateChanged(auth, (user) => {
+  authStateResolved = true;
   currentUser = user;
   state.currentUser = user;
   const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
@@ -355,6 +359,7 @@ onAuthStateChanged(auth, (user) => {
       const adminBadge = document.getElementById("admin-badge");
       const adminMobileLink = document.getElementById("admin-mobile-link");
       const adminDesktopLink = document.getElementById("nav-dashboard-link");
+      const brandLink = document.getElementById("profile-brand-link");
 
       const navLinkIds = [
         "nav-home-link",
@@ -377,6 +382,7 @@ onAuthStateChanged(auth, (user) => {
 
       if (role === "admin") {
         document.body.classList.add("admin-mode");
+        if (brandLink) brandLink.href = "admin.html";
 
         if (adminBadge) {
           adminBadge.classList.add("hidden");
@@ -396,6 +402,7 @@ onAuthStateChanged(auth, (user) => {
         );
       } else {
         document.body.classList.remove("admin-mode");
+        if (brandLink) brandLink.href = "../index.html";
         if (adminBadge) {
           adminBadge.classList.add("hidden");
           adminBadge.classList.remove("inline-flex");
