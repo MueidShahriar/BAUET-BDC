@@ -1403,7 +1403,9 @@ img,
 }
 
 .recent-card__headline span {
-    color: #7f1d1d;
+    color: var(--red-700);
+    font-size: 1.1rem;
+    font-weight: 800;
 }
 
 .recent-card__date {
@@ -4939,4 +4941,94 @@ canvas {
         top: 50%;
         transform: translateY(-50%);
     }
+}
+
+/* Final home-page hero and section typography adjustments. */
+#hero.hero-shell::before {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+#hero .hero-visual {
+    width: auto !important;
+    aspect-ratio: auto !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+#hero .hero-visual::before,
+#hero .hero-visual::after {
+    display: none !important;
+    content: none !important;
+}
+
+#hero .hero-drop-motion {
+    animation: hero-drop-vertical-flow 3.2s ease-in-out infinite !important;
+}
+
+@keyframes hero-drop-vertical-flow {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-18px);
+    }
+}
+
+#recent-donor .section-title {
+    font-size: clamp(1.8rem, 3vw, 2.35rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+}
+
+#recent-donor .section-subtitle {
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+@media (min-width: 768px) {
+    #hero .hero-copy {
+        align-items: flex-start !important;
+        justify-content: center !important;
+        text-align: left !important;
+    }
+
+    #hero .hero-title {
+        max-width: 12ch;
+        font-size: clamp(2.6rem, 4.2vw, 4rem) !important;
+        line-height: 1.05;
+        letter-spacing: -0.04em;
+        text-align: left !important;
+    }
+
+    #hero .hero-description {
+        max-width: 38rem;
+        font-size: 1.05rem !important;
+        line-height: 1.65;
+        text-align: left !important;
+    }
+
+    #hero .hero-actions {
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+    }
+}
+
+#recent-donor .section-title {
+    font-size: 1.5rem;
+    line-height: 1.25;
+    letter-spacing: 0;
+}
+
+#dashboard-insights h2::after {
+    display: none !important;
+}
+
+#dashboard-insights h2 {
+    margin-bottom: 0.25rem;
 }

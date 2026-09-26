@@ -699,6 +699,34 @@ function getDonationPreparationAnswer(question, lang) {
     return getKBAnswer(KNOWLEDGE_BASE.find((entry) => entry.keywords.includes('prepare')), lang);
 }
 
+function isDeveloperQuestion(question) {
+    const q = normalizeQuestionForKB(question);
+    const directPatterns = [
+        /who\s+(?:develop(?:ed|er)?|creat(?:ed|or)?|built|made)\s+(?:you|this|the\s+(?:website|site|chatbot|bot|app))/i,
+        /(?:who|which person)\s+(?:is|was)\s+(?:your|the)\s+(?:developer|creator|maker)/i,
+        /(?:tomake|tomay|tmy|tmi|tumar|tomar|apnake|apnar|ei)\s+(?:ke|k|kara)?\s*(?:develop|create|ban|bana|toiri|made|build)/i,
+        /(?:ke|k|kara)\s+(?:tomake|tomay|tmy|tmi|apnake|ei website|ei site|chatbot|bot)\s+(?:develop|create|ban|bana|toiri|made|build)/i,
+        /(?:তোমাকে|তোমায়|আপনাকে|এই ওয়েবসাইট|এই ওয়েবসাইট|এই সাইট|চ্যাটবট|বট).*(?:কে|কারা).*(?:তৈরি|বানিয়েছে|বানিয়েছে|ডেভেলপ|উন্নয়ন)/i,
+        /(?:কে|কারা).*(?:তোমাকে|তোমায়|আপনাকে|এই ওয়েবসাইট|এই ওয়েবসাইট|এই সাইট|চ্যাটবট|বট).*(?:তৈরি|বানিয়েছে|বানিয়েছে|ডেভেলপ|উন্নয়ন)/i,
+        /(?:তোমার|আপনার|এই ওয়েবসাইটের|এই ওয়েবসাইটের|চ্যাটবটের).*(?:ডেভেলপার|নির্মাতা|স্রষ্টা|তৈরি করেছে|কে)/i
+    ];
+    if (directPatterns.some((pattern) => pattern.test(question))) return true;
+
+    const developerTerms = [
+        'developer', 'developed by', 'develop korse', 'develop korche', 'develop koreche',
+        'creator', 'created by', 'maker', 'made by', 'built by', 'banayse', 'banayche', 'banaise', 'banayse',
+        'banিয়েছে', 'banaiছে', 'toiri korse', 'toiri koreche', 'ডেভেলপার', 'ডেভেলপ', 'নির্মাতা',
+        'স্রষ্টা', 'তৈরি করেছে', 'বানিয়েছে', 'বানিয়েছে', 'কে বানিয়েছে', 'কে তৈরি করেছে'
+    ];
+    return developerTerms.some((term) => q.includes(term));
+}
+
+function getDeveloperAnswer() {
+    return `Developed by Md. Mueid Shahriar CSE-16th, BAUET<br>
+        <a href="https://www.linkedin.com/in/mueid16/" target="_blank" rel="noopener noreferrer" aria-label="Md. Mueid Shahriar on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://wa.me/8801712460423" target="_blank" rel="noopener noreferrer" aria-label="Contact Md. Mueid Shahriar on WhatsApp"><i class="fab fa-whatsapp"></i></a>`;
+}
+
 function buildKBContext(question) {
     const normalizedQuestion = normalizeQuestionForKB(question);
     const qWords = normalizedQuestion.split(/\s+/).filter(w => w.length > 0);
@@ -1008,6 +1036,14 @@ async function getAnswer(question, options = {}) {
     const { skipAI = false } = options;
     loadPersistedChatState();
     const lang = detectLang(question);
+
+    if (isDeveloperQuestion(question)) {
+        const reply = getDeveloperAnswer();
+        addToHistory('user', question);
+        addToHistory('model', stripHtml(reply));
+        return reply;
+    }
+
     const bloodGroup = extractBloodGroup(question);
     const wantsDonor = isDonorIntent(question);
     const softDonor = bloodGroup && ['donor', 'rokto', 'blood', 'lagbe', 'dorkar', 'chai', 'রক্ত', 'দাতা', 'ডোনার'].some(w => question.toLowerCase().includes(w));
@@ -1211,14 +1247,10 @@ export function initChatbot() {
     }
 
     async function typeAssistantMessage(messageRef, html, stepDelay = 14) {
-        if (/<\/?[a-z][\s\S]*>/i.test(html)) {
-            updateAssistantMessage(messageRef, html, false);
-            return;
-        }
-
         const temp = document.createElement('div');
         temp.innerHTML = html;
-        const text = temp.textContent || temp.innerText || '';
+        const hasMarkup = /<\/?[a-z][\s\S]*>/i.test(html);
+        const text = (temp.textContent || temp.innerText || '').trim();
 
         if (!text.trim()) {
             updateAssistantMessage(messageRef, html, false);
@@ -1232,7 +1264,7 @@ export function initChatbot() {
             await sleep(stepDelay);
         }
 
-        updateAssistantMessage(messageRef, formatPlainTextForHtml(text), false);
+        updateAssistantMessage(messageRef, hasMarkup ? html : formatPlainTextForHtml(text), false);
     }
 
     function addTypingIndicator(isDonorSearch = false) {
@@ -1283,7 +1315,7 @@ export function initChatbot() {
                 removeTypingIndicator();
                 const assistantMessage = createAssistantMessage('');
                 await typeAssistantMessage(assistantMessage, answer, 8);
-            } else if (isDonationPreparationQuestion(question)) {
+            } else if (isDonationPreparationQuestion(question) || isDeveloperQuestion(question)) {
                 const answer = await getAnswer(question, { skipAI: true });
                 const elapsed = Date.now() - startTime;
                 if (elapsed < minimumThinkingTime) {

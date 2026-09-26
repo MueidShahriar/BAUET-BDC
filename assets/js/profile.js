@@ -316,19 +316,9 @@ function refreshDonationCount() {
 
 let currentUser = null;
 let currentDonorData = {};
-let authStateResolved = false;
 let recentDonationsList = [];
 
-setTimeout(() => {
-  if (!authStateResolved) {
-    hideLoader();
-    notLoggedIn?.classList.remove("hidden");
-    profileContent?.classList.add("hidden");
-  }
-}, 4500);
-
 onAuthStateChanged(auth, (user) => {
-  authStateResolved = true;
   currentUser = user;
   state.currentUser = user;
   const mobileLogoutBtn = document.getElementById("mobile-logout-btn");

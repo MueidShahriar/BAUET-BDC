@@ -11,5 +11,11 @@ export function finishPreloader() {
 
 export function initPreloader({ waitForAuth = false } = {}) {
     if (waitForAuth) return;
-    setTimeout(finishPreloader, 2200);
+
+    const finishAfterLoad = () => finishPreloader();
+    if (document.readyState === 'complete') {
+        finishAfterLoad();
+    } else {
+        window.addEventListener('load', finishAfterLoad, { once: true });
+    }
 }
