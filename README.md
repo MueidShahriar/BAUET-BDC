@@ -1,6 +1,6 @@
 <div align="center">
 <img src="image/blood-drop.png" alt="BAUET BDC logo" width="120" />
-<h1>BAUET Blood Donation Community</h1>
+<h1>BAUET Blood Donation Club</h1>
 <p><strong>Find donors faster. Coordinate better. Help save lives.</strong></p>
 <p>A community-powered blood donation network built for BAUET.</p>
 <p>
