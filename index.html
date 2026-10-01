@@ -420,13 +420,50 @@
                             </div>
                         </div>
                         <form id="admin-recent-donor-form" class="admin-form-grid">
+                            <div class="admin-form-section-title admin-form-section-title--patient">Patient Information</div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-user-injured"></i>
+                                <input name="patient-name" id="patient-name" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="patient-name"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Patient Name</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-notes-medical"></i>
+                                <input name="patient-problem" id="patient-problem" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="patient-problem"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Patient Problem</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-person"></i>
+                                <input name="patient-age" id="patient-age" type="number" min="0" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="patient-age"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Patient Age</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-location-dot"></i>
+                                <input name="patient-address" id="patient-address" type="text" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="patient-address"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Patient Address</label>
+                            </div>
+                            <div class="field-icon-left">
+                                <i class="fi fa-solid fa-phone"></i>
+                                <input name="patient-contact" id="patient-contact" type="tel" placeholder=" " required
+                                    class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                                <label for="patient-contact"
+                                    class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Patient Contact</label>
+                            </div>
+                            <div class="admin-form-section-title admin-form-section-title--donor">Donor Information</div>
                             <div class="field-icon-left">
                                 <i class="fi fa-solid fa-id-badge"></i>
                                 <input name="donor-id" id="donor-id" type="text" placeholder=" "
                                     class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
                                 <label for="donor-id"
                                     class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Donor ID <span class="field-optional">Optional</span></label>
-                                <p class="mt-2 text-xs text-gray-500">Use a registered donor ID like <strong>BDC-301</strong> for auto-fill, or leave it blank and enter the donor details manually.</p>
+                                <p class="admin-donor-id-hint mt-2 text-xs">Use a registered donor ID like <strong>BDC-301</strong> for auto-fill, or leave it blank and enter the donor details manually.</p>
                             </div>
                             <div class="field-icon-left">
                                 <i class="fi fa-solid fa-user"></i>

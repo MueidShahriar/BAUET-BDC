@@ -72,6 +72,11 @@ function renderRecentDonationCardAdmin(d) {
     const initials = getInitials(donorName, '?');
     const donorId = normalizeDonorId(d.donorId) || d.donorId || '';
     const phone = getTextValue(d.phone, '');
+    const patientName = getTextValue(d.patientName, '—');
+    const patientProblem = getTextValue(d.patientProblem, '—');
+    const patientAge = getTextValue(d.patientAge, '—');
+    const patientAddress = getTextValue(d.patientAddress, '—');
+    const patientContact = getTextValue(d.patientContact, '—');
     const contactRow = phone
         ? `<div class="admin-event-card__meta"><span><i class="fa-solid fa-phone"></i> Contact: ${phone}</span></div>`
         : '';
@@ -94,6 +99,18 @@ function renderRecentDonationCardAdmin(d) {
                     <span><i class="fa-solid fa-layer-group"></i> Batch: ${getTextValue(d.batch, '—')}</span>
                     <span><i class="fa-solid fa-user"></i> Age: ${getTextValue(d.age, '—')}</span>
                     <span><i class="fa-solid fa-weight-scale"></i> ${getTextValue(d.weight, '') ? `${getTextValue(d.weight)} kg` : '—'}</span>
+                </div>
+                <div class="admin-event-card__meta" style="color:#dc2626;font-weight:700">
+                    <span><i class="fa-solid fa-user-injured"></i> Patient Information</span>
+                </div>
+                <div class="admin-event-card__meta">
+                    <span><i class="fa-solid fa-user"></i> Name: ${patientName}</span>
+                    <span><i class="fa-solid fa-notes-medical"></i> Problem: ${patientProblem}</span>
+                    <span><i class="fa-solid fa-person"></i> Age: ${patientAge}</span>
+                </div>
+                <div class="admin-event-card__meta">
+                    <span><i class="fa-solid fa-location-dot"></i> Address: ${patientAddress}</span>
+                    <span><i class="fa-solid fa-phone"></i> Contact: ${patientContact}</span>
                 </div>
             </div>
             <div class="admin-event-card__actions">
@@ -118,6 +135,11 @@ export function renderAdminRecentDonationsList(deleteRecentFn) {
             if (data) {
                 const idField = document.getElementById('admin-recent-donor-id');
                 if (idField) idField.value = data.id;
+                const patientNameF = document.getElementById('patient-name'); if (patientNameF) patientNameF.value = data.patientName || '';
+                const patientProblemF = document.getElementById('patient-problem'); if (patientProblemF) patientProblemF.value = data.patientProblem || '';
+                const patientAgeF = document.getElementById('patient-age'); if (patientAgeF) patientAgeF.value = data.patientAge || '';
+                const patientAddressF = document.getElementById('patient-address'); if (patientAddressF) patientAddressF.value = data.patientAddress || '';
+                const patientContactF = document.getElementById('patient-contact'); if (patientContactF) patientContactF.value = data.patientContact || '';
                 const donorIdField = document.getElementById('donor-id');
                 if (donorIdField) donorIdField.value = normalizeDonorId(data.donorId) || data.donorId || '';
                 const nameF = document.getElementById('donor-name'); if (nameF) nameF.value = data.name || '';

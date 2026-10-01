@@ -921,6 +921,25 @@ img {
     margin-left: 0.35rem;
 }
 
+.admin-form-section-title {
+    grid-column: 1 / -1;
+    color: #dc2626;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    margin: 0;
+}
+
+.admin-form-section-title--donor {
+    border-top: 1px solid #fecaca;
+    margin-top: 0.9rem;
+    padding-top: 1rem;
+}
+
+.admin-donor-id-hint {
+    color: #dc2626;
+}
+
 .field-icon-right {
     position: relative;
 }

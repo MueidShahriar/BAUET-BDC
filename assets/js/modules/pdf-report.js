@@ -52,8 +52,8 @@ export function createMonthlyReportDownloader({
         format: "a4",
       });
       const marginX = 20;
-      const marginY = 20;
-      const bottomMargin = 20;
+      const marginY = 12;
+      const bottomMargin = 12;
       const pageWidth = doc.internal.pageSize.getWidth();
       const pageHeight = doc.internal.pageSize.getHeight();
       const contentWidth = pageWidth - marginX * 2;
@@ -78,17 +78,27 @@ export function createMonthlyReportDownloader({
           (donation?.publicComment ?? "").toString().trim(),
         );
         const hasPhone = Boolean((donation?.phone ?? "").toString().trim());
+        const patientFieldCount = [
+          donation?.patientName,
+          donation?.patientProblem,
+          donation?.patientAge,
+          donation?.patientAddress,
+          donation?.patientContact,
+        ].filter((value) => String(value ?? "").trim()).length;
+        const patientRowCount = patientFieldCount
+          ? Math.ceil(patientFieldCount / 3)
+          : 0;
 
         return (
-          6 +
+          10 +
           5 +
-          5 +
-          (hasPhone ? 5 : 0) +
-          (hasNotes ? 5 : 0) +
-          (hasComment ? 5 : 0) +
           4 +
-          8 +
-          2
+          (hasPhone ? 4 : 0) +
+          4 +
+          (hasNotes ? 4 : 0) +
+          (hasComment ? 4 : 0) +
+          (patientRowCount ? 10 + patientRowCount * 4 : 0) +
+          3
         );
       };
 
@@ -96,22 +106,22 @@ export function createMonthlyReportDownloader({
         ensureSpace(estimatedHeight);
       };
       const drawDivider = () => {
-        ensureSpace(4);
+        ensureSpace(3);
         doc.setDrawColor(...palette.border);
         doc.setLineWidth(0.3);
         doc.line(marginX, cursorY, marginX + contentWidth, cursorY);
-        cursorY += 4;
+        cursorY += 3;
         doc.setDrawColor(0);
       };
       const drawSectionTitle = (title) => {
-        ensureSpace(12);
+        ensureSpace(10);
         doc.setFillColor(...palette.panel);
-        doc.rect(marginX, cursorY, contentWidth, 9, "F");
+        doc.rect(marginX, cursorY, contentWidth, 7, "F");
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
+        doc.setFontSize(10);
         setTextColor(palette.primary);
-        doc.text(title, marginX + 2, cursorY + 6);
-        cursorY += 12;
+        doc.text(title, marginX + 2, cursorY + 5);
+        cursorY += 10;
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
         setTextColor(palette.text);
@@ -141,15 +151,15 @@ export function createMonthlyReportDownloader({
         count,
         firstEntryHeight = 24,
       ) => {
-        ensureSpace(13);
+        ensureSpace(11 + firstEntryHeight);
         doc.setFillColor(252, 231, 233);
-        doc.rect(marginX, cursorY, contentWidth, 9, "F");
+        doc.rect(marginX, cursorY, contentWidth, 7, "F");
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(11);
+        doc.setFontSize(10);
         setTextColor(palette.primary);
         const headerText = `${label} ${yearText ? yearText + " " : ""}(${count})`;
-        doc.text(headerText, marginX + 2, cursorY + 6.5);
-        cursorY += 13;
+        doc.text(headerText, marginX + 2, cursorY + 5);
+        cursorY += 11;
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
         setTextColor(palette.text);
@@ -191,6 +201,7 @@ export function createMonthlyReportDownloader({
       };
       const writeDonationEntry = (entryNumber, detail) => {
         if (!detail) return;
+        drawSectionTitle("Donor Information");
         const firstLineSegments = [
           { text: `${entryNumber}. `, bold: true },
           { text: `${detail.displayDate} - `, bold: false },
@@ -210,7 +221,7 @@ export function createMonthlyReportDownloader({
           });
           firstLineSegments.push({ text: ")", bold: false });
         }
-        writeInlineSegments(firstLineSegments, 0, 6);
+        writeInlineSegments(firstLineSegments, 0, 5);
         const locationSegments = [
           { text: "Location: ", bold: true },
           { text: detail.location || "—", bold: false },
@@ -218,14 +229,14 @@ export function createMonthlyReportDownloader({
           { text: "Department: ", bold: true },
           { text: detail.department || "—", bold: false },
         ];
-        writeInlineSegments(locationSegments, 8, 5);
+        writeInlineSegments(locationSegments, 8, 4);
         const phoneText = (detail.phone || "").toString().trim();
         if (phoneText) {
           const contactSegments = [
             { text: "Contact: ", bold: true },
             { text: phoneText, bold: false },
           ];
-          writeInlineSegments(contactSegments, 8, 5);
+          writeInlineSegments(contactSegments, 8, 4);
         }
         const batchAgeWeightSegments = [
           { text: "Batch: ", bold: true },
@@ -237,7 +248,7 @@ export function createMonthlyReportDownloader({
           { text: "Weight: ", bold: true },
           { text: detail.weight || "—", bold: false },
         ];
-        writeInlineSegments(batchAgeWeightSegments, 8, 5);
+        writeInlineSegments(batchAgeWeightSegments, 8, 4);
         if (detail.notes) {
           writeInlineSegments(
             [
@@ -245,7 +256,7 @@ export function createMonthlyReportDownloader({
               { text: detail.notes, bold: false },
             ],
             8,
-            5,
+            4,
           );
         }
         if (detail.comment) {
@@ -255,8 +266,28 @@ export function createMonthlyReportDownloader({
               { text: detail.comment, bold: false },
             ],
             8,
-            5,
+            4,
           );
+        }
+        const patientFields = [
+          ["Patient Name", detail.patientName],
+          ["Patient Problem", detail.patientProblem],
+          ["Patient Age", detail.patientAge],
+          ["Patient Address", detail.patientAddress],
+          ["Patient Contact", detail.patientContact],
+        ].filter(([, value]) => String(value || "").trim());
+        if (patientFields.length) {
+          drawSectionTitle("Patient Information");
+          for (let index = 0; index < patientFields.length; index += 3) {
+            const rowFields = patientFields.slice(index, index + 3);
+            const rowSegments = [];
+            rowFields.forEach(([label, value], fieldIndex) => {
+              if (fieldIndex > 0) rowSegments.push({ text: " | ", bold: false });
+              rowSegments.push({ text: `${label.replace("Patient ", "")}: `, bold: true });
+              rowSegments.push({ text: String(value).trim(), bold: false });
+            });
+            writeInlineSegments(rowSegments, 8, 4);
+          }
         }
       };
       const now = new Date();
@@ -318,7 +349,7 @@ export function createMonthlyReportDownloader({
       if (yearlyCounts.length === 0) {
         writeWrappedText("No yearly data available", 6, 5);
       }
-      addGap(6);
+      addGap(3);
 
       drawSectionTitle("Monthly Summary");
       if (sortedYears.length > 0) {
@@ -387,7 +418,7 @@ export function createMonthlyReportDownloader({
       } else {
         writeWrappedText("No monthly data available", 6, 5);
       }
-      addGap(6);
+      addGap(3);
 
       drawSectionTitle("Donation details by date");
       let printedAnyDetails = false;
@@ -433,9 +464,6 @@ export function createMonthlyReportDownloader({
           );
 
           entries.forEach(({ donation, dateObj }, entryIdx) => {
-            if (entryIdx > 0) {
-              ensureEntrySpace(24);
-            }
             const detail = getDonationDetailData(donation, dateObj) || {
               displayDate: formatDateDisplay(dateObj),
               donorName: donation?.name || "Details unavailable",
@@ -447,14 +475,20 @@ export function createMonthlyReportDownloader({
               weight: "—",
               notes: "",
               comment: "",
+              patientName: "",
+              patientProblem: "",
+              patientAge: "",
+              patientAddress: "",
+              patientContact: "",
             };
             const rawPhone = donation?.phone;
             detail.phone = rawPhone == null ? "" : String(rawPhone).trim();
+            ensureEntrySpace(getEntryEstimatedHeight(donation));
             writeDonationEntry(entryIdx + 1, detail);
-            addGap(4);
+            addGap(0);
             drawDivider();
           });
-          addGap(6);
+          addGap(3);
         }
       });
       if (undated.length) {
@@ -471,11 +505,17 @@ export function createMonthlyReportDownloader({
             weight: "—",
             notes: "",
             comment: "",
+            patientName: "",
+            patientProblem: "",
+            patientAge: "",
+            patientAddress: "",
+            patientContact: "",
           };
           const rawPhone = donation?.phone;
           detail.phone = rawPhone == null ? "" : String(rawPhone).trim();
+          ensureEntrySpace(getEntryEstimatedHeight(donation));
           writeDonationEntry(entryIdx + 1, detail);
-          addGap(2);
+          addGap(0);
           drawDivider();
         });
         addGap(4);

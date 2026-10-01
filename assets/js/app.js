@@ -777,6 +777,9 @@ window.onload = function () {
         const donorIdInput = normalizeDonorId(donorIdRaw);
         const matchedDonor = findDonorForRecentDonationInput(donorIdRaw);
         const donorData = {
+            patientName: fd.get('patient-name'), patientProblem: fd.get('patient-problem'),
+            patientAge: fd.get('patient-age'), patientAddress: fd.get('patient-address'),
+            patientContact: fd.get('patient-contact'),
             name: fd.get('donor-name'), bloodGroup: fd.get('donor-blood-group'),
             location: fd.get('donor-location'), department: fd.get('donor-department'),
             batch: fd.get('donor-batch'), age: fd.get('donor-age'),

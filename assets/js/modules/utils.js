@@ -37,7 +37,13 @@ export function getDonationDetailData(donation, dateObj) {
     const weight = formatWeightValue(donation.weight);
     const notes = (donation.notes ?? '').toString().trim();
     const comment = (donation.publicComment ?? '').toString().trim();
-    return { displayDate, donorName, bloodGroup: blood, location, department, batch, age, weight, notes, comment };
+    const patientName = (donation.patientName ?? '').toString().trim();
+    const patientProblem = (donation.patientProblem ?? '').toString().trim();
+    const patientAge = (donation.patientAge ?? '').toString().trim();
+    const patientAddress = (donation.patientAddress ?? '').toString().trim();
+    const patientContact = (donation.patientContact ?? '').toString().trim();
+    return { displayDate, donorName, bloodGroup: blood, location, department, batch, age, weight, notes, comment,
+        patientName, patientProblem, patientAge, patientAddress, patientContact };
 }
 
 export function normalizeBloodGroup(value) {
