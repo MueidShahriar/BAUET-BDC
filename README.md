@@ -1,8 +1,60 @@
-# BAUET Blood Donation Community
+<div align="center">
+<img src="image/blood-drop.png" alt="BAUET BDC logo" width="120" />
+<h1>BAUET Blood Donation Community</h1>
+<p><strong>Find donors faster. Coordinate better. Help save lives.</strong></p>
+<p>A community-powered blood donation network built for BAUET.</p>
+<p>
+<a href="https://blood-donation-community.vercel.app/"><strong>Open Live App</strong></a>
+&nbsp;&nbsp;|&nbsp;&nbsp;
+<a href="https://blood-donation-community.vercel.app/"><strong>Install App</strong></a>
+&nbsp;&nbsp;|&nbsp;&nbsp;
+<a href="https://github.com/mueidshahriar/Blood-Donation-Community"><strong>Source Code</strong></a>
+</p>
+<p>
+<img src="https://img.shields.io/badge/PWA-Installable-e11d48?style=for-the-badge" alt="Installable PWA" />
+<img src="https://img.shields.io/badge/Firebase-Realtime-ffca28?style=for-the-badge&logo=firebase&logoColor=111827" alt="Firebase Realtime" />
+<img src="https://img.shields.io/badge/License-Private-64748b?style=for-the-badge" alt="Private project" />
+</p>
+</div>
+
+<br />
 
 A professional blood donation management platform built to help the BAUET community coordinate donor discovery, streamline event management, and improve emergency response through a modern web experience.
 
+> Every donor connection can become someone else's second chance.
+
+## Explore the Project
+
+| | Section |
+| --- | --- |
+| 01 | [What it does](#highlights) |
+| 02 | [Technology](#technology-stack) |
+| 03 | [Install the app](#install-the-app) |
+| 04 | [Run locally](#local-development-setup) |
+
 [Live Demo](https://blood-donation-community.vercel.app)
+
+## Quick Links
+
+| Resource | Link |
+| --- | --- |
+| Live application | [blood-donation-community.vercel.app](https://blood-donation-community.vercel.app/) |
+| Install the PWA | [Install BAUET BDC](https://blood-donation-community.vercel.app/) |
+| Project source | [github.com/mueidshahriar/Blood-Donation-Community](https://github.com/mueidshahriar/Blood-Donation-Community) |
+
+## Install the App
+
+BAUET BDC is an installable Progressive Web App. Use the link below to open the live application:
+
+**[Install BAUET BDC](https://blood-donation-community.vercel.app/)**
+
+After opening the link:
+
+- **Android / Chrome:** open the browser menu and choose **Install app** or **Add to Home screen**.
+- **Desktop Chrome or Edge:** select the install icon in the address bar, then confirm.
+- **iPhone / iPad:** use **Share -> Add to Home Screen** in Safari.
+
+The installed app opens in a standalone window and uses the included web manifest and service worker for the PWA experience.
 
 ## Introduction
 
@@ -23,6 +75,14 @@ The project is designed for both public users and administrators. Public users c
 - Progressive Web App support for installable usage
 - AI assistant for donation guidance and website help
 - Certificate and donor card generation
+
+<table>
+<tr>
+<td width="33%" align="center"><strong>Find Donors</strong><br />Search by blood group, location, and eligibility.</td>
+<td width="33%" align="center"><strong>Manage Operations</strong><br />Coordinate members, events, donations, and feedback.</td>
+<td width="33%" align="center"><strong>Stay Connected</strong><br />Use the installable PWA on desktop or mobile.</td>
+</tr>
+</table>
 
 ## Technology Stack
 
