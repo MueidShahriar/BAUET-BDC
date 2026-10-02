@@ -21,8 +21,7 @@ export function initVisitorTracker(database, isHomePage = false) {
     const sessionId = getSessionId();
 
     
-    const onlineEls = document.querySelectorAll('.online-users-count');
-    const onlineSingle = document.getElementById('online-users-count');
+    const onlineEls = document.querySelectorAll('.online-users-count, #online-users-count, #vs-online-count');
     const viewEls = document.querySelectorAll('.total-views-count');
     const viewSingle = document.getElementById('total-views-count');
 
@@ -30,6 +29,20 @@ export function initVisitorTracker(database, isHomePage = false) {
     const myPresenceRef = ref(database, `visitorTracking/presence/${sessionId}`);
     const connectedRef = ref(database, '.info/connected');
     let heartbeatTimer = null;
+    let presenceRefreshTimer = null;
+    let latestPresenceData = null;
+
+    const renderOnlineCount = (data) => {
+        const now = Date.now();
+        const count = data
+            ? Object.values(data).filter((entry) => (
+                entry && typeof entry === 'object' &&
+                typeof entry.updatedAt === 'number' &&
+                now - entry.updatedAt <= PRESENCE_ACTIVE_WINDOW_MS
+            )).length
+            : 0;
+        onlineEls.forEach(el => { el.textContent = count; });
+    };
 
     // A session is one browser tab. sessionStorage preserves its id across a refresh,
     // so mounting this module again cannot create an additional online record.
@@ -49,19 +62,12 @@ export function initVisitorTracker(database, isHomePage = false) {
 
     const allPresenceRef = ref(database, 'visitorTracking/presence');
     onValue(allPresenceRef, (snap) => {
-        const data = snap.val();
-        const now = Date.now();
-        const count = data
-            ? Object.values(data).filter((entry) => {
-                if (entry && typeof entry === 'object' && typeof entry.updatedAt === 'number') {
-                    return now - entry.updatedAt <= PRESENCE_ACTIVE_WINDOW_MS;
-                }
-                return Boolean(entry);
-            }).length
-            : 0;
-        onlineEls.forEach(el => { el.textContent = count; });
-        if (onlineSingle) onlineSingle.textContent = count;
+        latestPresenceData = snap.val();
+        renderOnlineCount(latestPresenceData);
     });
+    presenceRefreshTimer = window.setInterval(() => {
+        renderOnlineCount(latestPresenceData);
+    }, 1000);
 
     // Resume a stale heartbeat as soon as a backgrounded tab becomes active again.
     const refreshPresenceWhenVisible = () => {
@@ -86,6 +92,7 @@ export function initVisitorTracker(database, isHomePage = false) {
 
     window.addEventListener('pagehide', () => {
         if (heartbeatTimer) window.clearInterval(heartbeatTimer);
+        if (presenceRefreshTimer) window.clearInterval(presenceRefreshTimer);
         document.removeEventListener('visibilitychange', refreshPresenceWhenVisible);
         // onDisconnect covers crashes and connection loss; remove also handles normal navigation.
         myPresenceRef && removePresence();

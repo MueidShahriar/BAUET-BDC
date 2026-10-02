@@ -26,7 +26,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 const feedbackRef = ref(database, 'feedback');
-const PRESENCE_ACTIVE_WINDOW_MS = 45000;
 
 function callUpdateLogin() {
     updateLoginButtonState(database, ref, onValue,
@@ -68,26 +67,10 @@ window.onload = function () {
 
     
     const viewsRef = ref(database, 'visitorTracking/totalViews');
-    const presenceRef = ref(database, 'visitorTracking/presence');
-
     onValue(viewsRef, (snap) => {
         const views = snap.val() || 0;
         const el = document.getElementById('vs-total-views');
         if (el) el.textContent = views.toLocaleString();
     });
 
-    onValue(presenceRef, (snap) => {
-        const data = snap.val();
-        const now = Date.now();
-        const count = data
-            ? Object.values(data).filter((entry) => {
-                if (entry && typeof entry === 'object' && typeof entry.updatedAt === 'number') {
-                    return now - entry.updatedAt <= PRESENCE_ACTIVE_WINDOW_MS;
-                }
-                return Boolean(entry);
-            }).length
-            : 0;
-        const el = document.getElementById('vs-online-count');
-        if (el) el.textContent = count;
-    });
 };
