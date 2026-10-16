@@ -91,6 +91,9 @@ export const translations = {
         badgeGold: "Gold donor",
         badgeSilver: "Silver donor",
         badgeBronze: "Bronze donor",
+        badgeGoldRange: "(8+ donations)",
+        badgeSilverRange: "(4–7 donations)",
+        badgeBronzeRange: "(1–3 donations)",
 
         eventsTitle: "Upcoming Events",
         eventsDescription: "Join our community drives and help save lives - see the event details and register to participate.",
@@ -368,6 +371,9 @@ export const translations = {
         badgeGold: "গোল্ড ডোনার",
         badgeSilver: "সিলভার ডোনার",
         badgeBronze: "ব্রোঞ্জ ডোনার",
+        badgeGoldRange: "(৮+ বার ডোনেশন)",
+        badgeSilverRange: "(৪–৭ বার ডোনেশন)",
+        badgeBronzeRange: "(১–৩ বার ডোনেশন)",
 
         eventsTitle: "আসন্ন ইভেন্ট",
         eventsDescription: "আমাদের কমিউনিটি ড্রাইভে যোগ দিন এবং জীবন বাঁচাতে সাহায্য করুন - ইভেন্টের বিবরণ দেখুন এবং অংশগ্রহণের জন্য নিবন্ধন করুন।",

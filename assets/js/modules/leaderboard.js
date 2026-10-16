@@ -38,9 +38,10 @@ function renderLeaderboardCard(entry, rank) {
         : rank === 2 ? 'leaderboard-medal--silver'
         : rank === 3 ? 'leaderboard-medal--bronze'
         : 'leaderboard-medal--neutral';
+    const cardTierClass = badge?.tier ? `leaderboard-card--${badge.tier}` : '';
 
     return `
-        <article class="leaderboard-card">
+        <article class="leaderboard-card ${cardTierClass}">
             <div class="leaderboard-rank ${medalClass}">${rank}</div>
             <div class="leaderboard-avatar">${avatar}</div>
             <div class="leaderboard-body">
