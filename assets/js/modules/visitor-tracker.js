@@ -8,6 +8,59 @@ import {
 const PRESENCE_ACTIVE_WINDOW_MS = 45000;
 const PRESENCE_HEARTBEAT_MS = 15000;
 
+function ensureVisitorStatsBar() {
+    let bar = document.querySelector('.visitor-stats-bar');
+    if (!bar) {
+        bar = document.createElement('div');
+        bar.className = 'visitor-stats-bar';
+        bar.setAttribute('aria-live', 'polite');
+        const footer = document.querySelector('footer');
+        if (footer?.parentNode) footer.parentNode.insertBefore(bar, footer);
+        else document.body.appendChild(bar);
+    }
+
+    let content = bar.querySelector('.visitor-stats-content');
+    if (!content) {
+        content = bar.querySelector(':scope > div');
+        if (!content) {
+            content = document.createElement('div');
+            bar.appendChild(content);
+        }
+        content.classList.add('visitor-stats-content');
+        content.classList.add('max-w-6xl', 'mx-auto', 'px-4', 'sm:px-6', 'lg:px-8', 'flex', 'items-center', 'justify-center', 'gap-6', 'sm:gap-10', 'flex-wrap');
+    }
+
+    if (!bar.querySelector('#total-views-count, .total-views-count')) {
+        const item = document.createElement('div');
+        item.className = 'visitor-stats-item';
+        item.innerHTML = '<span class="visitor-stats-dot" style="background:#6366f1"></span><i class="fa-solid fa-eye text-xs" style="color:#6366f1"></i><span class="text-sm font-semibold text-gray-700">Total Views:</span><span id="total-views-count" class="text-sm font-extrabold text-gray-900">0</span>';
+        content.appendChild(item);
+    } else {
+        const totalViewsEl = bar.querySelector('#total-views-count, .total-views-count');
+        if (!totalViewsEl.id) totalViewsEl.id = 'total-views-count';
+    }
+
+    if (!bar.querySelector('.online-users-count, #online-users-count, #vs-online-count')) {
+        const item = document.createElement('div');
+        item.className = 'visitor-stats-item';
+        item.innerHTML = '<span class="visitor-stats-dot visitor-stats-dot--live"></span><i class="fa-solid fa-users text-xs" style="color:#10b981"></i><span class="text-sm font-semibold text-gray-700">Online Now:</span><span id="online-users-count" class="text-sm font-extrabold text-gray-900 online-users-count">0</span>';
+        content.appendChild(item);
+    }
+
+    const totalViewsItem = bar.querySelector('#total-views-count, .total-views-count')?.closest('.visitor-stats-item');
+    const onlineItem = bar.querySelector('.online-users-count, #online-users-count, #vs-online-count')?.closest('.visitor-stats-item');
+    if (totalViewsItem && onlineItem && totalViewsItem !== onlineItem) {
+        content.insertBefore(totalViewsItem, onlineItem);
+    }
+
+    if (!document.getElementById('visitor-stats-shared-style')) {
+        const style = document.createElement('style');
+        style.id = 'visitor-stats-shared-style';
+        style.textContent = '.visitor-stats-bar{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;padding:12px 0;margin:2rem 0 2.5rem;width:100%;flex-shrink:0}.visitor-stats-content{display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap}.visitor-stats-item{display:inline-flex;align-items:center;gap:6px}.visitor-stats-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}.visitor-stats-dot--live{background:#10b981;animation:visitor-online-pulse 1.5s infinite}@keyframes visitor-online-pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{box-shadow:0 0 0 5px rgba(16,185,129,0)}}@media print{.visitor-stats-bar{display:none!important}}';
+        document.head.appendChild(style);
+    }
+}
+
 function getSessionId() {
     let sid = sessionStorage.getItem('bdc_session_id');
     if (!sid) {
@@ -18,6 +71,7 @@ function getSessionId() {
 }
 
 export function initVisitorTracker(database, isHomePage = false) {
+    ensureVisitorStatsBar();
     const sessionId = getSessionId();
 
     

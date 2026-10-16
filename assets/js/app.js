@@ -48,6 +48,7 @@ import {
 import { updateLoginButtonState, initAuth } from "./modules/auth.js";
 import { initJoinForm } from "./modules/join-form.js";
 import { initFeedback } from "./modules/feedback.js";
+import { initFooter } from "./modules/footer.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
 import { initChatbot } from "./modules/chatbot.js";
 import { initLeaderboardFilters, renderDonorLeaderboard, renderDonorTicker } from "./modules/leaderboard.js";
@@ -744,6 +745,7 @@ window.onload = function () {
     runInitStep('chatbot', () => initChatbot());
 
     runInitStep('feedback', () => initFeedback(feedbackRef, push));
+    runInitStep('footer', () => initFooter());
     const isHomePage = /\/(index\.html)?(\?.*)?(\#.*)?$/i.test(window.location.pathname);
     runInitStep('visitor tracker', () => initVisitorTracker(database, isHomePage)); 
     runInitStep('join form', () => initJoinForm({ auth, database, ref, set, runTransaction, createUserWithEmailAndPassword }));

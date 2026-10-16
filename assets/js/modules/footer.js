@@ -97,6 +97,7 @@ export function initFooter() {
     const inPagesDir = path.includes('/pages/');
 
     footerEl.innerHTML = FOOTER_HTML(isHomePage, inPagesDir);
+    window.updatePageLanguage?.();
 
     
     const observer = new IntersectionObserver((entries) => {
