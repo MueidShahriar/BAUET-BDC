@@ -1934,3 +1934,78 @@ body.admin-mode #mobile-menu button:hover {
     0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
     50% { box-shadow: 0 0 0 5px rgba(16,185,129,0); }
 }
+
+@media (max-width: 640px) {
+    html,
+    body {
+        width: 100%;
+        min-width: 0;
+        overflow-x: hidden;
+    }
+
+    header.fixed {
+        width: 100%;
+    }
+
+    header.fixed nav {
+        min-height: 56px;
+        gap: 0.5rem;
+    }
+
+    header.fixed nav > div:first-child {
+        min-width: 0;
+        gap: 0.5rem;
+    }
+
+    header.fixed .header-logo {
+        width: 2rem;
+        height: 2rem;
+        flex-shrink: 0;
+    }
+
+    header.fixed .site-title {
+        max-width: 8rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    header.fixed nav > div:last-child {
+        flex-shrink: 0;
+    }
+
+    main {
+        padding-top: calc(var(--header-height) + 0.75rem);
+    }
+
+    img,
+    video,
+    canvas,
+    iframe {
+        max-width: 100%;
+    }
+
+    pre,
+    code {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    table {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+        max-width: 100%;
+    }
+
+    footer {
+        overflow: hidden;
+    }
+}

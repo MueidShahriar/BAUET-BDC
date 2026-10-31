@@ -5167,3 +5167,78 @@ canvas {
         border-color: rgba(194, 65, 12, 0.38) !important;
     }
 }
+
+@media (max-width: 640px) {
+    .hero-shell {
+        gap: 1.25rem;
+        padding-top: 0.5rem;
+    }
+
+    .hero-title {
+        letter-spacing: -0.045em;
+    }
+
+    .hero-description {
+        font-size: 0.92rem;
+        line-height: 1.65;
+    }
+
+    .hero-actions {
+        width: 100%;
+        gap: 0.65rem;
+    }
+
+    .hero-trust-grid {
+        gap: 0.7rem;
+    }
+
+    .hero-trust-card {
+        padding: 0.8rem;
+        border-radius: 0.9rem;
+    }
+
+    .hero-trust-icon {
+        width: 2.45rem;
+        height: 2.45rem;
+        border-radius: 0.8rem;
+    }
+
+    .hero-trust-card strong {
+        font-size: 0.88rem;
+    }
+
+    .hero-trust-card p {
+        font-size: 0.78rem;
+    }
+
+    .hero-visual-wrap {
+        padding: 0.25rem;
+    }
+
+    .hero-visual {
+        width: min(100%, 18rem);
+    }
+
+    .section-heading {
+        font-size: 1.55rem;
+        line-height: 1.2;
+    }
+
+    .home-highlight-band,
+    .community-stats-shell {
+        padding: 1rem !important;
+        border-radius: 1rem;
+    }
+
+    .recent-card__summary {
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .recent-card__avatar {
+        width: 2.8rem;
+        height: 2.8rem;
+        min-width: 2.8rem;
+        min-height: 2.8rem;
+    }
+}
