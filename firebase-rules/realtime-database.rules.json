@@ -57,6 +57,20 @@
       "totalViews": {
         ".read": true,
         ".write": "newData.isNumber() && newData.val() >= 0"
+      },
+      "pageViews": {
+        ".read": true,
+        "$page": {
+          "$metric": {
+            ".write": "newData.isNumber() && newData.val() >= 0"
+          }
+        }
+      },
+      "dailyViews": {
+        ".read": true,
+        "$date": {
+          ".write": "newData.isNumber() && newData.val() >= 0"
+        }
       }
     }
   }

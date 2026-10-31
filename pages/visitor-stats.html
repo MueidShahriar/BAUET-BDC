@@ -241,7 +241,7 @@
                     </div>
                     <div class="vs-label">Total Page Views</div>
                     <p class="text-xs text-gray-400 mt-2 leading-relaxed">
-                        Counted once per session when visiting the Home page. Page refreshes don't increase the count.
+                        Website-wide views counted once per page and browser session each day. Page refreshes don't increase the count.
                     </p>
                 </div>
             </div>
@@ -274,7 +274,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-gray-600">
                 <div class="flex items-start gap-3">
                     <span class="vs-step-badge">1</span>
-                    <p><strong>Total Views</strong> — Incremented only when someone visits the Home page. Each browser session counts once (no duplicate counting on refresh).</p>
+                    <p><strong>Page Views</strong> — Each page tracks visits independently. A browser session is counted once per page each day, so refreshes do not inflate the numbers.</p>
                 </div>
                 <div class="flex items-start gap-3">
                     <span class="vs-step-badge">2</span>
@@ -299,6 +299,10 @@
             <pre class="vs-code-block"><code>{
   "visitorTracking": {
     "totalViews": 1234,
+    "dailyViews": { "2026-11-01": 43 },
+    "pageViews": {
+      "about": { "total": 15 }
+    },
     "presence": {
       "sess_17089...a3f": { "updatedAt": 1708900000000, "path": "/index.html" },
       "sess_17089...b7e": { "updatedAt": 1708900000000, "path": "/pages/search.html" }
@@ -318,6 +322,20 @@
       "totalViews": {
         ".read": true,
         ".write": "newData.isNumber() && newData.val() >= 0"
+      },
+      "pageViews": {
+        ".read": true,
+        "$page": {
+          "$metric": {
+            ".write": "newData.isNumber() && newData.val() >= 0"
+          }
+        }
+      },
+      "dailyViews": {
+        ".read": true,
+        "$date": {
+          ".write": "newData.isNumber() && newData.val() >= 0"
+        }
       },
       "presence": {
         ".read": true,
