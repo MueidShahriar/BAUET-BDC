@@ -12,7 +12,7 @@ import {
 import { firebaseConfig } from "../modules/firebase-config.js";
 import { initPreloader } from "../modules/preloader.js";
 import { initHeader, initMobileMenu } from "../modules/header.js";
-import { initBackToTop } from "../modules/back-to-top.js";
+import { initBackToTop } from "../modules/back-to-top.js?v=3";
 import { initFloatObserver } from "../modules/float-observer.js";
 import { openModal, closeModal, showModalMessage } from "../modules/modals.js";
 import { updateLoginButtonState, initAuth } from "../modules/auth.js";

@@ -18,7 +18,7 @@ import state from "./modules/state.js";
 import { initPreloader, finishPreloader } from "./modules/preloader.js";
 import { initHeader, initMobileMenu } from "./modules/header.js";
 import { initFloatObserver } from "./modules/float-observer.js";
-import { initBackToTop } from "./modules/back-to-top.js";
+import { initBackToTop } from "./modules/back-to-top.js?v=3";
 import {
     openModal, closeModal, showModalMessage, attachConfirmHandler
 } from "./modules/modals.js";

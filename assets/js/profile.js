@@ -23,7 +23,7 @@ import {
   initLanguageSystem,
   updatePageLanguage,
 } from "./modules/language-ui.js";
-import { initBackToTop } from "./modules/back-to-top.js";
+import { initBackToTop } from "./modules/back-to-top.js?v=3";
 import { initFeedback } from "./modules/feedback.js";
 import { initHeader, initMobileMenu } from "./modules/header.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";

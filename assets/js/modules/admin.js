@@ -70,6 +70,7 @@ function renderRecentDonationCardAdmin(d) {
     const donationDate = d.date ? (() => { const _d = new Date(d.date + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : '—';
     const donorName = getTextValue(d.name || d.donorName || d.fullName, 'Unknown');
     const initials = getInitials(donorName, '?');
+    const bloodGroup = getTextValue(d.bloodGroup, '—');
     const donorId = normalizeDonorId(d.donorId) || d.donorId || '';
     const phone = getTextValue(d.phone, '');
     const patientName = getTextValue(d.patientName, '—');
@@ -82,12 +83,9 @@ function renderRecentDonationCardAdmin(d) {
         : '';
     return `
         <div class="admin-event-card">
-            <div class="admin-event-card__date-badge" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
-                <span class="admin-event-card__month" style="font-size:0.6rem">${getTextValue(d.bloodGroup, '—')}</span>
-                <span class="admin-event-card__day" style="font-size:0.85rem">${initials}</span>
-            </div>
             <div class="admin-event-card__body">
-                <div class="admin-event-card__title">${donorName}</div>
+                <div class="recent-donor-info">
+                <div class="admin-event-card__title admin-recent-donor-heading"><span>${donorName}</span><span class="admin-recent-blood-badge">${bloodGroup}</span></div>
                 <div class="admin-event-card__meta">
                     <span><i class="fa-regular fa-calendar"></i> ${donationDate}</span>
                     <span><i class="fa-solid fa-location-dot"></i> ${getTextValue(d.location, '—')}</span>
@@ -100,6 +98,8 @@ function renderRecentDonationCardAdmin(d) {
                     <span><i class="fa-solid fa-user"></i> Age: ${getTextValue(d.age, '—')}</span>
                     <span><i class="fa-solid fa-weight-scale"></i> ${getTextValue(d.weight, '') ? `${getTextValue(d.weight)} kg` : '—'}</span>
                 </div>
+                </div>
+                <div class="recent-patient-info">
                 <div class="admin-event-card__meta" style="color:#dc2626;font-weight:700">
                     <span><i class="fa-solid fa-user-injured"></i> Patient Information</span>
                 </div>
@@ -111,6 +111,7 @@ function renderRecentDonationCardAdmin(d) {
                 <div class="admin-event-card__meta">
                     <span><i class="fa-solid fa-location-dot"></i> Address: ${patientAddress}</span>
                     <span><i class="fa-solid fa-phone"></i> Contact: ${patientContact}</span>
+                </div>
                 </div>
             </div>
             <div class="admin-event-card__actions">
@@ -176,7 +177,7 @@ function renderDonorCardAdmin(d) {
     const reputation = computeDonorReputation(d, state.recentDonationsList || []);
     const repBadgeLabel = reputation.badge ? t(reputation.badge.key) : '—';
     const repBadge = reputation.badge
-        ? `<span class="donor-badge ${reputation.badge.className}">${reputation.badge.icon} ${repBadgeLabel}</span>`
+        ? `<span class="donor-badge admin-member-reputation-badge ${reputation.badge.className}">${reputation.badge.icon} ${repBadgeLabel}</span>`
         : '';
     const eligibility = getDonorEligibilityStatus(d.lastDonateDate);
     const eligibleBadge = !eligibility ? ''
@@ -195,20 +196,20 @@ function renderDonorCardAdmin(d) {
     const roleActionButton = isAdminMember
         ? `
                 <button data-member-id="${d.id}" class="demote-member-btn admin-action-btn admin-action-btn--demote" title="Make Member">
-                    <i class="fa-solid fa-user-minus" data-member-id="${d.id}"></i>
+                    <i class="fa-solid fa-user-minus" data-member-id="${d.id}"></i><span>Make Member</span>
                 </button>
         `
         : `
                 <button data-member-id="${d.id}" class="promote-member-btn admin-action-btn admin-action-btn--promote" title="Make Admin">
-                    <i class="fa-solid fa-user-shield" data-member-id="${d.id}"></i>
+                    <i class="fa-solid fa-user-shield" data-member-id="${d.id}"></i><span>Make Admin</span>
                 </button>
         `;
     const statusBadge = isActive
         ? ''
         : '<span class="admin-member-badge admin-member-badge--inactive"><i class="fa-solid fa-circle-pause"></i> Inactive</span>';
     const statusActionButton = isActive
-        ? `<button data-member-id="${d.id}" class="deactivate-member-btn admin-action-btn admin-action-btn--deactivate" title="Deactivate"><i class="fa-solid fa-user-slash" data-member-id="${d.id}"></i></button>`
-        : `<button data-member-id="${d.id}" class="activate-member-btn admin-action-btn admin-action-btn--activate" title="Activate"><i class="fa-solid fa-user-check" data-member-id="${d.id}"></i></button>`;
+        ? `<button data-member-id="${d.id}" class="deactivate-member-btn admin-action-btn admin-action-btn--deactivate" title="Deactivate"><i class="fa-solid fa-user-slash" data-member-id="${d.id}"></i><span>Deactivate</span></button>`
+        : `<button data-member-id="${d.id}" class="activate-member-btn admin-action-btn admin-action-btn--activate" title="Activate"><i class="fa-solid fa-user-check" data-member-id="${d.id}"></i><span>Activate</span></button>`;
     return `
         <div class="admin-member-card">
             <div class="admin-member-card__avatar">${avatarContent}</div>
@@ -216,11 +217,16 @@ function renderDonorCardAdmin(d) {
                 <div class="admin-member-card__top">
                     <h4 class="admin-member-card__name">${donorName}</h4>
                     <span class="admin-member-card__blood"><i class="fa-solid fa-droplet"></i> ${getTextValue(d.bloodGroup, '—')}</span>
-                    ${eligibleBadge}
-                    ${roleBadge}
-                    ${statusBadge}
+                    <span class="admin-member-card__status-row">
+                        ${eligibleBadge}
+                        <span class="admin-member-card__role-status">
+                            ${roleBadge}
+                            ${statusBadge}
+                        </span>
+                    </span>
                     ${repBadge}
                 </div>
+                <div class="admin-member-card__id">Donor ID: ${donorId}</div>
                 <div class="admin-member-card__info">
                     <span><i class="fa-solid fa-envelope"></i> ${getTextValue(d.email, '—')}</span>
                     <span><i class="fa-solid fa-phone"></i> ${phone}</span>
@@ -229,21 +235,18 @@ function renderDonorCardAdmin(d) {
                     <span><i class="fa-solid fa-building-columns"></i> Department: ${getTextValue(d.department, '—')}</span>
                     <span><i class="fa-solid fa-layer-group"></i> Batch: ${getTextValue(d.batch, '—')}</span>
                     <span><i class="fa-solid fa-calendar-check"></i> Last: ${lastDate}</span>
-                    <span><i class="fa-solid fa-medal"></i> ${t('leaderboardReputation')}: ${repBadgeLabel}</span>
-                    <span><i class="fa-solid fa-chart-line"></i> ${t('leaderboardScore')}: ${reputation.score}</span>
                     <span><i class="fa-solid fa-hand-holding-droplet"></i> ${t('leaderboardDonations')}: ${reputation.donationCount}</span>
                     ${ageRow}
                     ${noteRow}
                 </div>
-                <div class="admin-member-card__id">ID: ${donorId}</div>
             </div>
             <div class="admin-member-card__actions">
                 ${roleActionButton}
                 <button type="button" data-member-id="${d.id}" class="edit-member-btn admin-action-btn admin-action-btn--edit" title="Edit" aria-label="Edit ${donorName}">
-                    <i class="fa-solid fa-pen-to-square" data-member-id="${d.id}"></i>
+                    <i class="fa-solid fa-pen-to-square" data-member-id="${d.id}"></i><span>Edit</span>
                 </button>
                 <button data-member-id="${d.id}" class="delete-member-btn admin-action-btn admin-action-btn--delete" title="Delete">
-                    <i class="fa-solid fa-trash-can" data-member-id="${d.id}"></i>
+                    <i class="fa-solid fa-trash-can" data-member-id="${d.id}"></i><span>Delete</span>
                 </button>
                 ${statusActionButton}
             </div>

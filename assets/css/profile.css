@@ -692,3 +692,292 @@ textarea.pf-input {
 #profile-content > *:nth-child(3) {
     animation-delay: 0.25s;
 }
+
+/* Refined profile dashboard styling */
+.profile-main {
+    max-width: 860px;
+}
+
+.profile-hero-card,
+.profile-form-card,
+.profile-danger-card {
+    border-color: rgba(225, 29, 72, 0.14);
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+}
+
+.profile-hero-bg {
+    height: 128px;
+    background:
+        radial-gradient(circle at 85% 10%, rgba(251, 113, 133, 0.3), transparent 34%),
+        linear-gradient(135deg, #fff1f2 0%, #ffffff 58%, #f8fafc 100%);
+    border-bottom-color: rgba(225, 29, 72, 0.12);
+}
+
+.profile-hero-inner {
+    gap: 1.25rem;
+    padding: 0 2rem 1.5rem;
+    margin-top: -48px;
+}
+
+.profile-avatar {
+    width: 104px;
+    height: 104px;
+    border: 4px solid #ffffff;
+    border-radius: 1.5rem;
+    box-shadow: 0 14px 28px rgba(225, 29, 72, 0.16);
+}
+
+.profile-hero-info {
+    gap: 0.45rem;
+}
+
+.profile-id-chip {
+    background: #fff7f8;
+    border-color: rgba(225, 29, 72, 0.16);
+}
+
+.profile-id-chip__label {
+    color: #be123c;
+}
+
+.profile-quick-stats {
+    gap: 0.7rem;
+    padding: 0.8rem;
+    border-top: 1px solid rgba(225, 29, 72, 0.12);
+    background: #fffafb;
+}
+
+.profile-stat-item {
+    min-width: 0;
+    border: 1px solid #f1e4e7;
+    border-radius: 0.9rem;
+    background: #ffffff;
+    padding: 0.75rem;
+}
+
+.profile-form-card {
+    background: linear-gradient(145deg, #ffffff, #fffafb);
+}
+
+.profile-form-header {
+    background: rgba(255, 255, 255, 0.88);
+}
+
+.pf-input {
+    border-color: #e5e7eb;
+    background: #ffffff;
+}
+
+.pf-input:focus {
+    border-color: #fb7185;
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1);
+}
+
+@media (max-width: 640px) {
+    .profile-main {
+        max-width: 100%;
+        padding-inline: 0.65rem;
+    }
+
+    .profile-hero-bg {
+        height: 92px;
+    }
+
+    .profile-hero-inner {
+        padding-inline: 1rem;
+        margin-top: -40px;
+    }
+
+    .profile-avatar {
+        width: 84px;
+        height: 84px;
+        border-radius: 1.25rem;
+    }
+
+    .profile-quick-stats {
+        gap: 0.45rem;
+        padding: 0.55rem;
+    }
+
+    .profile-stat-item {
+        padding: 0.65rem 0.7rem;
+    }
+}
+
+/* Final visual polish for the user profile dashboard */
+body:has(.profile-main) {
+    background: linear-gradient(180deg, #fff7f8 0, #ffffff 24rem) !important;
+}
+
+.profile-main {
+    position: relative;
+}
+
+.profile-main::before {
+    content: '';
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    width: min(34rem, 85vw);
+    height: 15rem;
+    transform: translateX(-50%);
+    background: radial-gradient(circle, rgba(225, 29, 72, 0.1), transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.profile-form-header {
+    display: flex;
+    align-items: center;
+    min-height: 4.4rem;
+}
+
+.profile-form-header h2 {
+    letter-spacing: -0.015em;
+}
+
+.profile-form-body {
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.pf-field {
+    gap: 0.45rem;
+}
+
+.pf-label {
+    color: #344054;
+    font-weight: 700;
+}
+
+.pf-input {
+    min-height: 2.8rem;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.025);
+}
+
+.profile-actions {
+    padding-top: 1rem;
+    border-top: 1px solid #f1e4e7;
+}
+
+.pf-btn {
+    min-height: 2.8rem;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.07);
+}
+
+.profile-danger-card {
+    background: linear-gradient(145deg, #ffffff, #fff7f8);
+}
+
+/* Keep Recent Donation red-themed; use a distinct neutral treatment elsewhere. */
+.profile-form-card:not(.profile-recent-card) {
+    position: relative;
+    isolation: isolate;
+    border-color: #dbe5f0;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 18px 38px rgba(30, 64, 175, 0.07);
+}
+
+.profile-form-card:not(.profile-recent-card)::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, #2563eb, #60a5fa, transparent);
+    z-index: 1;
+}
+
+.profile-form-card:not(.profile-recent-card) .profile-form-header {
+    background: linear-gradient(180deg, #f8fbff, #ffffff);
+    border-bottom-color: #e5edf6;
+}
+
+.profile-form-card:not(.profile-recent-card) .profile-form-header-icon {
+    color: #2563eb;
+    background: #eff6ff;
+    border-color: #dbeafe;
+}
+
+.profile-form-card:not(.profile-recent-card) .pf-field {
+    padding: 0.65rem;
+    border: 1px solid #edf2f7;
+    border-radius: 0.85rem;
+    background: rgba(248, 250, 252, 0.72);
+}
+
+.profile-form-card:not(.profile-recent-card) .pf-input {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+.profile-form-card:not(.profile-recent-card) .profile-actions {
+    margin-inline: -0.25rem;
+    padding-inline: 0.25rem;
+}
+
+.profile-danger-card .pf-btn--danger {
+    color: #b91c1c;
+    border-color: #fecaca;
+    background: #fff7f7;
+}
+
+.profile-danger-card .pf-btn--danger:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+}
+
+/* Premium action palette */
+.profile-actions .pf-btn--primary {
+    background: linear-gradient(135deg, #be123c 0%, #e11d48 55%, #f43f5e 100%);
+    border-color: #be123c;
+    box-shadow: 0 10px 22px rgba(190, 18, 60, 0.2);
+}
+
+.profile-actions .pf-btn--primary:hover {
+    background: linear-gradient(135deg, #9f1239 0%, #be123c 55%, #e11d48 100%);
+    box-shadow: 0 13px 26px rgba(190, 18, 60, 0.26);
+}
+
+.profile-actions .pf-btn--blue {
+    background: linear-gradient(135deg, #3730a3 0%, #4f46e5 55%, #6366f1 100%);
+    border-color: #3730a3;
+    box-shadow: 0 10px 22px rgba(67, 56, 202, 0.2);
+}
+
+.profile-actions .pf-btn--blue:hover {
+    background: linear-gradient(135deg, #312e81 0%, #4338ca 55%, #4f46e5 100%);
+    box-shadow: 0 13px 26px rgba(67, 56, 202, 0.26);
+}
+
+.profile-actions .pf-btn--teal {
+    background: linear-gradient(135deg, #047857 0%, #059669 55%, #10b981 100%);
+    border-color: #047857;
+    box-shadow: 0 10px 22px rgba(5, 150, 105, 0.2);
+}
+
+.profile-actions .pf-btn--teal:hover {
+    background: linear-gradient(135deg, #065f46 0%, #047857 55%, #059669 100%);
+    box-shadow: 0 13px 26px rgba(5, 150, 105, 0.26);
+}
+
+.profile-danger-card {
+    border-color: #f1e2d2;
+    background: linear-gradient(145deg, #ffffff 0%, #fffaf5 100%);
+    box-shadow: 0 16px 32px rgba(146, 64, 14, 0.06);
+}
+
+.profile-danger-icon {
+    background: #fff7ed;
+    border-color: #fed7aa;
+    color: #c2410c;
+}
+
+@media (max-width: 640px) {
+    .profile-form-header {
+        min-height: 3.8rem;
+    }
+
+    .profile-actions {
+        gap: 0.55rem;
+        padding-top: 0.8rem;
+    }
+}

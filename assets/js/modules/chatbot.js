@@ -1133,13 +1133,15 @@ function sleep(ms) {
 }
 
 export function initChatbot() {
+    const isHomePage = /\/(?:index\.html)?$/i.test(window.location.pathname);
+    if (!isHomePage) return;
+
     loadPersistedChatState();
     
     const fab = document.createElement('div');
     fab.id = 'chatbot-fab';
-    fab.innerHTML = `<button id="chatbot-toggle" aria-label="Blood Donation Assistant" title="Blood Donation Assistant" style="width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,#b91c1c,#dc2626 55%,#fb7185);color:#fff;border:none;cursor:pointer;box-shadow:0 18px 34px rgba(220,38,38,0.28);display:flex;align-items:center;justify-content:center;transition:all 0.3s;font-size:1.2rem;position:relative">
-        <i class="fa-solid fa-robot"></i>
-        <span style="position:absolute;top:-2px;right:-2px;width:10px;height:10px;background:#10b981;border-radius:50%;border:2px solid #fff"></span>
+    fab.innerHTML = `<button id="chatbot-toggle" aria-label="Blood Donation Assistant" title="Blood Donation Assistant" style="width:72px;height:72px;border-radius:0;background:transparent;color:#fff;border:none;cursor:pointer;box-shadow:none;display:flex;align-items:center;justify-content:center;transition:all 0.3s;position:relative">
+        <span class="chatbot-robot" aria-hidden="true"><span class="chatbot-robot__antenna"></span><span class="chatbot-robot__ear chatbot-robot__ear--left"></span><span class="chatbot-robot__face"><span class="chatbot-robot__eyes"><span></span><span></span></span><span class="chatbot-robot__mouth"></span></span><span class="chatbot-robot__ear chatbot-robot__ear--right"></span></span>
     </button>`;
     fab.style.cssText = 'position:fixed;bottom:80px;right:24px;z-index:45;transition:bottom 0.3s ease;';
 
@@ -1149,8 +1151,8 @@ export function initChatbot() {
     chatWindow.style.cssText = 'position:fixed;bottom:140px;right:24px;width:370px;max-width:calc(100vw - 32px);height:500px;max-height:calc(100vh - 180px);background:rgba(255,255,255,0.96);border-radius:1.4rem;box-shadow:0 28px 70px rgba(15,23,42,0.18),0 0 0 1px rgba(255,255,255,0.4);z-index:46;display:none;flex-direction:column;overflow:hidden;font-family:Inter,sans-serif;backdrop-filter:blur(18px);';
     chatWindow.innerHTML = `
         <div style="background:linear-gradient(135deg,#991b1b,#dc2626 58%,#fb7185);padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;flex-shrink:0">
-            <div style="width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2)">
-                <i class="fa-solid fa-robot" style="color:#fff;font-size:1.05rem"></i>
+            <div class="chatbot-header-robot" aria-hidden="true">
+                <span class="chatbot-robot chatbot-robot--small"><span class="chatbot-robot__antenna"></span><span class="chatbot-robot__ear chatbot-robot__ear--left"></span><span class="chatbot-robot__face"><span class="chatbot-robot__eyes"><span></span><span></span></span><span class="chatbot-robot__mouth"></span></span><span class="chatbot-robot__ear chatbot-robot__ear--right"></span></span>
             </div>
             <div style="flex:1;min-width:0">
                 <div style="font-size:0.95rem;font-weight:800;color:#fff;letter-spacing:-0.02em">Blood Donation Assistant</div>
@@ -1374,7 +1376,31 @@ export function initChatbot() {
         @keyframes think-fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .chatbot-streaming::after { content: "▋"; display: inline-block; margin-left: 2px; color: #dc2626; animation: chatbot-cursor-blink 1s step-end infinite; }
         @keyframes chatbot-cursor-blink { 50% { opacity: 0; } }
-        #chatbot-toggle:hover { transform: translateY(-2px); box-shadow: 0 22px 40px rgba(220,38,38,0.35) !important; }
+        #chatbot-toggle:hover { transform: translateY(-2px); box-shadow:none !important; }
+        #chatbot-toggle { overflow: visible !important; }
+        .chatbot-header-robot { width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,0.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2); }
+        .chatbot-robot { position:relative;display:inline-flex;width:44px;height:38px;align-items:center;justify-content:center;border:3px solid #b3132e;border-radius:13px;background:linear-gradient(145deg,#ff667b 0%,#e11d3d 46%,#a20f2b 100%);box-shadow:inset 0 2px 2px rgba(255,255,255,0.22),0 7px 15px rgba(153,17,45,0.28); }
+        .chatbot-robot__face { width:29px;height:23px;border:2px solid #7f1023;border-radius:8px;background:#25101a;box-shadow:inset 0 1px 4px rgba(0,0,0,0.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px; }
+        .chatbot-robot__eyes { display:flex;gap:7px;align-items:center; }
+        .chatbot-robot__eyes span { display:block;width:5px;height:7px;border-radius:50%;background:#fff7f8;box-shadow:0 0 6px rgba(255,255,255,0.9);animation: chatbot-eye-blink 4.8s infinite;transform-origin:center; }
+        .chatbot-robot__eyes span:nth-child(2) { animation-delay:0.08s; }
+        .chatbot-robot__mouth { width:9px;height:3px;border-radius:0 0 8px 8px;background:#ffdce2;opacity:0.85; }
+        .chatbot-robot__antenna { position:absolute;top:-11px;width:3px;height:9px;border-radius:3px;background:#c91635; }
+        .chatbot-robot__antenna::after { content:"";position:absolute;top:-4px;left:-2px;width:7px;height:7px;border-radius:50%;background:#e11d3d;box-shadow:0 0 7px rgba(225,29,61,0.7); }
+        .chatbot-robot__ear { position:absolute;top:8px;width:7px;height:15px;border-radius:7px;background:linear-gradient(180deg,#ff6e82,#cf1535);border:2px solid #b3132e;box-shadow:0 3px 7px rgba(153,17,45,0.25); }
+        .chatbot-robot__ear--left { left:-11px; }
+        .chatbot-robot__ear--right { right:-11px; }
+        .chatbot-robot--small { width:25px;height:21px;border-width:2px;border-radius:9px;box-shadow:0 0 0 2px rgba(179,19,46,0.32),0 3px 7px rgba(81,7,20,0.22); }
+        .chatbot-robot--small .chatbot-robot__face { width:17px;height:13px;border-radius:5px;gap:2px; }
+        .chatbot-robot--small .chatbot-robot__eyes { gap:4px; }
+        .chatbot-robot--small .chatbot-robot__eyes span { width:3px;height:4px; }
+        .chatbot-robot--small .chatbot-robot__mouth { width:6px;height:2px; }
+        .chatbot-robot--small .chatbot-robot__antenna { top:-8px;width:2px;height:6px; }
+        .chatbot-robot--small .chatbot-robot__antenna::after { top:-3px;left:-2px;width:5px;height:5px; }
+        .chatbot-robot--small .chatbot-robot__ear { top:5px;width:3px;height:8px;border-width:1px; }
+        .chatbot-robot--small .chatbot-robot__ear--left { left:-5px; }
+        .chatbot-robot--small .chatbot-robot__ear--right { right:-5px; }
+        @keyframes chatbot-eye-blink { 0%, 44%, 48%, 100% { transform:scaleY(1); } 46% { transform:scaleY(0.08); } }
         #chatbot-messages::-webkit-scrollbar { width: 4px; }
         #chatbot-messages::-webkit-scrollbar-track { background: transparent; }
         #chatbot-messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }

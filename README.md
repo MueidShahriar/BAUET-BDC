@@ -21,6 +21,8 @@
 
 A professional blood donation management platform built to help the BAUET community coordinate donor discovery, streamline event management, and improve emergency response through a modern web experience.
 
+BAUET BDC is designed as a fast, installable, and responsive experience for phones, tablets, MacBooks, and desktop browsers. The public website and admin dashboard share the same visual system so users can move from donor discovery to community operations without friction.
+
 > Every donor connection can become someone else's second chance.
 
 ## Explore the Project
@@ -75,6 +77,9 @@ The project is designed for both public users and administrators. Public users c
 - Progressive Web App support for installable usage
 - AI assistant for donation guidance and website help
 - Certificate and donor card generation
+- Responsive admin dashboard with compact metric cards, tab navigation, member management, recent donations, events, and feedback inbox
+- Professional donor cards with role, eligibility, reputation, donation, and action controls
+- Accessible mobile navigation and touch-friendly controls
 
 <table>
 <tr>
@@ -105,6 +110,14 @@ Core responsibilities are divided as follows:
 - `assets/js/` contains application logic, shared modules, and page controllers
 - Firebase stores donors, events, recent donations, feedback, and visitor data
 - `server.js` handles chat requests for the AI assistant
+
+### Responsive UI standards
+
+- Mobile layouts avoid horizontal scrolling and preserve readable touch targets.
+- Admin overview metrics use a compact two-column mobile layout.
+- Admin navigation collapses to a single icon row on small screens.
+- Member information uses a denser two-column layout on desktop and a readable stacked layout on mobile.
+- Action buttons remain inside their cards at every supported width.
 
 ## Project Structure
 
@@ -159,6 +172,8 @@ Blood-Donation-Community/
 - Record recent donations
 - Review feedback submissions
 - Access summary metrics across the platform
+- Use compact navigation tabs for Events, Recent Donors, Members, Donor Search, and Feedback
+- Activate, deactivate, promote, demote, edit, or delete member records
 
 ### Analytics and Community Visibility
 
@@ -231,7 +246,22 @@ PORT=3000
 npm run dev
 ```
 
+The server listens on `http://localhost:3000` by default. Set `PORT` when another port is required:
+
+```bash
+PORT=8080 npm start
+```
+
 After the server starts, open the local application URL in your browser.
+
+### Available npm scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the local Node.js server |
+| `npm start` | Start the production-style Node.js server |
+
+The static frontend can also be served by any static hosting provider. When the AI assistant is enabled, deploy `server.js` separately or use a Node-compatible host.
 
 ## AI Assistant
 
@@ -250,6 +280,13 @@ The assistant requires a valid `GEMINI_API_KEY` in the environment configuration
 - Firebase handles authentication and realtime application data
 - The AI assistant requires a separate running Node.js server or a compatible server runtime
 - If frontend and server are deployed separately, ensure the chat endpoint configuration matches the deployed backend
+
+## Security and Data Handling
+
+- Never commit `.env` files, API keys, service-account credentials, or private Firebase configuration.
+- Apply the rules in `firebase-rules/` before using a production database.
+- Keep administrative access limited to trusted accounts.
+- Treat donor contact information as private data and expose only what is necessary for a donation request.
 
 ## Contributing
 

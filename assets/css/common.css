@@ -210,6 +210,12 @@ body {
     height: 100%;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 html {
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
@@ -226,6 +232,53 @@ body {
     color: var(--ink-950);
     overflow-x: hidden;
     scroll-behavior: smooth;
+}
+
+main,
+section,
+article,
+.page-shell {
+    min-width: 0;
+}
+
+img,
+svg,
+video,
+canvas {
+    max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+a,
+button,
+label {
+    overflow-wrap: anywhere;
+}
+
+button,
+a {
+    touch-action: manipulation;
+}
+
+table {
+    max-width: 100%;
+}
+
+@media (max-width: 640px) {
+    body {
+        font-size: 0.96rem;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+        font-size: 16px;
+    }
 }
 
 body::before,
@@ -547,6 +600,12 @@ img {
     box-shadow: 0 4px 14px rgba(225, 29, 72, 0.25);
 }
 
+/* Keep the control above page cards, footers and floating decorations. */
+#fab-wrap {
+    /* The chatbot stays above this control; both remain reachable. */
+    z-index: 40 !important;
+}
+
 #back-to-top.show {
     opacity: 1;
     transform: translateY(0) translateZ(0);
@@ -562,6 +621,8 @@ img {
     #fab-wrap {
         right: 16px !important;
         bottom: 20px !important;
+        display: flex !important;
+        z-index: 40 !important;
     }
     #fab-wrap #back-to-top {
         width: 52px !important;
@@ -576,6 +637,7 @@ img {
     #fab-wrap {
         right: 12px !important;
         bottom: 16px !important;
+        display: flex !important;
     }
     #fab-wrap #back-to-top {
         width: 48px !important;
