@@ -60,6 +60,15 @@ export function getTextValue(value, fallback = '') {
     return text || fallback;
 }
 
+export function formatPhoneForDisplay(value) {
+    const text = getTextValue(value, '');
+    const digits = text.replace(/\D/g, '');
+    if (digits.length < 11 || !digits.startsWith('88')) return text;
+
+    const localNumber = digits.startsWith('880') ? digits.slice(3) : digits.slice(2);
+    return localNumber.startsWith('0') ? localNumber : `0${localNumber}`;
+}
+
 export function getInitials(value, fallback = '?') {
     const text = getTextValue(value, '');
     if (!text) return fallback;
@@ -80,8 +89,8 @@ export function getDefaultAvatarMarkup(gender, className = 'default-avatar-glyph
 export function getDefaultAvatarImageUrl(gender) {
     const normalizedGender = getTextValue(gender, '').toLowerCase();
     const imagePath = normalizedGender === 'female'
-        ? '../../../image/female.png'
-        : '../../../image/male.png';
+        ? '../../../image/female.webp'
+        : '../../../image/male.webp';
     return new URL(imagePath, import.meta.url).href;
 }
 

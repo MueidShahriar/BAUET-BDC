@@ -22,16 +22,18 @@ import { finishPreloader } from "./modules/preloader.js";
 import {
   initLanguageSystem,
   updatePageLanguage,
-} from "./modules/language-ui.js";
-import { initBackToTop } from "./modules/back-to-top.js?v=3";
+} from "./modules/language-ui.js?v=4";
+import { initBackToTop } from "./modules/back-to-top.js?v=11";
 import { initFeedback } from "./modules/feedback.js";
-import { initHeader, initMobileMenu } from "./modules/header.js";
+import { initHeader, initMobileMenu } from "./modules/header.js?v=3";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
-import { initChatbot } from "./modules/chatbot.js";
+import { initChatbot } from "./modules/chatbot.js?v=6";
+import { updateBirthdayWish } from "./modules/birthday-wish.js?v=5";
 import {
   getDonationCountForDonor,
   normalizeDonorId,
   formatDateDisplay,
+  formatPhoneForDisplay,
   getDonorEligibilityStatus,
   getDefaultAvatarImageUrl,
 } from "./modules/utils.js";
@@ -84,10 +86,38 @@ const recentAge = document.getElementById("profile-recent-age");
 const recentWeight = document.getElementById("profile-recent-weight");
 
 const logoutHeaderBtn = document.getElementById("pf-logout-header");
+const logoutHeaderHome = logoutHeaderBtn?.parentElement;
 const deleteBtn = document.getElementById("pf-delete");
 const certBtn = document.getElementById("pf-certificate");
 const donorCardBtn = document.getElementById("pf-donor-card");
 const deleteModal = document.getElementById("delete-confirm-modal");
+
+function updateProfileHeaderMenu(role) {
+  const isAdmin = role === "admin";
+  const desktopMenu = document.getElementById("desktop-nav-menu");
+  const desktopMenuToggle = document.getElementById("desktop-menu-toggle");
+
+  document.body.classList.toggle("admin-profile-menu", isAdmin);
+
+  if (isAdmin && desktopMenu && logoutHeaderBtn) {
+    logoutHeaderBtn.classList.add("desktop-menu-account");
+    if (!desktopMenu.contains(logoutHeaderBtn)) desktopMenu.append(logoutHeaderBtn);
+    if (logoutHeaderBtn.dataset.adminMenuCloseBound !== "true") {
+      logoutHeaderBtn.addEventListener("click", () => {
+        desktopMenu.classList.remove("is-open");
+        desktopMenuToggle?.setAttribute("aria-expanded", "false");
+        document.querySelector("header")?.classList.remove("desktop-menu-open");
+      });
+      logoutHeaderBtn.dataset.adminMenuCloseBound = "true";
+    }
+    return;
+  }
+
+  if (!isAdmin && desktopMenu?.contains(logoutHeaderBtn)) {
+    logoutHeaderHome?.insertBefore(logoutHeaderBtn, document.getElementById("menu-toggle"));
+    logoutHeaderBtn.classList.remove("desktop-menu-account");
+  }
+}
 const deleteCancelBtn = document.getElementById("delete-cancel");
 const deleteConfirmBtn = document.getElementById("delete-confirm");
 
@@ -252,7 +282,7 @@ function populateProfile(data, email) {
       : null;
   if (fFullName) fFullName.value = data.fullName || "";
   if (fEmail) fEmail.value = email || "";
-  if (fPhone) fPhone.value = data.phone || "";
+  if (fPhone) fPhone.value = formatPhoneForDisplay(data.phone || "");
   if (fBloodGroup) fBloodGroup.value = data.bloodGroup || "";
   if (fLocation) fLocation.value = data.location || "";
   if (fDepartment)
@@ -328,6 +358,16 @@ onAuthStateChanged(auth, (user) => {
   const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
   if (!user) {
     state.currentUserProfile = null;
+    updateBirthdayWish(null);
+    document.body.classList.remove("admin-mode");
+    updateProfileHeaderMenu("member");
+    document.querySelectorAll('header nav a[id^="nav-"]:not(#nav-dashboard-link)')
+      .forEach((link) => link.classList.remove("hidden"));
+    document.getElementById("nav-dashboard-link")?.classList.add("hidden");
+    document.querySelectorAll('#mobile-menu a[id^="mobile-"]:not(#admin-mobile-link)')
+      .forEach((link) => link.classList.remove("hidden"));
+    document.getElementById("admin-mobile-link")?.classList.add("hidden");
+    document.getElementById("profile-brand-link")?.setAttribute("href", "../index.html");
     hideLoader();
     notLoggedIn?.classList.remove("hidden");
     profileContent?.classList.add("hidden");
@@ -348,6 +388,7 @@ onAuthStateChanged(auth, (user) => {
         uid: user.uid,
         email: user.email || "",
       };
+      updateBirthdayWish(state.currentUserProfile);
       currentDonorData = { ...data, uid: user.uid };
       populateProfile(data, user.email);
       refreshDonationCount();
@@ -382,6 +423,7 @@ onAuthStateChanged(auth, (user) => {
 
       if (role === "admin") {
         document.body.classList.add("admin-mode");
+        updateProfileHeaderMenu(role);
         if (brandLink) brandLink.href = "admin.html";
 
         if (adminBadge) {
@@ -402,6 +444,7 @@ onAuthStateChanged(auth, (user) => {
         );
       } else {
         document.body.classList.remove("admin-mode");
+        updateProfileHeaderMenu(role);
         if (brandLink) brandLink.href = "../index.html";
         if (adminBadge) {
           adminBadge.classList.add("hidden");
@@ -504,6 +547,7 @@ profileForm?.addEventListener("submit", (e) => {
   set(userRef, updatedData)
     .then(() => {
       showToast("Profile updated successfully!", "success");
+      updateBirthdayWish(updatedData);
       populateProfile(updatedData, updatedData.email || currentUser.email);
     })
     .catch((err) => {
@@ -639,7 +683,7 @@ certBtn?.addEventListener("click", async () => {
     return;
   }
   try {
-    const { showCertificateModal } = await import("./modules/certificate.js");
+    const { showCertificateModal } = await import("./modules/certificate.js?v=1");
     const donorData = {
       ...currentDonorData,
       fullName: fFullName?.value || "",
@@ -662,7 +706,7 @@ donorCardBtn?.addEventListener("click", async () => {
     return;
   }
   try {
-    const { showDonorCardModal } = await import("./modules/certificate.js");
+    const { showDonorCardModal } = await import("./modules/certificate.js?v=1");
     const donorData = {
       ...currentDonorData,
       fullName: fFullName?.value || "",

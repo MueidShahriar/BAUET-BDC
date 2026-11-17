@@ -1,5 +1,5 @@
 
-import { t as translate, getCurrentLanguage, setLanguage } from './language-config.js';
+import { t as translate, getCurrentLanguage, setLanguage } from './language-config.js?v=3';
 
 export const t = translate;
 
@@ -40,32 +40,6 @@ export function updatePageLanguage() {
     });
 }
 
-export function createLanguageSwitcher() {
-    const currentLang = getCurrentLanguage();
-    
-    const langBtn = document.createElement('button');
-    langBtn.id = 'language-toggle';
-    langBtn.className = 'fixed top-20 right-6 z-30 bg-white border-2 border-red-600 text-red-700 px-4 py-2 rounded-full font-bold shadow-lg hover:bg-red-50 transition-all duration-300 flex items-center gap-2';
-    langBtn.setAttribute('aria-label', 'Switch Language');
-    langBtn.setAttribute('title', currentLang === 'en' ? 'বাংলায় পরিবর্তন করুন' : 'Switch to English');
-    
-    langBtn.innerHTML = `
-        <i class="fa-solid fa-language"></i>
-        <span class="font-semibold">${currentLang === 'en' ? 'বাংলা' : 'English'}</span>
-    `;
-    
-    langBtn.addEventListener('click', toggleLanguage);
-    
-    const header = document.querySelector('header');
-    if (header && header.nextSibling) {
-        header.parentNode.insertBefore(langBtn, header.nextSibling);
-    } else {
-        document.body.appendChild(langBtn);
-    }
-    
-    return langBtn;
-}
-
 export function toggleLanguage() {
     const currentLang = getCurrentLanguage();
     const newLang = currentLang === 'en' ? 'bn' : 'en';
@@ -74,24 +48,13 @@ export function toggleLanguage() {
     
     updatePageLanguage();
     
-    const langBtn = document.getElementById('language-toggle');
-    if (langBtn) {
-        const span = langBtn.querySelector('span');
-        if (span) {
-            span.textContent = newLang === 'en' ? 'বাংলা' : 'English';
-        }
-        langBtn.setAttribute('title', newLang === 'en' ? 'বাংলায় পরিবর্তন করুন' : 'Switch to English');
-    }
-    
     window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: newLang } }));
 }
 
 export function initLanguageSystem() {
     const savedLang = getCurrentLanguage();
     setLanguage(savedLang);
-    
-    createLanguageSwitcher();
-    
+    document.getElementById('language-toggle')?.remove();
     updatePageLanguage();
 }
 

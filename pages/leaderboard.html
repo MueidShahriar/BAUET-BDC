@@ -7,20 +7,35 @@
     <meta name="theme-color" content="#e11d48" />
     <title>Leaderboard - BAUET BDC</title>
     <link rel="shortcut icon" href="../image/blood-drop.png" type="image/x-icon">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="../assets/css/common.css">
-    <link rel="stylesheet" href="../assets/css/index.css?v=14">
+    <link rel="stylesheet" href="../assets/css/common.css?v=141">
+    <link rel="stylesheet" href="../assets/css/index.css?v=123">
+    <style>
+        #page-loader[data-progress-mode="true"] .logo-fill {
+            animation: none;
+            clip-path: inset(var(--loader-fill-offset, 100%) 0 0 0);
+            transition: clip-path 0.85s cubic-bezier(0.22, 0.75, 0.25, 1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #page-loader[data-progress-mode="true"] .logo-fill {
+                transition-duration: 0.2s;
+            }
+        }
+    </style>
 
     <meta name="description" content="Top donors leaderboard for BAUET BDC.">
 </head>
 
 <body class="bg-white text-gray-900 loading">
-    <div id="page-loader">
+    <div id="page-loader" data-progress-mode="true">
         <div class="logo-wrapper">
             <div class="logo-base">
                 <img src="../image/blood-drop.png" alt="" />
@@ -31,13 +46,8 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" defer></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
     <script src="../assets/js/viewport.js" defer></script>
-    <script type="module" src="../assets/js/app.js?v=4"></script>
+    <script type="module" src="../assets/js/app.js?v=40"></script>
 
     <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
         <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">

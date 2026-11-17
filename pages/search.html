@@ -7,14 +7,18 @@
     <meta name="theme-color" content="#e11d48" />
     <title>Search Donors - BAUET BDC</title>
     <link rel="shortcut icon" href="../image/blood-drop.png" type="image/x-icon">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="../assets/css/common.css">
-    <link rel="stylesheet" href="../assets/css/index.css?v=6">
+    <link rel="stylesheet" href="../assets/css/common.css?v=141">
+    <link rel="stylesheet" href="../assets/css/index.css?v=123">
     <meta name="description" content="Search and find blood donors by blood group from BAUET BDC.">
     <style>
         #page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center}
@@ -23,7 +27,7 @@
     </style>
 </head>
 
-<body class="bg-white text-gray-900 loading" style="font-family:'Inter',sans-serif;">
+<body class="bg-white text-gray-900 loading search-page" style="font-family:'Inter',sans-serif;">
 
     <div id="page-loader">
         <div class="logo-wrapper">
@@ -113,7 +117,7 @@
                         <div class="flex items-center gap-2 -mb-1">
                             <div class="icon-circle-sm"><i class="fa-solid fa-magnifying-glass text-sm"
                                     aria-hidden="true"></i></div>
-                            <h3 class="text-base font-bold text-red-700" data-i18n="searchTitle">Find Donors</h3>
+                            <h3 class="text-base font-bold text-red-700" data-i18n="searchCardTitle">Search Filters</h3>
                         </div>
                         <form id="search-form" class="flex flex-col sm:flex-row sm:flex-wrap items-center gap-2 w-full">
                             <div class="field-icon-left w-full sm:flex-1 sm:min-w-[10rem]">
@@ -217,7 +221,7 @@
                         <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope"></i>
                                 <span>bauet.bdc@gmail.com</span></a></li>
                         <li><a href="tel:+8801712460423"><i class="fa-solid fa-phone"></i>
-                                <span>+8801712460423</span></a></li>
+                                <span>01712460423</span></a></li>
                         <li><a href="../index.html#contact"><i class="fa-solid fa-message"></i> <span
                                     data-i18n="navContact">Contact</span></a></li>
                     </ul>
@@ -253,13 +257,13 @@
     </footer>
 
     <div id="fab-wrap" class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
-        <a href="#" id="back-to-top"
+        <button type="button" id="back-to-top"
             class="bg-red-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-red-700 transition-all text-lg flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
             </svg>
-        </a>
+        </button>
     </div>
 
     <div id="login-modal" class="fixed inset-0 hidden items-center justify-center z-50">
@@ -374,7 +378,7 @@
     </div>
 
     <script src="../assets/js/viewport.js" defer></script>
-    <script type="module" src="../assets/js/pages/search.js"></script>
+    <script type="module" src="../assets/js/pages/search.js?v=15"></script>
 </body>
 
 </html>

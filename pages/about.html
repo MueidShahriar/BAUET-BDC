@@ -5,17 +5,22 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#e11d48" />
-    <title>About Us - BAUET BDC</title>
+    <title>About Us - BAUET Blood Donation Club</title>
     <link rel="shortcut icon" href="../image/blood-drop.png" type="image/x-icon">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="../assets/css/common.css">
+    <link rel="stylesheet" href="../assets/css/common.css?v=141">
+    <link rel="stylesheet" href="../assets/css/about.css?v=5">
     <meta name="description"
-        content="Learn about BAUET BDC - our mission, impact and how to get involved.">
+        content="Learn about BAUET Blood Donation Club - our mission, impact and how to get involved.">
     <style>
         #page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center}
         #page-loader.fade-out{opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s}
@@ -97,29 +102,40 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6 pt-24 pb-12">
+    <main class="about-page max-w-6xl mx-auto px-4 sm:px-4 lg:px-6 pt-24 pb-12">
 
-        <section id="about" class="py-10">
-            <div class="how-card tint-rose accent-rose rounded-xl shadow-lg p-8 float-in">
-                <div class="flex-1">
-                    <h2 class="text-3xl font-extrabold text-red-700 mb-2 tracking-tight flex items-center gap-2">
+        <section id="about" class="about-hero">
+            <div class="about-hero-card float-in">
+                <div class="about-hero__background" aria-hidden="true">
+                    <svg viewBox="0 0 400 400" fill="none" focusable="false">
+                        <circle cx="50" cy="50" r="80" fill="white" />
+                        <circle cx="350" cy="350" r="120" fill="white" />
+                        <circle cx="300" cy="80" r="50" fill="white" />
+                    </svg>
+                </div>
+                <div class="about-hero__content">
+                    <h1 class="about-hero__title">
                         <span data-i18n="aboutTitle">About Us</span>
-                        <span class="inline-block bg-red-600 text-white text-xs font-bold px-2 py-1 rounded"
-                            data-i18n="aboutBadge">Community</span>
-                    </h2>
-                    <p class="text-justify text-gray-700 leading-relaxed">
-                        <span class="font-semibold text-red-700" data-i18n="aboutName">BAUET BDC</span>
-                        <span data-i18n="aboutDescription">is a passionate, volunteer-driven organization dedicated to
-                            saving lives through the power of blood donation. We connect willing donors with patients in
+                    </h1>
+                    <p class="about-hero__lead">
+                        <span class="font-semibold text-red-700" data-i18n="aboutName">BAUET Blood Donation Club</span>
+                        <span data-i18n="aboutDescription"> is a club at BAUET dedicated to saving lives through blood donation. We connect willing donors with patients in
                             urgent need, organize regular blood drives and partner with hospitals and local groups to
-                            ensure a safe and reliable blood supply for all.</span>
+                            support a safe and reliable blood supply.</span>
                     </p>
+                </div>
+                <div class="about-hero__visual" aria-hidden="true">
+                    <div class="about-hero__halo">
+                        <span class="about-hero__spark about-hero__spark--one"><i class="fa-solid fa-plus"></i></span>
+                        <span class="about-hero__drop"><i class="fa-solid fa-hand-holding-droplet"></i></span>
+                        <span class="about-hero__spark about-hero__spark--two"><i class="fa-solid fa-heart-pulse"></i></span>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="aboutFoundation">Our Foundation</h2>
+        <section class="about-section about-foundation">
+            <h2 class="about-section__title" data-i18n="aboutFoundation">Our Foundation</h2>
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="how-card accent-rose tint-rose rounded-xl shadow-lg p-6 text-center float-in">
                     <div class="inline-flex items-center justify-center w-14 h-14 bg-red-100 rounded-full mb-4">
@@ -151,8 +167,8 @@
             </div>
         </section>
 
-        <section class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="aboutWhatWeDo">
+        <section class="about-section about-programs">
+            <h2 class="about-section__title" data-i18n="aboutWhatWeDo">
                 What We Do</h2>
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="how-card tint-rose rounded-xl shadow p-6 flex gap-4 items-start float-in">
@@ -202,8 +218,8 @@
             </div>
         </section>
 
-        <section class="py-10">
-            <h2 class="text-2xl font-extrabold text-red-700 mb-8 text-center tracking-tight" data-i18n="aboutWhyDonate">Why Donate Blood?</h2>
+        <section class="about-section about-benefits">
+            <h2 class="about-section__title" data-i18n="aboutWhyDonate">Why Donate Blood?</h2>
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="how-card accent-indigo tint-indigo rounded-xl shadow p-6 float-in">
                     <h4 class="font-bold text-red-700 mb-3 flex items-center gap-2">
@@ -240,8 +256,8 @@
             </div>
         </section>
 
-        <section class="py-10">
-            <div class="how-card gentle tint-emerald accent-emerald rounded-xl shadow-lg p-8 text-center float-in">
+        <section class="about-cta-section">
+            <div class="about-cta-card float-in">
                 <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
                     <i class="fa-solid fa-hand-holding-heart text-3xl text-red-600"></i>
                 </div>
@@ -250,11 +266,6 @@
                     donor, volunteer or supporter. Together, we build a caring, responsive community that puts
                     compassion into action.</p>
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a href="join.html"
-                        class="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg font-semibold shadow hover:bg-red-700 btn-breathe">
-                        <i class="fa-solid fa-user-plus"></i>
-                        <span data-i18n="aboutJoinAsDonor">Join as a Donor</span>
-                    </a>
                     <a href="events.html"
                         class="inline-flex items-center gap-2 border-2 border-red-600 text-red-700 px-6 py-3 rounded-lg font-semibold hover:bg-red-50">
                         <i class="fa-solid fa-calendar-days"></i>
@@ -288,13 +299,13 @@
     </footer>
 
     <div id="fab-wrap" class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
-        <a href="#" id="back-to-top"
+        <button type="button" id="back-to-top"
             class="bg-red-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-red-700 transition-all text-lg flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
             </svg>
-        </a>
+        </button>
     </div>
 
     <div id="login-modal" class="fixed inset-0 hidden items-center justify-center z-50">
@@ -407,7 +418,8 @@
     </div>
 
     <script src="../assets/js/viewport.js" defer></script>
-    <script type="module" src="../assets/js/pages/static-page.js"></script>
+    <script type="module" src="../assets/js/pages/about-scroll-flow.js?v=1"></script>
+    <script type="module" src="../assets/js/pages/static-page.js?v=12"></script>
 </body>
 
 </html>

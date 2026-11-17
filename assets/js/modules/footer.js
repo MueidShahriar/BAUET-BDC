@@ -12,7 +12,7 @@ const FOOTER_HTML = (isHomePage, inPagesDir) => {
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="footer-brand-title">
-                    <img src="${assetPrefix}image/blood-drop.png" alt="BAUET BDC" loading="lazy" />
+                    <img src="${assetPrefix}image/blood-drop.png" alt="BAUET BDC" loading="lazy" decoding="async" />
                     <span data-i18n="siteTitle">BAUET BDC</span>
                 </div>
                 <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives through the power of blood
@@ -53,7 +53,7 @@ const FOOTER_HTML = (isHomePage, inPagesDir) => {
                     <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope"></i>
                             <span>bauet.bdc@gmail.com</span></a></li>
                     <li><a href="tel:+8801712460423"><i class="fa-solid fa-phone"></i>
-                            <span>+8801712460423</span></a></li>
+                            <span>01712460423</span></a></li>
                     <li><a href="${contactHref}"><i class="fa-solid fa-message"></i> <span
                                 data-i18n="navContact">Contact</span></a></li>
                 </ul>

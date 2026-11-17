@@ -11,21 +11,22 @@ import {
 
 import { firebaseConfig } from "./modules/firebase-config.js";
 import { chartLabels, chartColors, getPieChartOptions } from "./modules/chart-config.js";
-import { initLanguageSystem, t } from "./modules/language-ui.js";
-import { createMonthlyReportDownloader } from "./modules/pdf-report.js";
+import { initLanguageSystem, t } from "./modules/language-ui.js?v=4";
+import { createMonthlyReportDownloader } from "./modules/pdf-report.js?v=1";
 
 import state from "./modules/state.js";
-import { initPreloader, finishPreloader } from "./modules/preloader.js";
-import { initHeader, initMobileMenu } from "./modules/header.js";
+import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js";
+import { initHeader, initMobileMenu } from "./modules/header.js?v=3";
 import { initFloatObserver } from "./modules/float-observer.js";
-import { initBackToTop } from "./modules/back-to-top.js?v=3";
+import { initBackToTop } from "./modules/back-to-top.js?v=11";
 import {
     openModal, closeModal, showModalMessage, attachConfirmHandler
 } from "./modules/modals.js";
 import {
     normalizeBloodGroup, buildDonorIndex, formatDateDisplay,
     getDonationDetailData, groupRecentDonationsByMonth, isDonorEligible,
-    normalizeDonorId, getDonorIdNumber, getMaxDonorIdNumber, DONOR_ID_COUNTER_SEED
+    normalizeDonorId, getDonorIdNumber, getMaxDonorIdNumber, DONOR_ID_COUNTER_SEED,
+    formatPhoneForDisplay
 } from "./modules/utils.js";
 import { setCountTarget, initStatsCounter } from "./modules/stats-counter.js";
 import {
@@ -38,19 +39,18 @@ import {
 } from "./modules/carousel.js";
 import {
     renderSearchResults, setSearchLoading, runSearch, initSearch
-} from "./modules/search.js";
+} from "./modules/search.js?v=3";
 import {
     renderAdminMembersList, renderAdminEventsList,
     clearAdminEventForm, clearAdminRecentDonorForm, clearAdminMemberForm,
     applyAdminMemberSearchFilters, resetAdminMemberSearchFilters, initAdminTabs,
     renderAdminRecentDonationsList, renderAdminFeedbackList
-} from "./modules/admin.js?v=3";
-import { updateLoginButtonState, initAuth } from "./modules/auth.js";
-import { initJoinForm } from "./modules/join-form.js";
+} from "./modules/admin.js?v=5";
+import { updateLoginButtonState, initAuth } from "./modules/auth.js?v=7";
+import { initJoinForm } from "./modules/join-form.js?v=5";
 import { initFeedback } from "./modules/feedback.js";
 import { initFooter } from "./modules/footer.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
-import { initChatbot } from "./modules/chatbot.js";
 import { initLeaderboardFilters, renderDonorLeaderboard, renderDonorTicker } from "./modules/leaderboard.js";
 
 const app = initializeApp(firebaseConfig);
@@ -64,6 +64,31 @@ const statsRef         = ref(database, 'stats');
 const recentDonationsRef = ref(database, 'recentDonations');
 const feedbackRef      = ref(database, 'feedback');
 const DEFAULT_RECENT_DONATION_CENTER = 'Mojumdar Clinic, Bagatipara';
+const isLeaderboardRoute = /\/pages\/leaderboard\.html$/i.test(window.location.pathname || '');
+const leaderboardInitialData = {
+    donorsReady: false,
+    recentDonationsReady: false,
+    initialized: false,
+    finishScheduled: false
+};
+if (isLeaderboardRoute) setPreloaderProgress(10);
+
+function markLeaderboardDataReady(source) {
+    if (!isLeaderboardRoute) return;
+    if (source === 'donors') leaderboardInitialData.donorsReady = true;
+    if (source === 'recentDonations') leaderboardInitialData.recentDonationsReady = true;
+    const readySourceCount = Number(leaderboardInitialData.donorsReady) + Number(leaderboardInitialData.recentDonationsReady);
+    if (readySourceCount) setPreloaderProgress(readySourceCount === 1 ? 56 : 88);
+    if (
+        !leaderboardInitialData.initialized ||
+        !leaderboardInitialData.donorsReady ||
+        !leaderboardInitialData.recentDonationsReady ||
+        leaderboardInitialData.finishScheduled
+    ) return;
+
+    leaderboardInitialData.finishScheduled = true;
+    requestAnimationFrame(() => requestAnimationFrame(finishPreloader));
+}
 
 const downloadMonthlyReportPdf = createMonthlyReportDownloader({
     getRecentDonations: () => Array.isArray(state.recentDonationsList) ? [...state.recentDonationsList] : [],
@@ -451,6 +476,20 @@ function runInitStep(label, callback) {
     }
 }
 
+function scheduleChatbotInit() {
+    const loadChatbot = () => {
+        import("./modules/chatbot.js?v=6")
+            .then(({ initChatbot }) => initChatbot())
+            .catch(error => console.error('Failed to load chatbot:', error));
+    };
+
+    if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(loadChatbot, { timeout: 1500 });
+    } else {
+        window.setTimeout(loadChatbot, 500);
+    }
+}
+
 function getDonorIdRepairPlan() {
     const donors = [...state.donorsList]
         .filter(donor => donor?.id)
@@ -570,10 +609,20 @@ onValue(donorsRef, (snapshot) => {
     } catch (error) {
         console.error('Failed to process donors:', error);
         setSearchErrorState('Donor data could not be shown right now. Please refresh and try again.');
+    } finally {
+        markLeaderboardDataReady('donors');
     }
 }, err => {
     console.error("Failed to load donors:", err);
-    setSearchErrorState('Donor data could not be loaded right now.');
+    try {
+        setSearchErrorState('Donor data could not be loaded right now.');
+        state.donorsList = [];
+        refreshLeaderboard();
+    } catch (error) {
+        console.error('Failed to render empty leaderboard:', error);
+    } finally {
+        markLeaderboardDataReady('donors');
+    }
 });
 
 onValue(eventsRef, (snapshot) => {
@@ -637,13 +686,21 @@ onValue(recentDonationsRef, (snapshot) => {
         renderRecentDonorsCarousel([]);
         setRecentLoading(false);
         refreshLeaderboard();
+    } finally {
+        markLeaderboardDataReady('recentDonations');
     }
 }, err => {
     console.error("Failed to load recent donations:", err);
-    state.recentDonationsList = [];
-    renderRecentDonorsCarousel([]);
-    setRecentLoading(false);
-    refreshLeaderboard();
+    try {
+        state.recentDonationsList = [];
+        renderRecentDonorsCarousel([]);
+        setRecentLoading(false);
+        refreshLeaderboard();
+    } catch (error) {
+        console.error('Failed to render leaderboard without donation data:', error);
+    } finally {
+        markLeaderboardDataReady('recentDonations');
+    }
 });
 
 onValue(feedbackRef, (snapshot) => {
@@ -712,7 +769,13 @@ function initContactScroll() {
 
 window.onload = function () {
     const isAdminPage = /\/(pages\/)?admin\.html$/i.test(window.location.pathname || '');
-    runInitStep('preloader', () => initPreloader({ waitForAuth: isAdminPage }));
+    runInitStep('preloader', () => initPreloader({ waitForAuth: isAdminPage, waitForData: isLeaderboardRoute }));
+    if (isLeaderboardRoute) {
+        setPreloaderProgress(24);
+        leaderboardInitialData.initialized = true;
+        markLeaderboardDataReady();
+        window.setTimeout(finishPreloader, 12000);
+    }
     runInitStep('header', () => initHeader());
     runInitStep('language system', () => initLanguageSystem());
     window.addEventListener('languageChanged', () => callUpdateLogin());
@@ -742,7 +805,7 @@ window.onload = function () {
     runInitStep('contact scroll', () => initContactScroll());
     runInitStep('float observer', () => initFloatObserver());
     runInitStep('stats counter', () => initStatsCounter());
-    runInitStep('chatbot', () => initChatbot());
+    runInitStep('chatbot loader', () => scheduleChatbotInit());
 
     runInitStep('feedback', () => initFeedback(feedbackRef, push));
     runInitStep('footer', () => initFooter());
@@ -882,7 +945,7 @@ window.onload = function () {
         if (deptF) deptF.value = match.department || lastInfo.department || '';
         if (batchF) batchF.value = match.batch || lastInfo.batch || '';
         if (ageF) ageF.value = match.age || lastInfo.age || '';
-        if (numberF) numberF.value = match.phone || '';
+        if (numberF) numberF.value = formatPhoneForDisplay(match.phone || '');
         if (weightF) weightF.value = match.weight || lastInfo.weight || '';
     };
     recentDonorIdField?.addEventListener('input', fillRecentDonorFromId);

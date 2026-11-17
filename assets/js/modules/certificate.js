@@ -1,5 +1,6 @@
 
-import { t } from './language-ui.js';
+import { t } from './language-ui.js?v=4';
+import { formatPhoneForDisplay } from './utils.js';
 
 function getSignatureImagePath() {
     return window.location.pathname.includes('/pages/') ? '../image/sign.png' : 'image/sign.png';
@@ -390,7 +391,7 @@ export function showDonorCardModal(donorData, containerEl) {
     const name = esc(donorData.fullName || 'Donor');
     const blood = esc(donorData.bloodGroup || '—');
     const location = esc(donorData.location || '—');
-    const phone = esc(donorData.phone || '—');
+    const phone = esc(formatPhoneForDisplay(donorData.phone || '—'));
     const email = esc(donorData.email || '—');
     const gender = esc(donorData.gender || '—');
     const initials = (donorData.fullName || 'D').split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0,2).toUpperCase();
@@ -847,7 +848,7 @@ function _renderDonorCardCanvas(donorData, photoSrc) {
 
             drawInfoRow('LOCATION', donorData.location || '--', rY, 'rgba(254,242,242,0.5)', '#dc2626', drawLocationPin);
             rY += rowH + rowGap;
-            drawInfoRow('PHONE', donorData.phone || '--', rY, 'rgba(252,231,243,0.3)', '#dc2626', drawPhoneIcon);
+            drawInfoRow('PHONE', formatPhoneForDisplay(donorData.phone || '--'), rY, 'rgba(252,231,243,0.3)', '#dc2626', drawPhoneIcon);
             rY += rowH + rowGap;
             drawInfoRow('LAST DONATION', lastD, rY, 'rgba(254,242,242,0.5)', '#dc2626', drawCalendarIcon);
             rY += rowH + rowGap;

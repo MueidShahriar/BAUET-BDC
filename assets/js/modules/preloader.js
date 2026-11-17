@@ -1,10 +1,50 @@
-const PRELOADER_FILL_MS = 2000;
+const PRELOADER_FILL_MS = 900;
+const DATA_PROGRESS_FADE_DELAY_MS = 850;
 const preloaderStartedAt = performance.now();
 let finishTimer = null;
+
+export function setPreloaderProgress(progress) {
+    const pageLoader = document.getElementById('page-loader');
+    const value = Number(progress);
+    if (
+        !pageLoader ||
+        pageLoader.dataset.progressMode !== 'true' ||
+        pageLoader.dataset.finished === 'true' ||
+        pageLoader.dataset.finishRequested === 'true' ||
+        !Number.isFinite(value)
+    ) return;
+
+    const current = Number(pageLoader.dataset.progress || 0);
+    const next = Math.max(current, Math.min(100, Math.max(0, value)));
+    pageLoader.dataset.progress = String(next);
+    pageLoader.style.setProperty('--loader-fill-offset', `${100 - next}%`);
+}
+
+function hidePreloader(pageLoader) {
+    if (!pageLoader || pageLoader.dataset.finished === 'true') return;
+
+    pageLoader.dataset.finished = 'true';
+    pageLoader.classList.add('fade-out');
+    document.body.classList.remove('loading');
+    setTimeout(() => {
+        pageLoader.style.display = 'none';
+    }, 500);
+}
 
 export function finishPreloader() {
     const pageLoader = document.getElementById('page-loader');
     if (!pageLoader || pageLoader.dataset.finished === 'true') return;
+
+    if (pageLoader.dataset.progressMode === 'true') {
+        setPreloaderProgress(100);
+        if (pageLoader.dataset.finishRequested === 'true') return;
+        pageLoader.dataset.finishRequested = 'true';
+        finishTimer = setTimeout(() => {
+            finishTimer = null;
+            hidePreloader(pageLoader);
+        }, DATA_PROGRESS_FADE_DELAY_MS);
+        return;
+    }
 
     const remainingTime = Math.max(0, PRELOADER_FILL_MS - (performance.now() - preloaderStartedAt));
     if (remainingTime > 0) {
@@ -17,16 +57,11 @@ export function finishPreloader() {
         return;
     }
 
-    pageLoader.dataset.finished = 'true';
-    pageLoader.classList.add('fade-out');
-    document.body.classList.remove('loading');
-    setTimeout(() => {
-        pageLoader.style.display = 'none';
-    }, 500);
+    hidePreloader(pageLoader);
 }
 
-export function initPreloader({ waitForAuth = false } = {}) {
-    if (waitForAuth) return;
+export function initPreloader({ waitForAuth = false, waitForData = false } = {}) {
+    if (waitForAuth || waitForData) return;
 
     const finishAfterLoad = () => finishPreloader();
     if (document.readyState === 'complete') {

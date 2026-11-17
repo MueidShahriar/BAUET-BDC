@@ -1,5 +1,5 @@
 import state from './state.js';
-import { normalizeBloodGroup, isDonorEligible, getInitials, getTextValue, getDonorEligibilityStatus, getDefaultAvatarImageMarkup } from './utils.js';
+import { normalizeBloodGroup, isDonorEligible, getInitials, getTextValue, getDonorEligibilityStatus, getDefaultAvatarImageMarkup, formatPhoneForDisplay } from './utils.js';
 
 function getContactHref() {
     const path = window.location.pathname || '';
@@ -53,7 +53,8 @@ function renderDonorCardPublic(d) {
     const initials = getInitials(donorName, 'D');
     const bloodGroup = getTextValue(d.bloodGroup, '—');
     const location = getTextValue(d.location, '—');
-    const phone = getTextValue(d.phone, '—');
+    const rawPhone = getTextValue(d.phone, '—');
+    const phone = formatPhoneForDisplay(rawPhone);
     const contactNote = getTextValue(d.publicComment, 'Contact Admin');
     const eligibility = getEligibilityMeta(d.lastDonateDate);
     const statusDot = `
@@ -65,7 +66,7 @@ function renderDonorCardPublic(d) {
             tabindex="0">
         </span>`;
     const avatarHtml = d.profilePhoto
-        ? `<img src="${d.profilePhoto}" alt="" class="w-10 h-10 rounded-full object-cover border border-slate-200 flex-shrink-0 bg-white" />`
+        ? `<img src="${d.profilePhoto}" alt="" class="donor-card__avatar-image w-10 h-10 rounded-full object-cover border border-slate-200 flex-shrink-0 bg-white" />`
         : getDefaultAvatarImageMarkup(d.gender, 'w-10 h-10 rounded-full object-cover border border-slate-200 flex-shrink-0 bg-white donor-card__avatar-image');
     const contactHref = getContactHref();
     const isPhoneHidden = Boolean(d.isPhoneHidden) || String(d.gender || '').trim().toLowerCase() === 'female';
@@ -77,7 +78,7 @@ function renderDonorCardPublic(d) {
         : `<div class="flex items-center gap-1">
                 <i class="fa-solid fa-phone text-red-500"></i>
                 <span class="font-bold">Contact:</span>
-                <a class="text-xs text-gray-600 underline" href="${phone === '—' ? contactHref : `tel:${phone}`}">${phone}</a>
+                <a class="text-xs text-gray-600 underline" href="${rawPhone === '—' ? contactHref : `tel:${rawPhone}`}">${phone}</a>
            </div>`;
     const contactMobileRow = isPhoneHidden
         ? `<div class="info-row sm:hidden">
@@ -89,7 +90,7 @@ function renderDonorCardPublic(d) {
         : `<div class="info-row sm:hidden">
                 <i class="icon fa-solid fa-phone text-red-500"></i>
                 <div class="info-text">
-                    <a class="value font-semibold tracking-wide text-gray-700" href="${phone === '—' ? contactHref : `tel:${phone}`}">${phone}</a>
+                    <a class="value font-semibold tracking-wide text-gray-700" href="${rawPhone === '—' ? contactHref : `tel:${rawPhone}`}">${phone}</a>
                 </div>
            </div>`;
     return `
@@ -100,6 +101,7 @@ function renderDonorCardPublic(d) {
                     <div class="donor-card__name-row">
                         <div class="font-bold text-red-700 truncate donor-card__name-text">${donorName}</div>
                         ${statusDot}
+                        <span class="donor-status-tooltip" aria-hidden="true">${eligibility.tooltip}</span>
                     </div>
                 </div>
                 <div class="info-stack sm:hidden">
@@ -117,11 +119,11 @@ function renderDonorCardPublic(d) {
                             <span class="value">${lastDate}</span>
                         </div>
                     </div>
-                    <div class="info-row">
+                    <div class="info-row donor-card__location-row">
                         <i class="icon fa-solid fa-location-dot text-red-500"></i>
                         <div class="info-text">
-                            <span class="label">Current Location:</span>
-                            <span class="value">${location}</span>
+                            <span class="label donor-location-label">Current Location:</span>
+                            <span class="value donor-location-value">${location}</span>
                         </div>
                     </div>
                     ${contactMobileRow}
@@ -132,10 +134,10 @@ function renderDonorCardPublic(d) {
                         <span class="font-bold">Blood Group:</span>
                         <span>${bloodGroup}</span>
                     </div>
-                    <div class="flex items-center gap-1">
+                    <div class="flex items-center gap-1 donor-card__location-row">
                         <i class="fa-solid fa-location-dot text-red-500"></i>
-                        <span class="font-bold">Current Location:</span>
-                        <span>${location}</span>
+                        <span class="font-bold donor-location-label">Current Location:</span>
+                        <span class="donor-location-value">${location}</span>
                     </div>
                     
                 </div>

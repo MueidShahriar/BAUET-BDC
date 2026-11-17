@@ -1,5 +1,5 @@
 import state from './state.js';
-import { isDonorEligible, normalizeBloodGroup } from './utils.js';
+import { isDonorEligible, normalizeBloodGroup, formatPhoneForDisplay } from './utils.js';
 
 function getPageHref(page) {
     const path = window.location.pathname || '';
@@ -166,8 +166,45 @@ function getHiddenPhoneLabel(lang) {
     return 'Contact admin for donor communication';
 }
 
+function getDonorFieldLabels(lang) {
+    if (lang === 'bangla') return { contact: 'যোগাযোগ', location: 'এলাকা', lastDonation: 'শেষ রক্তদান' };
+    return { contact: 'Contact', location: 'Location', lastDonation: 'Last donation' };
+}
+
+function sortDonorsByName(donors) {
+    return [...donors].sort((a, b) =>
+        String(a.fullName || a.name || '').localeCompare(String(b.fullName || b.name || ''), undefined, { sensitivity: 'base' })
+    );
+}
+
+function formatDonorCard(donor, index, lang, { fallback = false, includeLastDonation = true } = {}) {
+    const labels = getDonorFieldLabels(lang);
+    const name = escapeHtml(String(donor.fullName || donor.name || 'Unknown'));
+    const phoneValue = isDonorPhoneHidden(donor)
+        ? getHiddenPhoneLabel(lang)
+        : formatPhoneForDisplay(donor.phone || donor.contact || 'N/A');
+    const phone = escapeHtml(String(phoneValue));
+    const locationValue = String(donor.location || donor.area || donor.address || '').trim();
+    const location = locationValue ? escapeHtml(locationValue) : '';
+    const lastDateValue = donor.lastDonateDate ? new Date(`${String(donor.lastDonateDate).slice(0, 10)}T00:00:00`) : null;
+    const lastDate = lastDateValue && !Number.isNaN(lastDateValue.getTime())
+        ? lastDateValue.toLocaleDateString('en-GB')
+        : '';
+    const background = fallback ? '#fff7ed' : '#f9fafb';
+    const border = fallback ? '#f97316' : '#dc2626';
+    let card = `<article style="display:grid;gap:0.35rem;background:${background};border-radius:0.75rem;padding:0.75rem 0.85rem;margin-top:0.55rem;border-left:3px solid ${border};min-width:0">`;
+    card += `<div style="font-weight:700;color:#111827;line-height:1.4;overflow-wrap:anywhere">${index + 1}. ${name}</div>`;
+    card += `<div style="display:grid;gap:0.2rem;font-size:0.78rem;color:#596579;line-height:1.5;min-width:0">`;
+    card += `<div style="overflow-wrap:anywhere">📞 <strong>${labels.contact}:</strong> ${phone}</div>`;
+    if (location) card += `<div style="overflow-wrap:anywhere">📍 <strong>${labels.location}:</strong> ${location}</div>`;
+    if (includeLastDonation && lastDate) card += `<div style="overflow-wrap:anywhere">🗓️ <strong>${labels.lastDonation}:</strong> ${lastDate}</div>`;
+    card += '</div></article>';
+    return card;
+}
+
 function formatDonorResults(donors, bloodGroup, lang) {
     const searchHref = getSearchHref();
+    const safeBloodGroup = escapeHtml(String(bloodGroup || ''));
     if (!donors || donors.length === 0) {
         if (lang === 'bangla') return `দুঃখিত, এই মুহূর্তে <strong>${bloodGroup}</strong> রক্তের গ্রুপে কোনো যোগ্য দাতা পাওয়া যায়নি। 😔<br><br>📋 আমাদের <a href="${searchHref}" style="color:#dc2626;font-weight:600">ডোনার সার্চ পেজে</a> চেক করুন অথবা পরে আবার চেষ্টা করুন।`;
         if (lang === 'banglish') return `Sorry, ekhon <strong>${bloodGroup}</strong> blood group er kono eligible donor paoa jaynai. 😔<br><br>📋 Amader <a href="${searchHref}" style="color:#dc2626;font-weight:600">Donor Search page</a> e check korun ba pore abar try korun.`;
@@ -177,27 +214,16 @@ function formatDonorResults(donors, bloodGroup, lang) {
     const count = donors.length;
     let header;
     if (lang === 'bangla') {
-        header = `🩸 <strong>${bloodGroup}</strong> রক্তের গ্রুপে <strong>${count}</strong> জন যোগ্য দাতা পাওয়া গেছে:`;
+        header = `🩸 <strong>${safeBloodGroup}</strong> রক্তের গ্রুপে <strong>${count}</strong> জন যোগ্য দাতা পাওয়া গেছে:`;
     } else if (lang === 'banglish') {
-        header = `🩸 <strong>${bloodGroup}</strong> blood group e <strong>${count}</strong> jon eligible donor paoa gese:`;
+        header = `🩸 <strong>${safeBloodGroup}</strong> blood group e <strong>${count}</strong> jon eligible donor paoa gese:`;
     } else {
-        header = `🩸 Found <strong>${count}</strong> eligible <strong>${bloodGroup}</strong> donor${count > 1 ? 's' : ''}:`;
+        header = `🩸 Found <strong>${count}</strong> eligible <strong>${safeBloodGroup}</strong> donor${count > 1 ? 's' : ''}:`;
     }
 
     const maxShow = 120;
-    const list = donors.slice(0, maxShow).map((d, i) => {
-        const name = d.fullName || d.name || 'Unknown';
-        const phone = isDonorPhoneHidden(d) ? getHiddenPhoneLabel(lang) : (d.phone || d.contact || 'N/A');
-        const loc = d.location || d.area || '';
-        const lastDate = d.lastDonateDate ? new Date(d.lastDonateDate).toLocaleDateString('en-GB') : '';
-        let row = `<div style="background:#f9fafb;border-radius:0.5rem;padding:0.5rem 0.65rem;margin-top:0.35rem;border-left:3px solid #dc2626">`;
-        row += `<div style="font-weight:600;color:#111827">${i + 1}. ${name}</div>`;
-        row += `<div style="font-size:0.75rem;color:#6b7280;margin-top:2px">📞 ${phone}`;
-        if (loc) row += ` &nbsp;•&nbsp; 📍 ${loc}`;
-        if (lastDate) row += ` &nbsp;•&nbsp; 🗓️ Last: ${lastDate}`;
-        row += `</div></div>`;
-        return row;
-    }).join('');
+    const list = sortDonorsByName(donors).slice(0, maxShow)
+        .map((donor, index) => formatDonorCard(donor, index, lang)).join('');
 
     let footer = '';
     if (count > maxShow) {
@@ -212,30 +238,22 @@ function formatDonorResults(donors, bloodGroup, lang) {
     else if (lang === 'banglish') tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ Sob donor eligible (last donation er por 4 months complete hoyeche)</div>`;
     else tip = `<div style="margin-top:0.5rem;font-size:0.75rem;color:#059669">✅ All donors are eligible (4 months have passed since last donation)</div>`;
 
-    return header + list + footer + tip;
+    return `<div style="margin-bottom:0.55rem;font-weight:600;line-height:1.5">${header}</div>${list}${footer}${tip}`;
 }
 
 function formatFallbackDonorResults(donors, bloodGroup, lang) {
     const searchHref = getSearchHref();
     const count = donors.length;
+    const safeBloodGroup = escapeHtml(String(bloodGroup || ''));
     const header = lang === 'bangla'
-        ? `⚠️ এই মুহূর্তে <strong>${bloodGroup}</strong> গ্রুপে যোগ্য দাতা পাওয়া যায়নি। তবে ${count} জন দাতা পাওয়া গেছে (সম্ভবত অপেক্ষার সময় চলছে):`
+        ? `⚠️ এই মুহূর্তে <strong>${safeBloodGroup}</strong> গ্রুপে যোগ্য দাতা পাওয়া যায়নি। তবে ${count} জন দাতা পাওয়া গেছে (সম্ভবত অপেক্ষার সময় চলছে):`
         : lang === 'banglish'
-            ? `⚠️ Ekhon <strong>${bloodGroup}</strong> group e eligible donor nai. Kintu ${count} jon donor paoa gese (waiting period thakte pare):`
-            : `⚠️ No eligible <strong>${bloodGroup}</strong> donors right now, but ${count} donors were found (they may be in the waiting period):`;
+            ? `⚠️ Ekhon <strong>${safeBloodGroup}</strong> group e eligible donor nai. Kintu ${count} jon donor paoa gese (waiting period thakte pare):`
+            : `⚠️ No eligible <strong>${safeBloodGroup}</strong> donors right now, but ${count} donors were found (they may be in the waiting period):`;
 
     const maxShow = 120;
-    const list = donors.slice(0, maxShow).map((d, i) => {
-        const name = d.fullName || d.name || 'Unknown';
-        const phone = isDonorPhoneHidden(d) ? getHiddenPhoneLabel(lang) : (d.phone || d.contact || 'N/A');
-        const loc = d.location || d.area || '';
-        let row = `<div style="background:#fff1f2;border-radius:0.5rem;padding:0.5rem 0.65rem;margin-top:0.35rem;border-left:3px solid #f97316">`;
-        row += `<div style="font-weight:600;color:#111827">${i + 1}. ${name}</div>`;
-        row += `<div style="font-size:0.75rem;color:#6b7280;margin-top:2px">📞 ${phone}`;
-        if (loc) row += ` &nbsp;•&nbsp; 📍 ${loc}`;
-        row += `</div></div>`;
-        return row;
-    }).join('');
+    const list = sortDonorsByName(donors).slice(0, maxShow)
+        .map((donor, index) => formatDonorCard(donor, index, lang, { fallback: true })).join('');
 
     const footer = lang === 'bangla'
         ? `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">সম্পূর্ণ তালিকার জন্য <a href="${searchHref}" style="color:#dc2626;font-weight:600">সার্চ পেজ</a> দেখুন বা অ্যাডমিনের সাথে যোগাযোগ করুন।</div>`
@@ -243,24 +261,29 @@ function formatFallbackDonorResults(donors, bloodGroup, lang) {
             ? `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">Full list er jonno <a href="${searchHref}" style="color:#dc2626;font-weight:600">Search page</a> e jan ba admin er sathe jogajog korun.</div>`
             : `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">See the full list on the <a href="${searchHref}" style="color:#dc2626;font-weight:600">Search page</a> or contact admin.</div>`;
 
-    return header + list + footer;
+    return `<div style="margin-bottom:0.55rem;font-weight:600;line-height:1.5">${header}</div>${list}${footer}`;
 }
 
 function formatDonorNameResults(donors, bloodGroup, lang) {
     const maxShow = 120;
     const count = donors.length;
+    const safeBloodGroup = escapeHtml(String(bloodGroup || ''));
     let header;
     if (lang === 'bangla') {
-        header = `🩸 <strong>${bloodGroup}</strong> গ্রুপে <strong>${count}</strong> জন দাতার নাম:`;
+        header = `🩸 <strong>${safeBloodGroup}</strong> গ্রুপে <strong>${count}</strong> জন দাতার নাম:`;
     } else if (lang === 'banglish') {
-        header = `🩸 <strong>${bloodGroup}</strong> group e <strong>${count}</strong> jon donor er naam:`;
+        header = `🩸 <strong>${safeBloodGroup}</strong> group e <strong>${count}</strong> jon donor er naam:`;
     } else {
-        header = `🩸 <strong>${count}</strong> <strong>${bloodGroup}</strong> donor name(s):`;
+        header = `🩸 <strong>${count}</strong> <strong>${safeBloodGroup}</strong> donor name(s):`;
     }
 
-    const list = donors.slice(0, maxShow).map((d, i) => {
-        const name = d.fullName || d.name || 'Unknown';
-        return `<div style="background:#f9fafb;border-radius:0.5rem;padding:0.5rem 0.65rem;margin-top:0.35rem;border-left:3px solid #dc2626">${i + 1}. ${name}</div>`;
+    const list = sortDonorsByName(donors).slice(0, maxShow).map((donor, index) => {
+        const name = escapeHtml(String(donor.fullName || donor.name || 'Unknown'));
+        const location = String(donor.location || donor.area || donor.address || '').trim();
+        const locationLine = location
+            ? `<div style="margin-top:0.2rem;font-size:0.78rem;font-weight:400;color:#596579;overflow-wrap:anywhere">📍 <strong>${getDonorFieldLabels(lang).location}:</strong> ${escapeHtml(location)}</div>`
+            : '';
+        return `<article style="background:#f9fafb;border-radius:0.75rem;padding:0.75rem 0.85rem;margin-top:0.55rem;border-left:3px solid #dc2626;font-weight:600;line-height:1.4;overflow-wrap:anywhere">${index + 1}. ${name}${locationLine}</article>`;
     }).join('');
 
     let footer = '';
@@ -270,7 +293,18 @@ function formatDonorNameResults(donors, bloodGroup, lang) {
         else if (lang === 'banglish') footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...ar o ${remaining} jon donor achen.</div>`;
         else footer = `<div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280">...and ${remaining} more.</div>`;
     }
-    return header + list + footer;
+    return `<div style="margin-bottom:0.55rem;font-weight:600;line-height:1.5">${header}</div>${list}${footer}`;
+}
+
+function formatDonorGroupPrompt(lang) {
+    const searchHref = getSearchHref();
+    if (lang === 'bangla') {
+        return `🩸 কোন রক্তের গ্রুপের ডোনার খুঁজছেন? <strong>A+, A-, B+, B-, O+, O-, AB+ বা AB-</strong> লিখুন।<br><br>📋 <a href="${searchHref}" style="color:#dc2626;font-weight:600">ডোনার সার্চ পেজ</a> থেকেও খুঁজতে পারেন।`;
+    }
+    if (lang === 'banglish') {
+        return `🩸 Kon blood group er donor khujchen? <strong>A+, A-, B+, B-, O+, O-, AB+ ba AB-</strong> likhun.<br><br>📋 <a href="${searchHref}" style="color:#dc2626;font-weight:600">Donor Search page</a> thekeo khujte paren.`;
+    }
+    return `🩸 Which blood group do you need? Enter <strong>A+, A-, B+, B-, O+, O-, AB+ or AB-</strong> and I’ll show the matching donors.<br><br>📋 You can also use the <a href="${searchHref}" style="color:#dc2626;font-weight:600">Donor Search page</a>.`;
 }
 
 function buildDonorContext(question) {
@@ -533,9 +567,9 @@ const KNOWLEDGE_BASE = [
       answerBn: 'ব্লাড ডোনেশন কমিউনিটি একটি স্বেচ্ছাসেবী প্ল্যাটফর্ম যা রক্তদাতা ও রোগীদের সংযুক্ত করে। আপনি দাতা হিসেবে যোগ দিতে পারেন, রক্তের গ্রুপ অনুযায়ী দাতা খুঁজতে পারেন, ইভেন্ট দেখতে পারেন এবং ডোনার কার্ড পেতে পারেন! আমাদের সার্চ পেজে দাতা খুঁজুন।' },
 
         { keywords: ['contact', 'email', 'phone', 'whatsapp', 'contact info', 'যোগাযোগ', 'ইমেইল', 'ফোন', 'হোয়াটসঅ্যাপ'],
-            answer: `You can contact us via email: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> or phone: <a href="tel:+8801712460423">+8801712460423</a>. WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>. You can also use the Contact section: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>.`,
-            answerBn: `আপনি ইমেইল করতে পারেন: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> অথবা ফোন করুন: <a href="tel:+8801712460423">+8801712460423</a>। WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>। চাইলে Contact সেকশনও দেখতে পারেন: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>।`,
-            answerBl: `Email: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a>, phone: <a href="tel:+8801712460423">+8801712460423</a>. WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>. Contact section: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>.` },
+            answer: `You can contact us via email: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> or phone: <a href="tel:+8801712460423">01712460423</a>. WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>. You can also use the Contact section: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>.`,
+            answerBn: `আপনি ইমেইল করতে পারেন: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> অথবা ফোন করুন: <a href="tel:+8801712460423">01712460423</a>। WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>। চাইলে Contact সেকশনও দেখতে পারেন: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>।`,
+            answerBl: `Email: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a>, phone: <a href="tel:+8801712460423">01712460423</a>. WhatsApp: <a href="https://wa.me/8801712460423" target="_blank" rel="noopener">Chat now</a>. Contact section: <a href="${SITE_LINKS.contact}" style="color:#dc2626;font-weight:600">Contact</a>.` },
 
         { keywords: ['join', 'register', 'sign up', 'become donor', 'join donor', 'register donor', 'নিবন্ধন', 'রেজিস্টার', 'ডোনার হব', 'যোগ দিতে', 'দাতা হব'],
             answer: `To join as a donor, fill out the registration form here: <a href="${SITE_LINKS.join}" style="color:#dc2626;font-weight:600">Join as Donor</a>. After signup, you can manage your profile anytime.`,
@@ -981,12 +1015,12 @@ Do NOT use Bengali script. Do NOT reply in pure English. Reply in casual, natura
 
 function getLiveAgentFallback(lang) {
     if (lang === 'bangla') {
-        return 'আপনার প্রশ্নের সাথে নির্দিষ্ট মিল পাইনি। 👨‍💬 <strong>Live agent</strong> এর সাহায্য নিতে পারেন: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> অথবা ফোন করুন <a href="tel:+8801712460423">+8801712460423</a>। জরুরি হলে নিকটস্থ হাসপাতালের সাথে যোগাযোগ করুন।';
+        return 'আপনার প্রশ্নের সাথে নির্দিষ্ট মিল পাইনি। 👨‍💬 <strong>Live agent</strong> এর সাহায্য নিতে পারেন: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> অথবা ফোন করুন <a href="tel:+8801712460423">01712460423</a>। জরুরি হলে নিকটস্থ হাসপাতালের সাথে যোগাযোগ করুন।';
     }
     if (lang === 'banglish') {
-        return 'Apnar question er sathe specific match paini. 👨‍💬 <strong>Live agent</strong> er sathe jogajog korun: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> ba phone <a href="tel:+8801712460423">+8801712460423</a>। Emergency hole nearest hospital e jogajog korun.';
+        return 'Apnar question er sathe specific match paini. 👨‍💬 <strong>Live agent</strong> er sathe jogajog korun: <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> ba phone <a href="tel:+8801712460423">01712460423</a>। Emergency hole nearest hospital e jogajog korun.';
     }
-    return 'I could not find a specific match. 👨‍💬 Please contact a <strong>Live agent</strong> at <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> or call <a href="tel:+8801712460423">+8801712460423</a>. If it is urgent, contact your nearest hospital.';
+    return 'I could not find a specific match. 👨‍💬 Please contact a <strong>Live agent</strong> at <a href="mailto:bauet.bdc@gmail.com">bauet.bdc@gmail.com</a> or call <a href="tel:+8801712460423">01712460423</a>. If it is urgent, contact your nearest hospital.';
 }
 
 function getClarifyFallback(lang) {
@@ -1001,12 +1035,12 @@ function getClarifyFallback(lang) {
 
 function getAIFallbackMessage(lang) {
     if (lang === 'bangla') {
-        return 'এই মুহূর্তে AI reply পাওয়া যাচ্ছে না, তাই স্বাভাবিকভাবে উত্তর জেনারেট করতে পারছি না। একটু পরে আবার চেষ্টা করুন, অথবা প্রশ্নটা একটু নির্দিষ্টভাবে লিখলে আমি available তথ্য দিয়ে সাহায্য করব।';
+        return 'AI উত্তর সেবার সাথে এই মুহূর্তে সংযোগ করা যাচ্ছে না, তাই আপনার প্রশ্নটির নির্ভরযোগ্য উত্তর দিতে পারছি না। অনুগ্রহ করে কিছুক্ষণ পরে আবার চেষ্টা করুন।';
     }
     if (lang === 'banglish') {
-        return 'Ekhon AI reply available na, tai ekdom natural vabe generate kore answer dite parchi na. Ektu pore abar try korun, ba question ta aro specific kore dile available info diye help korbo.';
+        return 'Ekhon AI answer service-e connect kora jacche na, tai apnar question-er reliable answer dite parchi na. Doya kore kichukhon pore abar try korun.';
     }
-    return 'The AI reply service is unavailable right now, so I cannot generate a natural response at the moment. Please try again shortly, or send a more specific question and I will help with the information available.';
+    return 'The AI answer service is temporarily unavailable, so I cannot give a reliable answer to this question right now. Please try again shortly.';
 }
 
 function getConversationalFallback(question, lang) {
@@ -1016,20 +1050,18 @@ function getConversationalFallback(question, lang) {
         || q.includes('কি করো') || q.includes('কি করতে পারো') || q.includes('আপনি কে') || q.includes('তুমি কে');
 
     if (isWellbeingQuestion) {
-        if (lang === 'bangla') return 'আমি ভালো আছি, ধন্যবাদ! আপনি কেমন আছেন? রক্তদান, ডোনার খোঁজা বা ওয়েবসাইটের যেকোনো বিষয়ে বলুন, আমি সাহায্য করছি।';
-        if (lang === 'banglish') return 'Ami bhalo achi, dhonnobad! Apni kmn asen? Blood donation, donor search, ba website niye ja jante chan bolun, ami help korchi.';
-        return 'I am doing well, thank you. How are you? Ask me anything about blood donation, finding donors, or using this website.';
+        if (lang === 'bangla') return 'আমি ভালো আছি, ধন্যবাদ! আপনি কেমন আছেন? রক্তদান, ওয়েবসাইট বা অন্য যেকোনো সাধারণ প্রশ্নে বলুন—সাধ্যমতো সাহায্য করব।';
+        if (lang === 'banglish') return 'Ami bhalo achi, dhonnobad! Apni kmn asen? Blood donation, website, ba onno general question-e bolun—ami help korar chesta korbo.';
+        return 'I am doing well, thank you. How are you? I can help with blood donation, the website, and many general questions.';
     }
 
     if (isAboutAssistantQuestion) {
-        if (lang === 'bangla') return 'আমি BAUET BDC-এর Blood Donation Assistant। আমি রক্তদানের যোগ্যতা, প্রস্তুতি, রক্তের গ্রুপ, ডোনার খোঁজা এবং এই ওয়েবসাইট ব্যবহারে সাহায্য করতে পারি।';
-        if (lang === 'banglish') return 'Ami BAUET BDC-er Blood Donation Assistant. Ami blood donation eligibility, preparation, blood group, donor search, ar ei website use korte help korte pari.';
-        return 'I am the BAUET BDC Blood Donation Assistant. I can help with donation eligibility, preparation, blood groups, donor search, and using this website.';
+        if (lang === 'bangla') return 'আমি BAUET BDC-এর সহকারী। রক্তদান, ডোনার খোঁজা ও ওয়েবসাইটের পাশাপাশি বিজ্ঞান, পড়াশোনা, লেখা, অনুবাদ, গণিত ও প্রযুক্তিসহ অনেক সাধারণ বিষয়ে সাহায্য করতে পারি। নিশ্চিত না হলে তা স্পষ্ট করে বলব।';
+        if (lang === 'banglish') return 'Ami BAUET BDC-er assistant. Blood donation, donor search, website-er pasapashi science, study, writing, translation, math, technology shoho onek general topic-e help korte pari. Nischit na hole seta bole debo.';
+        return 'I am the BAUET BDC assistant. I can help with blood donation, donor search, the website, and many general topics such as science, study, writing, translation, math, and technology. I will say when I am unsure.';
     }
 
-    if (lang === 'bangla') return 'আমি রক্তদান, ডোনার খোঁজা এবং এই ওয়েবসাইট ব্যবহার নিয়ে সাহায্য করতে পারি। প্রশ্নটা একটু বিস্তারিত লিখলে আমি সবচেয়ে ভালোভাবে উত্তর দিতে পারব।';
-    if (lang === 'banglish') return 'Ami blood donation, donor search, ar ei website use kora niye help korte pari. Question ta ektu details e likhle ami best vabe answer dite parbo.';
-    return 'I can help with blood donation, donor search, and using this website. Please share a little more detail and I will give you the most useful answer.';
+    return getAIFallbackMessage(lang);
 }
 
 async function getAnswer(question, options = {}) {
@@ -1140,7 +1172,7 @@ export function initChatbot() {
     
     const fab = document.createElement('div');
     fab.id = 'chatbot-fab';
-    fab.innerHTML = `<button id="chatbot-toggle" aria-label="Blood Donation Assistant" title="Blood Donation Assistant" style="width:72px;height:72px;border-radius:0;background:transparent;color:#fff;border:none;cursor:pointer;box-shadow:none;display:flex;align-items:center;justify-content:center;transition:all 0.3s;position:relative">
+    fab.innerHTML = `<button id="chatbot-toggle" aria-label="Blood Donation Assistant" aria-controls="chatbot-window" aria-expanded="false" title="Blood Donation Assistant" style="width:72px;height:72px;border-radius:0;background:transparent;color:#fff;border:none;cursor:pointer;box-shadow:none;display:flex;align-items:center;justify-content:center;transition:all 0.3s;position:relative">
         <span class="chatbot-robot" aria-hidden="true"><span class="chatbot-robot__antenna"></span><span class="chatbot-robot__ear chatbot-robot__ear--left"></span><span class="chatbot-robot__face"><span class="chatbot-robot__eyes"><span></span><span></span></span><span class="chatbot-robot__mouth"></span></span><span class="chatbot-robot__ear chatbot-robot__ear--right"></span></span>
     </button>`;
     fab.style.cssText = 'position:fixed;bottom:80px;right:24px;z-index:45;transition:bottom 0.3s ease;';
@@ -1148,6 +1180,8 @@ export function initChatbot() {
     
     const chatWindow = document.createElement('div');
     chatWindow.id = 'chatbot-window';
+    chatWindow.setAttribute('role', 'dialog');
+    chatWindow.setAttribute('aria-label', 'Blood Donation Assistant');
     chatWindow.style.cssText = 'position:fixed;bottom:140px;right:24px;width:370px;max-width:calc(100vw - 32px);height:500px;max-height:calc(100vh - 180px);background:rgba(255,255,255,0.96);border-radius:1.4rem;box-shadow:0 28px 70px rgba(15,23,42,0.18),0 0 0 1px rgba(255,255,255,0.4);z-index:46;display:none;flex-direction:column;overflow:hidden;font-family:Inter,sans-serif;backdrop-filter:blur(18px);';
     chatWindow.innerHTML = `
         <div style="background:linear-gradient(135deg,#991b1b,#dc2626 58%,#fb7185);padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;flex-shrink:0">
@@ -1156,9 +1190,9 @@ export function initChatbot() {
             </div>
             <div style="flex:1;min-width:0">
                 <div style="font-size:0.95rem;font-weight:800;color:#fff;letter-spacing:-0.02em">Blood Donation Assistant</div>
-                <div style="font-size:0.72rem;color:rgba(255,255,255,0.8);display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;background:#4ade80;border-radius:50%;display:inline-block"></span> Live donor help and website guidance</div>
+                <div style="font-size:0.72rem;color:rgba(255,255,255,0.8);display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;background:#4ade80;border-radius:50%;display:inline-block"></span> Blood donation, website help, and general questions</div>
             </div>
-            <button id="chatbot-close" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+            <button id="chatbot-close" aria-label="Close chat" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
                 <i class="fa-solid fa-xmark" style="font-size:0.85rem"></i>
             </button>
         </div>
@@ -1168,21 +1202,21 @@ export function initChatbot() {
                     <i class="fa-solid fa-robot" style="color:#fff;font-size:0.65rem"></i>
                 </div>
                 <div style="background:rgba(255,255,255,0.95);border-radius:0 1rem 1rem 1rem;padding:0.8rem 0.95rem;font-size:0.82rem;color:#374151;line-height:1.6;box-shadow:0 16px 30px rgba(15,23,42,0.08);max-width:85%;border:1px solid rgba(255,255,255,0.7)">
-                    Hello! 👋 I'm your <strong>Blood Donation Assistant</strong>. I can:<br>
+                    Hello! 👋 I'm your <strong>Blood Donation Assistant</strong>. I can help with:<br>
                     🔍 <strong>Find donors</strong> — just tell me the blood group!<br>
-                    💬 Answer questions about blood donation, eligibility & health.
+                    💬 Blood donation, website guidance, and general questions.
                 </div>
             </div>
         </div>
         <div style="padding:0.85rem;background:rgba(255,255,255,0.96);border-top:1px solid rgba(241,245,249,0.95);flex-shrink:0">
             <form id="chatbot-form" style="display:flex;gap:0.5rem;align-items:center">
-                <input id="chatbot-input" type="text" placeholder="Ask about donors, eligibility, or the website..." autocomplete="off" style="flex:1;padding:0.75rem 0.95rem;border:1.5px solid #e5e7eb;border-radius:0.95rem;font-size:0.82rem;outline:none;transition:border-color 0.2s;font-family:Inter,sans-serif;background:#f9fafb" onfocus="this.style.borderColor='#fca5a5';this.style.background='#fff'" onblur="this.style.borderColor='#e5e7eb';this.style.background='#f9fafb'" />
+                <input id="chatbot-input" type="text" placeholder="Ask me anything..." autocomplete="off" style="flex:1;padding:0.75rem 0.95rem;border:1.5px solid #e5e7eb;border-radius:0.95rem;font-size:0.82rem;outline:none;transition:border-color 0.2s;font-family:Inter,sans-serif;background:#f9fafb" onfocus="this.style.borderColor='#fca5a5';this.style.background='#fff'" onblur="this.style.borderColor='#e5e7eb';this.style.background='#f9fafb'" />
                 <button type="submit" style="width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;box-shadow:0 14px 28px rgba(220,38,38,0.22)" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
                     <i class="fa-solid fa-paper-plane" style="font-size:0.8rem"></i>
                 </button>
             </form>
             <div style="text-align:center;margin-top:0.4rem">
-                <span style="font-size:0.64rem;color:#94a3b8">Powered by Gemini AI • Donor Finder • Website Guide</span>
+                <span style="font-size:0.64rem;color:#94a3b8">Gemini AI • Donor Finder • Website Guide</span>
             </div>
         </div>
     `;
@@ -1197,16 +1231,26 @@ export function initChatbot() {
     const messagesDiv = document.getElementById('chatbot-messages');
 
     let isOpen = false;
-    function toggleChat() {
-        isOpen = !isOpen;
+    function setChatOpen(open) {
+        isOpen = open;
         chatWindow.style.display = isOpen ? 'flex' : 'none';
+        toggleBtn?.setAttribute('aria-expanded', String(isOpen));
         if (isOpen) {
             chatInput.focus();
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
     }
+    function toggleChat() {
+        setChatOpen(!isOpen);
+    }
     toggleBtn?.addEventListener('click', toggleChat);
     closeBtn?.addEventListener('click', toggleChat);
+    document.addEventListener('pointerdown', (event) => {
+        const target = event.target;
+        if (isOpen && target instanceof Node && !chatWindow.contains(target) && !fab.contains(target)) {
+            setChatOpen(false);
+        }
+    });
 
     function addMessage(text, isUser) {
         const wrapper = document.createElement('div');
@@ -1254,6 +1298,11 @@ export function initChatbot() {
         const hasMarkup = /<\/?[a-z][\s\S]*>/i.test(html);
         const text = (temp.textContent || temp.innerText || '').trim();
 
+        if (hasMarkup) {
+            updateAssistantMessage(messageRef, html, false);
+            return;
+        }
+
         if (!text.trim()) {
             updateAssistantMessage(messageRef, html, false);
             return;
@@ -1266,20 +1315,20 @@ export function initChatbot() {
             await sleep(stepDelay);
         }
 
-        updateAssistantMessage(messageRef, hasMarkup ? html : formatPlainTextForHtml(text), false);
+        updateAssistantMessage(messageRef, formatPlainTextForHtml(text), false);
     }
 
-    function addTypingIndicator(isDonorSearch = false) {
+    function addTypingIndicator(isDonorSearch = false, needsBloodGroup = false) {
         const wrapper = document.createElement('div');
         wrapper.id = 'chatbot-typing';
         wrapper.style.cssText = 'display:flex;flex-direction:column;align-items:flex-start;padding:0.15rem 0 0.25rem 0';
-        const label = isDonorSearch ? 'Searching donors' : 'Thinking';
+        const label = needsBloodGroup ? 'Checking request' : (isDonorSearch ? 'Searching donors' : 'Thinking');
         wrapper.innerHTML = `
             <div class="chatbot-thinking-label" style="font-size:0.95rem;font-weight:600;color:#6b7280;letter-spacing:-0.01em;">
                 ${label}<span class="chatbot-inline-dots"><span>.</span><span>.</span><span>.</span></span>
             </div>
             <div class="chatbot-thinking-subtle" style="margin-top:0.35rem;font-size:0.74rem;color:#9ca3af;line-height:1.45;">
-                ${isDonorSearch ? 'Checking matching donor information for you.' : 'Preparing a natural reply for you.'}
+                ${needsBloodGroup ? 'Preparing a quick donor search.' : (isDonorSearch ? 'Checking matching donor information for you.' : 'Preparing a natural reply for you.')}
             </div>
         `;
         messagesDiv.appendChild(wrapper);
@@ -1301,14 +1350,23 @@ export function initChatbot() {
         const bg = extractBloodGroup(question);
         const di = isDonorIntent(question);
         const softDonor = bg && ['donor', 'rokto', 'blood', 'lagbe', 'dorkar', 'chai', 'রক্ত', 'দাতা', 'ডোনার'].some(w => question.toLowerCase().includes(w));
-        addTypingIndicator((bg && di) || softDonor);
+        addTypingIndicator(di || softDonor, Boolean((di || softDonor) && !bg));
         chatInput.disabled = true;
 
         const startTime = Date.now();
         try {
             const minimumThinkingTime = 1800;
 
-            if (bg && (di || softDonor)) {
+            if ((di || softDonor) && !bg) {
+                const answer = formatDonorGroupPrompt(detectLang(question));
+                addToHistory('user', question);
+                addToHistory('model', stripHtml(answer));
+                const elapsed = Date.now() - startTime;
+                if (elapsed < 700) await sleep(700 - elapsed);
+                removeTypingIndicator();
+                const assistantMessage = createAssistantMessage('');
+                await typeAssistantMessage(assistantMessage, answer, 8);
+            } else if (bg && (di || softDonor)) {
                 const answer = await getAnswer(question);
                 const elapsed = Date.now() - startTime;
                 if (elapsed < minimumThinkingTime) {

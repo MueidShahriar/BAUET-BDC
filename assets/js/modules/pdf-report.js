@@ -1,3 +1,5 @@
+import { formatPhoneForDisplay } from './utils.js';
+
 export async function loadJsPdf() {
   if (window.jspdf?.jsPDF) return window.jspdf.jsPDF;
   await import("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
@@ -230,7 +232,7 @@ export function createMonthlyReportDownloader({
           { text: detail.department || "—", bold: false },
         ];
         writeInlineSegments(locationSegments, 8, 4);
-        const phoneText = (detail.phone || "").toString().trim();
+        const phoneText = formatPhoneForDisplay(detail.phone || "").trim();
         if (phoneText) {
           const contactSegments = [
             { text: "Contact: ", bold: true },
@@ -274,7 +276,7 @@ export function createMonthlyReportDownloader({
           ["Patient Problem", detail.patientProblem],
           ["Patient Age", detail.patientAge],
           ["Patient Address", detail.patientAddress],
-          ["Patient Contact", detail.patientContact],
+          ["Patient Contact", formatPhoneForDisplay(detail.patientContact)],
         ].filter(([, value]) => String(value || "").trim());
         if (patientFields.length) {
           drawSectionTitle("Patient Information");

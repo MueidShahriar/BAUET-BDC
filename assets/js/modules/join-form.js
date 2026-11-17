@@ -1,6 +1,15 @@
 import state from './state.js';
 import { showModalMessage } from './modals.js';
 import { normalizeDonorId, getDonorIdNumber, getMaxDonorIdNumber, DONOR_ID_COUNTER_SEED } from './utils.js';
+import { t } from './language-ui.js?v=2';
+import { getFriendlyAuthError } from './auth-errors.js?v=1';
+
+function getLocalDateInputValue(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 export function initJoinForm({ auth, database, ref, set, runTransaction, createUserWithEmailAndPassword }) {
     state.joinFeedbackEl = document.getElementById('join-feedback');
@@ -20,7 +29,79 @@ export function initJoinForm({ auth, database, ref, set, runTransaction, createU
     }
 
     const joinForm = document.getElementById('join-form');
-    const joinClear = document.getElementById('join-clear');
+    const phoneInput = document.getElementById('phone');
+    const phoneToast = document.getElementById('join-phone-toast');
+    const phoneToastMessage = document.getElementById('join-phone-toast-message');
+    let phoneToastTimeout;
+
+    function hidePhoneToast() {
+        window.clearTimeout(phoneToastTimeout);
+        phoneToast?.classList.remove('show');
+        phoneToast?.setAttribute('aria-hidden', 'true');
+    }
+
+    function showPhoneToast(message) {
+        if (!phoneToast || !phoneToastMessage) {
+            setJoinFeedback(message, 'error');
+            return;
+        }
+        window.clearTimeout(phoneToastTimeout);
+        phoneToastMessage.textContent = message;
+        phoneToast.setAttribute('aria-hidden', 'false');
+        phoneToast.classList.add('show');
+        phoneToastTimeout = window.setTimeout(hidePhoneToast, 3500);
+    }
+
+    phoneInput?.addEventListener('input', () => {
+        const digitCount = phoneInput.value.replace(/\D/g, '').length;
+        const previousDigitCount = Number(phoneInput.dataset.previousDigitCount || 0);
+        if (digitCount > 11 && previousDigitCount <= 11) {
+            showPhoneToast('Phone number cannot exceed 11 digits.');
+        } else if (digitCount <= 11) {
+            hidePhoneToast();
+        }
+        phoneInput.dataset.previousDigitCount = String(digitCount);
+    });
+
+    phoneInput?.addEventListener('invalid', (event) => {
+        event.preventDefault();
+        showPhoneToast('Phone number must contain exactly 11 digits.');
+    });
+
+    const passwordToggles = Array.from(joinForm?.querySelectorAll('[data-password-target]') || []);
+    function syncPasswordToggle(toggle) {
+        const passwordInput = document.getElementById(toggle.dataset.passwordTarget);
+        if (!passwordInput) return;
+
+        const isVisible = passwordInput.type === 'text';
+        const labelKey = isVisible ? 'loginHidePassword' : 'loginShowPassword';
+        const label = t(labelKey);
+        toggle.dataset.i18n = labelKey;
+        toggle.title = label;
+        toggle.setAttribute('aria-label', label);
+        toggle.setAttribute('aria-pressed', isVisible ? 'true' : 'false');
+        toggle.querySelector('i')?.classList.toggle('fa-eye', !isVisible);
+        toggle.querySelector('i')?.classList.toggle('fa-eye-slash', isVisible);
+    }
+
+    passwordToggles.forEach((toggle) => {
+        const passwordInput = document.getElementById(toggle.dataset.passwordTarget);
+        if (!passwordInput) return;
+
+        syncPasswordToggle(toggle);
+
+        toggle.addEventListener('click', () => {
+            const isHidden = passwordInput.type === 'password';
+            passwordInput.type = isHidden ? 'text' : 'password';
+            syncPasswordToggle(toggle);
+        });
+    });
+    window.addEventListener('languageChanged', () => passwordToggles.forEach(syncPasswordToggle));
+
+    const lastDonateDateInput = document.getElementById('lastDonateDate');
+    if (lastDonateDateInput) {
+        lastDonateDateInput.max = getLocalDateInputValue();
+    }
 
     joinForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -46,17 +127,29 @@ export function initJoinForm({ auth, database, ref, set, runTransaction, createU
         const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i;
         if (!gmailRegex.test(email)) { setJoinFeedback('Only @gmail.com email addresses are accepted. Please use a Gmail account.', 'error'); return; }
         if (!donorData.bloodGroup) { setJoinFeedback('Please select your blood group to help matches find you.', 'error'); return; }
-        if (!donorData.phone) { setJoinFeedback('Phone number is required.', 'error'); return; }
-        const numericPhone = donorData.phone.replace(/[^\d+]/g, '');
-        if (numericPhone.length < 10) { setJoinFeedback('Please enter a phone number with at least 10 digits.', 'error'); return; }
         const digitsOnly = donorData.phone.replace(/\D/g, '');
-        donorData.phone = donorData.phone.trim().startsWith('+') ? `+${digitsOnly}` : digitsOnly;
+        if (digitsOnly.length !== 11) {
+            showPhoneToast(digitsOnly.length > 11
+                ? 'Phone number cannot exceed 11 digits.'
+                : 'Phone number must contain exactly 11 digits.');
+            phoneInput?.focus();
+            return;
+        }
+        hidePhoneToast();
+        donorData.phone = digitsOnly;
         if (!donorData.location || donorData.location.length < 3) { setJoinFeedback('Share your current location (minimum 3 characters).', 'error'); return; }
         if (donorData.lastDonateDate) {
-            const lastDonation = new Date(donorData.lastDonateDate);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            if (Number.isNaN(lastDonation.getTime()) || lastDonation > today) { setJoinFeedback('Last donation date cannot be in the future.', 'error'); return; }
+            const selectedDate = donorData.lastDonateDate.trim();
+            const dateParts = /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/.exec(selectedDate);
+            const lastDonation = dateParts ? new Date(`${selectedDate}T00:00:00`) : null;
+            const isValidDate = Boolean(lastDonation && !Number.isNaN(lastDonation.getTime())
+                && lastDonation.getFullYear() === Number(dateParts[1])
+                && lastDonation.getMonth() + 1 === Number(dateParts[2])
+                && lastDonation.getDate() === Number(dateParts[3]));
+            if (!isValidDate || selectedDate > getLocalDateInputValue()) {
+                setJoinFeedback('Last donation date cannot be in the future.', 'error');
+                return;
+            }
         }
         if (!password || !confirm) { setJoinFeedback('Please set and confirm your password.', 'error'); return; }
         if (password !== confirm) { setJoinFeedback('Passwords do not match. Please re-enter them.', 'error'); return; }
@@ -94,14 +187,11 @@ export function initJoinForm({ auth, database, ref, set, runTransaction, createU
                 setJoinFeedback('An error occurred while saving your profile data. Please try again.', 'error');
                 showModalMessage('success-modal', 'An error occurred while saving your profile data.', 'Error');
             } else {
-                setJoinFeedback(`Signup failed: ${error.message}`, 'error');
-                showModalMessage('success-modal', `Signup failed: ${error.message}`, 'Error');
+                const message = getFriendlyAuthError(error, 'signup');
+                setJoinFeedback(message, 'error');
+                showModalMessage('success-modal', message, t('authRegistrationFailedTitle'));
             }
         }
     });
 
-    joinClear?.addEventListener('click', () => {
-        joinForm?.reset();
-        clearJoinFeedback();
-    });
 }

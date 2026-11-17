@@ -1,10 +1,11 @@
 import state from './state.js';
-import { t } from './language-ui.js';
+import { t } from './language-ui.js?v=2';
 import {
     sortEventsByDate,
     normalizeDonorId,
     getInitials,
     getTextValue,
+    formatPhoneForDisplay,
     getDonorIdNumber,
     computeDonorReputation,
     getDonorEligibilityStatus,
@@ -72,12 +73,12 @@ function renderRecentDonationCardAdmin(d) {
     const initials = getInitials(donorName, '?');
     const bloodGroup = getTextValue(d.bloodGroup, '—');
     const donorId = normalizeDonorId(d.donorId) || d.donorId || '';
-    const phone = getTextValue(d.phone, '');
+    const phone = formatPhoneForDisplay(getTextValue(d.phone, ''));
     const patientName = getTextValue(d.patientName, '—');
     const patientProblem = getTextValue(d.patientProblem, '—');
     const patientAge = getTextValue(d.patientAge, '—');
     const patientAddress = getTextValue(d.patientAddress, '—');
-    const patientContact = getTextValue(d.patientContact, '—');
+    const patientContact = formatPhoneForDisplay(getTextValue(d.patientContact, '—'));
     const contactRow = phone
         ? `<div class="admin-event-card__meta"><span><i class="fa-solid fa-phone"></i> Contact: ${phone}</span></div>`
         : '';
@@ -140,7 +141,7 @@ export function renderAdminRecentDonationsList(deleteRecentFn) {
                 const patientProblemF = document.getElementById('patient-problem'); if (patientProblemF) patientProblemF.value = data.patientProblem || '';
                 const patientAgeF = document.getElementById('patient-age'); if (patientAgeF) patientAgeF.value = data.patientAge || '';
                 const patientAddressF = document.getElementById('patient-address'); if (patientAddressF) patientAddressF.value = data.patientAddress || '';
-                const patientContactF = document.getElementById('patient-contact'); if (patientContactF) patientContactF.value = data.patientContact || '';
+                const patientContactF = document.getElementById('patient-contact'); if (patientContactF) patientContactF.value = formatPhoneForDisplay(data.patientContact || '');
                 const donorIdField = document.getElementById('donor-id');
                 if (donorIdField) donorIdField.value = normalizeDonorId(data.donorId) || data.donorId || '';
                 const nameF = document.getElementById('donor-name'); if (nameF) nameF.value = data.name || '';
@@ -149,7 +150,7 @@ export function renderAdminRecentDonationsList(deleteRecentFn) {
                 const deptF = document.getElementById('donor-department'); if (deptF) deptF.value = data.department || '';
                 const batchF = document.getElementById('donor-batch'); if (batchF) batchF.value = data.batch || '';
                 const ageF = document.getElementById('donor-age'); if (ageF) ageF.value = data.age || '';
-                const numberF = document.getElementById('donor-number'); if (numberF) numberF.value = data.phone || '';
+                const numberF = document.getElementById('donor-number'); if (numberF) numberF.value = formatPhoneForDisplay(data.phone || '');
                 const weightF = document.getElementById('donor-weight'); if (weightF) weightF.value = data.weight || '';
                 const dateF = document.getElementById('donation-date'); if (dateF) dateF.value = data.date || '';
                 document.getElementById('admin-recent-donor-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -165,13 +166,22 @@ export function renderAdminRecentDonationsList(deleteRecentFn) {
 }
 
 function renderDonorCardAdmin(d) {
-    const lastDate = d.lastDonateDate ? (() => { const _d = new Date(d.lastDonateDate + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })() : 'Not recorded';
     const donorName = getTextValue(d.fullName || d.name, 'Unknown');
-    const phone = getTextValue(d.phone, '—');
+    const phone = formatPhoneForDisplay(getTextValue(d.phone, '—'));
     const note = getTextValue(d.notes, '');
-    const noteRow = note ? `<span style="color:#dc2626"><i class="fa-solid fa-note-sticky"></i> Additional Notes: ${note}</span>` : '';
-    const ageValue = getTextValue(d.age ?? d.lastDonationInfo?.age, '');
-    const ageRow = ageValue ? `<span><i class="fa-solid fa-user"></i> Age: ${ageValue}</span>` : '';
+    const activityDate = d.lastActiveAt || d.lastLoginAt || d.updatedAt || d.createdAt;
+    const lastActive = activityDate ? formatDateDisplay(activityDate) : 'Not recorded';
+    const birthDate = d.dateOfBirth ? new Date(`${d.dateOfBirth}T00:00:00`) : null;
+    let calculatedAge = '';
+    if (birthDate && !Number.isNaN(birthDate.getTime())) {
+        const today = new Date();
+        calculatedAge = today.getFullYear() - birthDate.getFullYear();
+        if (today.getMonth() < birthDate.getMonth() ||
+            (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+            calculatedAge -= 1;
+        }
+    }
+    const ageValue = getTextValue(d.age ?? d.lastDonationInfo?.age ?? calculatedAge, '—');
     const gender = getTextValue(d.gender, 'Not recorded');
     const initials = getInitials(donorName, '?');
     const reputation = computeDonorReputation(d, state.recentDonationsList || []);
@@ -210,35 +220,41 @@ function renderDonorCardAdmin(d) {
     const statusActionButton = isActive
         ? `<button data-member-id="${d.id}" class="deactivate-member-btn admin-action-btn admin-action-btn--deactivate" title="Deactivate"><i class="fa-solid fa-user-slash" data-member-id="${d.id}"></i><span>Deactivate</span></button>`
         : `<button data-member-id="${d.id}" class="activate-member-btn admin-action-btn admin-action-btn--activate" title="Activate"><i class="fa-solid fa-user-check" data-member-id="${d.id}"></i><span>Activate</span></button>`;
+    const detailRow = (icon, label, value) => `
+        <div class="admin-member-card__detail-row">
+            <i class="${icon}" aria-hidden="true"></i>
+            <strong>${label}</strong>
+            <span>${value}</span>
+        </div>`;
     return `
         <div class="admin-member-card">
-            <div class="admin-member-card__avatar">${avatarContent}</div>
-            <div class="admin-member-card__body">
-                <div class="admin-member-card__top">
-                    <h4 class="admin-member-card__name">${donorName}</h4>
-                    <span class="admin-member-card__blood"><i class="fa-solid fa-droplet"></i> ${getTextValue(d.bloodGroup, '—')}</span>
-                    <span class="admin-member-card__status-row">
+            <div class="admin-member-card__summary">
+                <div class="admin-member-card__avatar">${avatarContent}</div>
+                <div class="admin-member-card__body">
+                    <div class="admin-member-card__top">
+                        <h4 class="admin-member-card__name">${donorName}</h4>
+                        <span class="admin-member-card__blood"><i class="fa-solid fa-droplet"></i> ${getTextValue(d.bloodGroup, '—')}</span>
+                    </div>
+                    <div class="admin-member-card__status-row">
                         ${eligibleBadge}
-                        <span class="admin-member-card__role-status">
-                            ${roleBadge}
-                            ${statusBadge}
-                        </span>
-                    </span>
+                        ${roleBadge}
+                        ${statusBadge}
+                    </div>
                     ${repBadge}
+                    <div class="admin-member-card__id">Donor ID: ${donorId}</div>
                 </div>
-                <div class="admin-member-card__id">Donor ID: ${donorId}</div>
-                <div class="admin-member-card__info">
-                    <span><i class="fa-solid fa-envelope"></i> ${getTextValue(d.email, '—')}</span>
-                    <span><i class="fa-solid fa-phone"></i> ${phone}</span>
-                    <span><i class="fa-solid fa-venus-mars"></i> Gender: ${gender}</span>
-                    <span><i class="fa-solid fa-location-dot"></i> Current Location: ${getMemberLocation(d) || '—'}</span>
-                    <span><i class="fa-solid fa-building-columns"></i> Department: ${getTextValue(d.department, '—')}</span>
-                    <span><i class="fa-solid fa-layer-group"></i> Batch: ${getTextValue(d.batch, '—')}</span>
-                    <span><i class="fa-solid fa-calendar-check"></i> Last: ${lastDate}</span>
-                    <span><i class="fa-solid fa-hand-holding-droplet"></i> ${t('leaderboardDonations')}: ${reputation.donationCount}</span>
-                    ${ageRow}
-                    ${noteRow}
-                </div>
+            </div>
+            <div class="admin-member-card__info" aria-label="Donor information">
+                ${detailRow('fa-solid fa-envelope', 'Email', getTextValue(d.email, '—'))}
+                ${detailRow('fa-solid fa-phone', 'Mobile No.', phone)}
+                ${detailRow('fa-solid fa-venus-mars', 'Gender', gender)}
+                ${detailRow('fa-solid fa-location-dot', 'Current Location', getMemberLocation(d) || '—')}
+                ${detailRow('fa-solid fa-building-columns', 'Department', getTextValue(d.department, '—'))}
+                ${detailRow('fa-solid fa-layer-group', 'Batch', getTextValue(d.batch, '—'))}
+                ${detailRow('fa-solid fa-calendar-check', 'Last Active', lastActive)}
+                ${detailRow('fa-solid fa-hand-holding-droplet', 'Donations', reputation.donationCount)}
+                ${detailRow('fa-solid fa-user', 'Age', ageValue)}
+                ${note ? detailRow('fa-solid fa-note-sticky', 'Additional Notes', note) : ''}
             </div>
             <div class="admin-member-card__actions">
                 ${roleActionButton}
@@ -446,7 +462,7 @@ export function renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMe
                 document.getElementById('admin-member-id').value = memberData.id;
                 document.getElementById('admin-member-fullname').value = memberData.fullName || '';
                 document.getElementById('admin-member-email').value = memberData.email || '';
-                document.getElementById('admin-member-phone').value = memberData.phone || '';
+                document.getElementById('admin-member-phone').value = formatPhoneForDisplay(memberData.phone || '');
                 document.getElementById('admin-member-bloodGroup').value = memberData.bloodGroup || '';
                 document.getElementById('admin-member-gender').value = memberData.gender || 'Other';
                 document.getElementById('admin-member-location').value = getMemberLocation(memberData);

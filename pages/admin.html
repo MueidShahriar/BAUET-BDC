@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="antialiased scroll-smooth">
 
 <head>
@@ -8,14 +8,19 @@
     <title>Admin Dashboard - BAUET BDC</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="../image/blood-drop.png" type="image/x-icon">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="../assets/css/common.css">
-    <link rel="stylesheet" href="../assets/css/index.css">
+    <link rel="stylesheet" href="../assets/css/common.css?v=141">
+    <link rel="stylesheet" href="../assets/css/index.css?v=123">
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=12">
 
     <meta name="description"
         content="Admin dashboard for managing donors, events, and recent donations.">
@@ -33,12 +38,11 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" defer></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" defer></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
     <script src="../assets/js/viewport.js" defer></script>
-    <script type="module" src="../assets/js/app.js?v=5"></script>
+    <script type="module" src="../assets/js/app.js?v=40"></script>
 
     <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
         <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">
@@ -286,7 +290,7 @@
                 <button type="button" class="admin-tab active" data-tab="events"><i
                         class="fa-solid fa-calendar-days"></i><span>Events</span></button>
                 <button type="button" class="admin-tab" data-tab="recent"><i
-                        class="fa-solid fa-hand-holding-droplet"></i><span>Recent Donor</span></button>
+                        class="fa-solid fa-hand-holding-droplet"></i><span>Recent Donations</span></button>
                 <button type="button" class="admin-tab" data-tab="members"><i
                         class="fa-solid fa-users"></i><span>Members</span></button>
                 <button type="button" class="admin-tab" data-tab="search"><i
@@ -713,7 +717,7 @@
                                     <div class="flex items-center gap-2 -mb-1">
                                         <div class="icon-circle-sm"><i class="fa-solid fa-magnifying-glass text-sm"
                                                 aria-hidden="true"></i></div>
-                                        <h3 class="text-base font-bold text-red-700" data-i18n="searchTitle">Find Donors</h3>
+                                        <h3 class="text-base font-bold text-red-700" data-i18n="searchCardTitle">Search Filters</h3>
                                     </div>
                                     <form id="search-form" class="flex flex-col sm:flex-row items-center gap-2 w-full">
                                         <div class="field-icon-left w-full sm:flex-1">
@@ -788,7 +792,7 @@
                     <a href="tel:+8801712460423"
                         class="contact-chip inline-flex items-center gap-3 px-5 py-3 rounded-xl border border-red-100 bg-red-50/70 text-red-800 shadow-sm hover:shadow-md">
                         <span class="icon-circle-sm"><i class="fa-solid fa-phone" aria-hidden="true"></i></span>
-                        <span class="text-sm font-medium" data-i18n="contactPhone">+8801712460423</span>
+                        <span class="text-sm font-medium" data-i18n="contactPhone">01712460423</span>
                     </a>
                 </div>
                 <div class="mt-6">
@@ -871,7 +875,7 @@
                         <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope"></i>
                                 <span>bauet.bdc@gmail.com</span></a></li>
                         <li><a href="tel:+8801712460423"><i class="fa-solid fa-phone"></i>
-                                <span>+8801712460423</span></a></li>
+                                <span>01712460423</span></a></li>
                         <li><a href="#contact"><i class="fa-solid fa-message"></i> <span
                                     data-i18n="navContact">Contact</span></a></li>
                     </ul>
@@ -1033,13 +1037,13 @@
     </div>
 
     <div id="fab-wrap" class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
-        <a href="#" id="back-to-top"
+        <button type="button" id="back-to-top"
             class="bg-red-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-red-700 transition-all text-lg flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
             </svg>
-        </a>
+        </button>
     </div>
 
 </body>

@@ -761,7 +761,7 @@ body:has(#hero) main > section#hero {
 /* Admin feedback inbox polish. */
 [data-panel="feedback"] .admin-panel-card {
     border-color: #e8edf3;
-    background: linear-gradient(145deg, #ffffff, #fff8f8);
+    background: linear-gradient(145deg, #ffffff, #fffafb);
 }
 
 [data-panel="feedback"] .admin-panel-card__header {
@@ -770,9 +770,9 @@ body:has(#hero) main > section#hero {
 }
 
 [data-panel="feedback"] .admin-panel-card__icon {
-    color: #b91c32;
-    background: #fff0f2;
-    box-shadow: 0 8px 18px rgba(185, 28, 50, 0.12);
+    color: #be123c;
+    background: #fff1f2;
+    box-shadow: 0 8px 18px rgba(190, 18, 60, 0.1);
 }
 
 [data-panel="feedback"] .admin-list-section {
@@ -796,15 +796,13 @@ body:has(#hero) main > section#hero {
     padding: 1rem;
     gap: 0.9rem;
     border: 1px solid #e6ebf1;
-    border-left: 3px solid #e11d48;
-    border-radius: 1rem;
-    background: #ffffff;
+    border-radius: 0.8rem;
+    background: linear-gradient(145deg, #ffffff, #fffafb);
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.045);
 }
 
 [data-panel="feedback"] .admin-event-card:hover {
     border-color: #fecdd3;
-    border-left-color: #be123c;
     box-shadow: 0 14px 28px rgba(190, 18, 60, 0.1);
     transform: translateY(-1px);
 }
@@ -814,8 +812,8 @@ body:has(#hero) main > section#hero {
     height: 3rem;
     border: 0;
     border-radius: 0.85rem;
-    background: linear-gradient(145deg, #be123c, #fb7185) !important;
-    box-shadow: 0 8px 16px rgba(190, 18, 60, 0.18);
+    background: linear-gradient(145deg, #be123c, #f0647e) !important;
+    box-shadow: 0 8px 16px rgba(190, 18, 60, 0.16);
 }
 
 [data-panel="feedback"] .admin-event-card__month {
@@ -829,8 +827,8 @@ body:has(#hero) main > section#hero {
 
 [data-panel="feedback"] .admin-event-card__title {
     color: #172033;
-    font-size: 1rem;
-    font-weight: 800;
+    font-size: 0.84rem;
+    font-weight: 750;
 }
 
 [data-panel="feedback"] .admin-event-card__meta {
@@ -845,15 +843,27 @@ body:has(#hero) main > section#hero {
 }
 
 [data-panel="feedback"] .admin-event-card__desc {
-    margin-top: 0.7rem;
-    padding: 0.7rem 0.8rem;
-    border: 1px solid #f1f5f9;
-    border-radius: 0.7rem;
-    background: #f8fafc;
-    color: #475569;
-    font-size: 0.84rem;
+    margin-top: 0.75rem;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid #f3d9de;
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, #fff7f8 0%, #fffafb 100%);
+    color: #3f4b5f;
+    font-size: 0.82rem;
+    font-weight: 500;
     line-height: 1.55;
     overflow-wrap: anywhere;
+}
+
+[data-panel="feedback"] .admin-event-card__desc::before {
+    content: "Comment";
+    display: block;
+    margin-bottom: 0.35rem;
+    color: #be123c;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 }
 
 [data-panel="feedback"] .admin-event-card__actions {
@@ -2752,6 +2762,8 @@ img,
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+    overflow-wrap: normal;
+    word-break: normal;
 }
 
 .recent-card__stat-label i {
@@ -2838,13 +2850,13 @@ img,
     }
 
     .recent-card__stats {
-        grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         gap: 0.65rem;
     }
 
     .recent-card__stat {
         min-height: 0;
-        padding: 0.6rem 0.75rem;
+        padding: 0.6rem 0.5rem;
     }
 
     .recent-card__stat--wide,
@@ -2855,12 +2867,12 @@ img,
     .recent-card__stat--blood,
     .recent-card__stat--batch,
     .recent-card__stat--age {
-        grid-column: span 2 !important;
+        grid-column: auto !important;
     }
 
     .recent-card__stat--department,
     .recent-card__stat--weight {
-        grid-column: span 3 !important;
+        grid-column: auto !important;
     }
 
     .donor-card .info-stack {
@@ -2919,23 +2931,34 @@ img,
 
 .donor-card {
     position: relative;
-    /* Let the eligibility tooltip sit above the card instead of being clipped. */
     overflow: visible;
+    border: 1px solid #e7ebf1;
+    border-radius: 1rem;
+    background: linear-gradient(145deg, #ffffff 0%, #ffffff 78%, #fff8f9 100%);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .donor-card__name-row {
+    position: relative;
     min-width: 0;
     width: 100%;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
-    gap: 0.55rem;
+    gap: 0.35rem;
     flex: 1 1 auto;
 }
 
-.donor-card__name-text {
+.donor-card__name-row .donor-card__name-text {
     min-width: 0;
+    max-width: 100%;
     flex: 0 1 auto;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+    line-height: 1.2;
 }
 
 .donor-status-indicator {
@@ -2962,14 +2985,15 @@ img,
     inset: -0.45rem;
 }
 
-.donor-status-indicator::after {
-    content: attr(data-tooltip);
+.donor-status-tooltip {
+    display: block;
     position: absolute;
-    left: 50%;
+    right: 0;
     bottom: calc(100% + 0.7rem);
-    transform: translate(-50%, 0.35rem);
-    min-width: 150px;
-    max-width: 220px;
+    transform: translateY(0.35rem);
+    width: max-content;
+    min-width: min(150px, calc(100vw - 2rem));
+    max-width: min(220px, calc(100vw - 2rem));
     padding: 0.5rem 0.65rem;
     border-radius: 0.75rem;
     background: rgba(15, 23, 42, 0.96);
@@ -2977,7 +3001,9 @@ img,
     font-size: 0.72rem;
     font-weight: 500;
     line-height: 1.35;
-    text-align: center;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
     box-shadow: 0 14px 30px rgba(15, 23, 42, 0.2);
     opacity: 0;
     pointer-events: none;
@@ -2986,11 +3012,11 @@ img,
     z-index: 20;
 }
 
-.donor-status-indicator:hover::after,
-.donor-status-indicator:focus-visible::after {
+.donor-status-indicator:hover + .donor-status-tooltip,
+.donor-status-indicator:focus-visible + .donor-status-tooltip {
     opacity: 1;
     visibility: visible;
-    transform: translate(-50%, 0);
+    transform: translateY(0);
 }
 
 .donor-status-indicator:focus-visible {
@@ -3010,20 +3036,15 @@ img,
     background: #111827;
 }
 
-.donor-card::before {
-    content: "";
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 5px;
-    background: linear-gradient(180deg, #ef4444, #dc2626);
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
-    box-shadow: 0 0 0 1px rgba(225, 29, 72, .06) inset;
+.donor-card:hover {
+    border-color: #fecdd3;
+    box-shadow: 0 12px 26px rgba(190, 18, 60, 0.09);
+    transform: translateY(-2px);
 }
 
-.donor-card:hover {
-    transform: translateY(-3px) translateZ(0);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.donor-card:focus-within {
+    border-color: #fda4af;
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.12), 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
 .donor-card .info-stack {
@@ -3057,6 +3078,44 @@ img,
 
 .donor-card .info-row .info-text .value {
     display: inline;
+}
+
+.donor-card .donor-card__location-row {
+    min-width: 0;
+}
+
+.donor-card .donor-card__location-row .icon {
+    flex: 0 0 auto;
+}
+
+.donor-card .donor-card__location-row .info-text {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+
+.donor-card .donor-location-label {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.donor-card .donor-location-value {
+    display: block;
+    min-width: 0;
+    flex: 1 1 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#search-blood {
+    box-sizing: border-box;
+    height: 48px !important;
+    min-height: 48px;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    font-size: 1rem !important;
+    line-height: 1.25 !important;
 }
 
 .desktop-only,
@@ -4800,6 +4859,9 @@ canvas {
     }
 
     #search-results .donor-card {
+        width: calc(100% + 1rem);
+        max-width: none;
+        margin-inline: -0.5rem;
         padding: clamp(0.5rem, 2vw, 0.75rem) !important;
         border-radius: 10px;
     }
@@ -7017,12 +7079,21 @@ canvas {
 
 #contact .contact-chip {
     min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     border-color: #e5eaf1;
     border-radius: 0.85rem;
     background: #f8fafc;
     color: #344054;
     box-shadow: none;
     transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+#contact .contact-chip > span:last-child {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: left;
 }
 
 #contact .contact-chip:hover {
@@ -7036,6 +7107,7 @@ canvas {
     width: 2.5rem;
     height: 2.5rem;
     min-width: 2.5rem;
+    flex-shrink: 0;
     margin: 0;
     background: #fff0f2;
     color: #b4233c;
@@ -7220,12 +7292,37 @@ canvas {
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06) !important;
 }
 
+#admin-panel .admin-overview-card:nth-child(1) {
+    --overview-glow: rgba(225, 29, 72, 0.14);
+}
+
+#admin-panel .admin-overview-card:nth-child(2) {
+    --overview-glow: rgba(112, 84, 200, 0.14);
+}
+
+#admin-panel .admin-overview-card:nth-child(3) {
+    --overview-glow: rgba(22, 131, 93, 0.14);
+}
+
+#admin-panel .admin-overview-card:nth-child(4) {
+    --overview-glow: rgba(52, 116, 200, 0.14);
+}
+
 #admin-panel .admin-overview-card::before {
     content: '';
     position: absolute;
-    inset: 0 auto 0 0;
-    width: 4px;
-    background: linear-gradient(180deg, #e11d48, #fb7185);
+    inset: -3rem -2rem auto auto;
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--overview-glow) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+#admin-panel .admin-overview-card > * {
+    position: relative;
+    z-index: 1;
 }
 
 #admin-panel .admin-overview-label {
@@ -7279,9 +7376,18 @@ canvas {
 #admin-panel .admin-overview-card::before {
     content: '';
     position: absolute;
-    inset: 0 auto 0 0;
-    width: 4px;
-    background: linear-gradient(180deg, #e11d48, #fb7185);
+    inset: -3rem -2rem auto auto;
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--overview-glow) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+#admin-panel .admin-overview-card > * {
+    position: relative;
+    z-index: 1;
 }
 
 #admin-panel .admin-overview-label {
@@ -7409,7 +7515,7 @@ canvas {
     #contact .contact-chip {
         width: 100%;
         justify-content: flex-start;
-        padding: 0.7rem 0.85rem;
+        padding: 0.7rem 0.85rem !important;
     }
 }
 
@@ -7736,6 +7842,266 @@ canvas {
     white-space: nowrap;
 }
 
+/* Registered member cards follow the profile layout shown in the admin reference. */
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.15rem;
+    width: 100%;
+    padding: clamp(1rem, 2.2vw, 1.6rem);
+    border: 1px solid #d8e3f5;
+    border-radius: 1.5rem;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 12px 30px rgba(30, 64, 175, 0.1);
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__summary {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: 1.2rem;
+    min-width: 0;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__avatar {
+    width: 8rem !important;
+    height: 8rem !important;
+    border: 4px solid #3b82f6;
+    border-radius: 50% !important;
+    background: #eff6ff;
+    box-shadow: 0 8px 22px rgba(37, 99, 235, 0.18);
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+    min-width: 0;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem 0.8rem;
+    width: 100%;
+    margin: 0;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__name {
+    max-width: 100%;
+    color: #10264f;
+    font-size: clamp(1.2rem, 2.2vw, 1.8rem) !important;
+    font-weight: 800;
+    line-height: 1.2;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__blood {
+    padding: 0.45rem 0.8rem;
+    border: 0;
+    background: #fff0f0;
+    color: #dc2626;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__blood i {
+    font-size: 0.85rem;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__status-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    white-space: normal;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__status-row .admin-member-badge {
+    padding: 0.42rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+#admin-panel [data-panel="members"] .admin-member-reputation-badge {
+    position: static;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    white-space: normal;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__id {
+    margin: 0.1rem 0 0;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: linear-gradient(100deg, #ef171d, #c81018);
+    color: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__info {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    overflow: hidden;
+    border: 1px solid #d8e3f5;
+    border-radius: 1.2rem;
+    background: #fff;
+    color: #14213c;
+    font-size: 0.98rem;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__detail-row {
+    display: grid;
+    grid-template-columns: 2.4rem minmax(9.5rem, 0.72fr) minmax(0, 1.4fr);
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+    padding: 0.68rem 1rem;
+    border: 0;
+    background: #fff;
+    line-height: 1.4;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__detail-row:nth-child(even) {
+    background: #eff5ff;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__detail-row > i {
+    color: #1764d8;
+    font-size: 1.15rem;
+    text-align: center;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__detail-row > strong {
+    color: #172b50;
+    font-weight: 750;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__detail-row > span {
+    min-width: 0;
+    color: #172033;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__actions {
+    position: static !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.9rem;
+    border: 1px solid #e0e9f8;
+    border-radius: 1.25rem;
+    background: #fff;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__actions .admin-action-btn {
+    display: flex;
+    width: 100% !important;
+    min-width: 0;
+    min-height: 4rem;
+    height: auto !important;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.55rem 0.35rem;
+    border-radius: 1rem;
+    box-shadow: 0 5px 12px rgba(15, 23, 42, 0.08);
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__actions .admin-action-btn i {
+    font-size: 1.2rem;
+}
+
+#admin-panel [data-panel="members"] .admin-member-card__actions .admin-action-btn span {
+    display: inline !important;
+    font-size: 0.78rem !important;
+    line-height: 1.15;
+    text-align: center;
+    white-space: normal;
+}
+
+@media (max-width: 640px) {
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card {
+        gap: 0.75rem;
+        padding: 0.8rem;
+        width: 100%;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__summary {
+        grid-template-columns: 4.25rem minmax(0, 1fr);
+        gap: 0.7rem;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__avatar {
+        width: 4.1rem !important;
+        height: 4.1rem !important;
+        border-width: 3px;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__body {
+        gap: 0.4rem;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__name {
+        font-size: 1.05rem !important;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__blood {
+        padding: 0.3rem 0.55rem;
+        font-size: 0.82rem;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__status-row .admin-member-badge,
+    #admin-panel [data-panel="members"] .admin-member-reputation-badge {
+        padding: 0.28rem 0.5rem;
+        font-size: 0.68rem;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__id {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.75rem;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__info {
+        font-size: 0.76rem;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__detail-row {
+        grid-template-columns: 1.6rem minmax(6.2rem, 0.75fr) minmax(0, 1.25fr);
+        gap: 0.4rem;
+        padding: 0.55rem 0.6rem;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__detail-row > i {
+        font-size: 0.92rem;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+        padding: 0.6rem;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__actions .admin-action-btn {
+        min-height: 3.35rem;
+        flex-direction: row;
+        gap: 0.45rem;
+        padding: 0.45rem;
+        border-radius: 0.75rem;
+    }
+
+    #admin-panel [data-panel="members"] .admin-member-card__actions .admin-action-btn span {
+        font-size: 0.72rem !important;
+    }
+}
+
 #admin-panel input,
 #admin-panel select,
 #admin-panel textarea,
@@ -7835,3 +8201,811 @@ canvas {
     }
 }
 
+
+/* Final member-card table overrides after the dashboard responsive rules. */
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__info {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+    padding: 0 !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row {
+    display: grid;
+    grid-template-columns: 2.4rem minmax(9.5rem, 0.72fr) minmax(0, 1.4fr);
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions {
+    position: static !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    width: 100% !important;
+    padding: 0.9rem !important;
+    border: 1px solid #e0e9f8 !important;
+    border-radius: 1.25rem !important;
+    background: #fff !important;
+}
+
+@media (max-width: 640px) {
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row {
+        grid-template-columns: 1.6rem minmax(6.2rem, 0.75fr) minmax(0, 1.25fr);
+        padding: 0.55rem 0.6rem;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.5rem !important;
+        padding: 0.6rem !important;
+    }
+}
+
+/* Member Management: keep its profile cards compact and red-themed. */
+#admin-panel [data-panel="members"] .admin-panel-card {
+    border-color: #fecdd3 !important;
+    background: linear-gradient(145deg, #ffffff 0%, #fff8f8 100%) !important;
+}
+
+#admin-panel [data-panel="members"] .admin-panel-card__icon--emerald {
+    border-color: #fecdd3 !important;
+    background: #fff1f2 !important;
+    color: #be123c !important;
+    box-shadow: 0 6px 16px rgba(190, 18, 60, 0.1) !important;
+}
+
+#admin-panel [data-panel="members"] .admin-member-search-panel {
+    border-color: #fecdd3 !important;
+    background: linear-gradient(145deg, #fff5f6, #ffffff) !important;
+}
+
+#admin-panel [data-panel="members"] .admin-member-search-panel__icon {
+    border-color: #fecdd3 !important;
+    background: #fff1f2 !important;
+    color: #e11d48 !important;
+}
+
+#admin-panel [data-panel="members"] #admin-member-form {
+    border-color: #fee2e2 !important;
+    background: #fffdfd !important;
+}
+
+#admin-panel [data-panel="members"] #admin-member-form .field-icon-left > i,
+#admin-panel [data-panel="members"] #admin-member-form .field-icon-left .fi {
+    color: #e11d48 !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card {
+    border-color: #fecdd3 !important;
+    border-left: 1px solid #fecdd3 !important;
+    background: linear-gradient(145deg, #ffffff, #fffafa) !important;
+    box-shadow: 0 10px 24px rgba(190, 18, 60, 0.07) !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card:hover {
+    border-color: #fda4af !important;
+    border-left-color: #fda4af !important;
+    box-shadow: 0 14px 28px rgba(190, 18, 60, 0.12) !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__avatar {
+    border-color: #e11d48 !important;
+    background: #fff1f2 !important;
+    box-shadow: 0 7px 18px rgba(190, 18, 60, 0.14) !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__name {
+    color: #202b3d !important;
+    font-size: clamp(1rem, 1.45vw, 1.28rem) !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__blood {
+    padding: 0.34rem 0.65rem;
+    font-size: 0.84rem;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__status-row .admin-member-badge {
+    padding: 0.32rem 0.58rem;
+    font-size: 0.7rem;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-badge--admin {
+    border-color: #fecdd3;
+    background: #fff1f2;
+    color: #be123c;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-reputation-badge {
+    padding: 0.32rem 0.62rem;
+    font-size: 0.74rem;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__id {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.82rem;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__info {
+    border-color: #fee2e2;
+    font-size: 0.84rem;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row:nth-child(even) {
+    background: #fff4f5;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > i {
+    color: #e11d48 !important;
+    font-size: 0.98rem;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > strong {
+    color: #6f2336;
+    font-size: 0.82rem;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > span {
+    color: #364152;
+    font-size: 0.82rem;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-action-btn--promote,
+#admin-panel [data-panel="members"] #admin-members-list .admin-action-btn--promote:hover {
+    border: 1px solid #fecdd3;
+    background: #fff1f2;
+    color: #be123c;
+}
+
+/* The two member form actions stay side by side without splitting their labels. */
+#admin-panel [data-panel="members"] #admin-member-form .admin-form-actions {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 0.55rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-member-form .admin-form-actions .admin-btn {
+    display: inline-flex;
+    width: 100% !important;
+    min-width: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 0.42rem;
+    padding-inline: 0.55rem !important;
+    white-space: nowrap;
+    font-size: clamp(0.68rem, 1.5vw, 0.86rem) !important;
+}
+
+#admin-panel [data-panel="members"] #admin-member-form .admin-form-actions .admin-btn i,
+#admin-panel [data-panel="members"] #admin-member-form .admin-form-actions .admin-btn span {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__name {
+        font-size: 0.96rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__blood {
+        font-size: 0.76rem;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__info {
+        font-size: 0.74rem;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > strong,
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > span {
+        font-size: 0.74rem;
+    }
+
+    #admin-panel [data-panel="members"] #admin-member-form .admin-form-actions .admin-btn {
+        gap: 0.3rem;
+        padding-inline: 0.4rem !important;
+        font-size: 0.73rem !important;
+    }
+}
+
+@media (max-width: 360px) {
+    #admin-panel [data-panel="members"] #admin-member-form .admin-form-actions {
+        gap: 0.35rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-member-form .admin-form-actions .admin-btn {
+        gap: 0.25rem;
+        padding-inline: 0.3rem !important;
+        font-size: 0.68rem !important;
+    }
+}
+
+/* Compact registered-member cards and retain all four actions in one row. */
+#admin-panel [data-panel="members"] #admin-members-list {
+    margin-inline: -0.45rem !important;
+    padding-inline: 0.3rem !important;
+    gap: 0.5rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card {
+    width: 100% !important;
+    margin-inline: 0 !important;
+    padding: 0.55rem !important;
+    gap: 0.4rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__summary {
+    grid-template-columns: 4.2rem minmax(0, 1fr) !important;
+    gap: 0.55rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__avatar {
+    width: 3.9rem !important;
+    height: 3.9rem !important;
+    border-width: 3px !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__body {
+    gap: 0.25rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__name {
+    font-size: 0.98rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__blood {
+    padding: 0.18rem 0.4rem !important;
+    font-size: 0.66rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__status-row {
+    gap: 0.3rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__status-row .admin-member-badge,
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-reputation-badge {
+    padding: 0.18rem 0.35rem !important;
+    font-size: 0.58rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__id {
+    padding: 0.24rem 0.5rem !important;
+    font-size: 0.68rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__info {
+    font-size: 0.68rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row {
+    grid-template-columns: 1.5rem minmax(7rem, 0.68fr) minmax(0, 1.32fr) !important;
+    gap: 0.35rem !important;
+    padding: 0.28rem 0.5rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > i {
+    font-size: 0.78rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > strong,
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > span {
+    font-size: 0.68rem !important;
+    line-height: 1.2 !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions {
+    position: static !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 0.45rem !important;
+    width: 100% !important;
+    padding: 0.4rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions .admin-action-btn {
+    display: flex !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 3rem !important;
+    height: auto !important;
+    flex-direction: column !important;
+    gap: 0.18rem !important;
+    padding: 0.28rem 0.12rem !important;
+    border-radius: 0.72rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions .admin-action-btn i {
+    font-size: 0.92rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions .admin-action-btn span {
+    display: inline !important;
+    font-size: 0.57rem !important;
+    line-height: 1.02 !important;
+    text-align: center;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+}
+
+@media (max-width: 640px) {
+    #admin-panel [data-panel="members"] #admin-members-list {
+        padding-inline: 0.25rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card {
+        padding: 0.45rem !important;
+        gap: 0.35rem !important;
+        border-radius: 1rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__summary {
+        grid-template-columns: 3rem minmax(0, 1fr) !important;
+        gap: 0.4rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__avatar {
+        width: 2.8rem !important;
+        height: 2.8rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__name {
+        font-size: 0.88rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__status-row .admin-member-badge,
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-reputation-badge {
+        padding: 0.16rem 0.3rem !important;
+        font-size: 0.55rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row {
+        grid-template-columns: 1.2rem minmax(5rem, 0.68fr) minmax(0, 1.32fr) !important;
+        gap: 0.28rem !important;
+        padding: 0.25rem 0.35rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > strong,
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > span {
+        font-size: 0.63rem !important;
+        line-height: 1.2 !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > i {
+        font-size: 0.72rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 0.25rem !important;
+        padding: 0.35rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions .admin-action-btn {
+        min-height: 2.7rem !important;
+        padding: 0.2rem 0.06rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions .admin-action-btn i {
+        font-size: 0.82rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions .admin-action-btn span {
+        font-size: 0.5rem !important;
+    }
+}
+
+@media (max-width: 360px) {
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row {
+        grid-template-columns: 1.05rem minmax(4.6rem, 0.68fr) minmax(0, 1.32fr) !important;
+        gap: 0.22rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions {
+        gap: 0.18rem !important;
+        padding: 0.28rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions .admin-action-btn span {
+        font-size: 0.46rem !important;
+    }
+}
+
+/* Simplify nested cards in Member Management while keeping its red accents. */
+#admin-panel [data-panel="members"] .admin-member-search-panel {
+    padding: 0.75rem !important;
+    border-color: #f8d7df !important;
+    border-radius: 0.85rem !important;
+    background: #fffafb !important;
+    box-shadow: none !important;
+}
+
+#admin-panel [data-panel="members"] #admin-member-form {
+    margin-top: 0.65rem !important;
+    padding: 0.65rem !important;
+    border-color: #fce7eb !important;
+    border-radius: 0.85rem !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+#admin-panel [data-panel="members"] .admin-list-section {
+    margin-top: 0.85rem !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card {
+    padding: 0.45rem !important;
+    gap: 0.3rem !important;
+    border-radius: 0.85rem !important;
+    box-shadow: 0 4px 12px rgba(190, 18, 60, 0.055) !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__info {
+    border: 0 !important;
+    border-radius: 0.4rem !important;
+    background: transparent !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row {
+    border-bottom: 1px solid #f8e3e7 !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row:last-child {
+    border-bottom: 0 !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions {
+    padding: 0.2rem 0 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+}
+
+@media (max-width: 640px) {
+    #admin-panel [data-panel="members"] .admin-member-search-panel {
+        padding: 0.6rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-member-form {
+        padding: 0.5rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions {
+        padding-top: 0.15rem !important;
+    }
+}
+
+/* Desktop member directory: match the compact rhythm of Recent Donations. */
+@media (min-width: 1024px) {
+    #admin-panel [data-panel="members"] #admin-members-list {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 31rem), 1fr)) !important;
+        align-items: start;
+        justify-content: center;
+        width: min(100%, 84rem) !important;
+        max-width: 84rem !important;
+        margin-inline: auto !important;
+        padding: 0.4rem !important;
+        gap: 0.85rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card {
+        align-self: start;
+        justify-self: center;
+        width: 100% !important;
+        max-width: 42rem !important;
+        padding: 0.65rem !important;
+        gap: 0.5rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__summary {
+        grid-template-columns: 3.4rem minmax(0, 1fr) !important;
+        gap: 0.55rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__avatar {
+        width: 3.15rem !important;
+        height: 3.15rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__body {
+        gap: 0.2rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__name {
+        font-size: 0.98rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__status-row .admin-member-badge,
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-reputation-badge {
+        padding: 0.14rem 0.32rem !important;
+        font-size: 0.57rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__info {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.12rem 0.45rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row {
+        grid-template-columns: 1.1rem minmax(4.8rem, 0.72fr) minmax(0, 1.28fr) !important;
+        gap: 0.3rem !important;
+        min-height: 2rem;
+        padding: 0.22rem 0.3rem !important;
+        border-bottom: 1px solid #f8e3e7 !important;
+        background: transparent !important;
+        line-height: 1.2 !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > i {
+        font-size: 0.72rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > strong,
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > span {
+        font-size: 0.66rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > span {
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions {
+        gap: 0.35rem !important;
+        padding: 0.2rem 0 0 !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions .admin-action-btn {
+        min-height: 2.35rem !important;
+        flex-direction: row !important;
+        gap: 0.35rem !important;
+        padding: 0.28rem 0.35rem !important;
+        font-size: 0.66rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions .admin-action-btn i {
+        font-size: 0.78rem !important;
+    }
+
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions .admin-action-btn span {
+        font-size: 0.66rem !important;
+    }
+}
+
+/* Keep registered-member details clean and white, with outlined actions. */
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row,
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row:nth-child(even) {
+    background: #ffffff !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row > span {
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-member-card__actions .admin-action-btn {
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-radius: 0.9rem !important;
+    box-shadow: none !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-action-btn--promote,
+#admin-panel [data-panel="members"] #admin-members-list .admin-action-btn--demote {
+    border-color: #fed7aa !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-action-btn--edit {
+    border-color: #e2e8f0 !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-action-btn--delete {
+    border-color: #fecdd3 !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-action-btn--activate {
+    border-color: #86efac !important;
+}
+
+#admin-panel [data-panel="members"] #admin-members-list .admin-action-btn--deactivate {
+    border-color: #fed7aa !important;
+}
+
+@media (max-width: 640px) {
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card__detail-row {
+        padding-block: 0.18rem !important;
+        border-bottom-color: #edf0f4 !important;
+    }
+}
+
+/* Let the search and registered-member cards use the full Member panel width. */
+#admin-panel [data-panel="members"] > .admin-panel-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+#admin-panel [data-panel="members"] > .admin-panel-card::before {
+    display: none !important;
+}
+
+#admin-panel [data-panel="members"] > .admin-panel-card > .admin-panel-card__header {
+    margin: 0 0 0.9rem !important;
+    padding: 0 0.1rem 0.75rem !important;
+    border-bottom: 1px solid #e7eaf0 !important;
+}
+
+#admin-panel [data-panel="members"] .admin-member-search-panel,
+#admin-panel [data-panel="members"] #admin-member-form,
+#admin-panel [data-panel="members"] .admin-list-section,
+#admin-panel [data-panel="members"] #admin-members-list {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+@media (min-width: 1024px) {
+    #admin-panel [data-panel="members"] #admin-members-list {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 31rem), 1fr)) !important;
+    }
+}
+
+@media (max-width: 1023px) {
+    #admin-panel [data-panel="members"] #admin-members-list .admin-member-card {
+        width: calc(100% - 0.6rem) !important;
+        margin-left: 0.6rem !important;
+        margin-right: 0 !important;
+    }
+}
+
+/* Keep the desktop menu label and hamburger icon readable on the admin header. */
+@media (min-width: 768px) {
+    body.admin-mode header #desktop-menu-toggle,
+    body.admin-mode header #desktop-menu-toggle:hover,
+    body.admin-mode header #desktop-menu-toggle:focus-visible,
+    body.admin-mode header #desktop-menu-toggle[aria-expanded="true"] {
+        color: #be123c !important;
+    }
+
+    body.admin-mode header #desktop-menu-toggle svg {
+        stroke: #be123c !important;
+    }
+}
+
+/* Keep the donor search page compact, calm, and easy to scan. */
+.search-page #search {
+    padding-block: clamp(1.5rem, 3.5vw, 2.5rem);
+}
+
+.search-page #search > .bg-gradient-to-r {
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    border: 1px solid #e8eaf0;
+    border-radius: 1.25rem;
+    background: linear-gradient(145deg, #ffffff 0%, #fffafa 100%);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.search-page #search h2 {
+    color: #202b3d;
+    font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+    line-height: 1.2;
+}
+
+.search-page #search > .bg-gradient-to-r > .flex > div:first-child p {
+    color: #647084;
+    font-size: 0.84rem;
+    line-height: 1.55;
+}
+
+.search-page #search .search-card {
+    width: min(100%, 22rem);
+    max-width: 22rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid #e7eaf0;
+    border-radius: 1rem;
+    background: linear-gradient(145deg, #ffffff, #fbfcfe);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.055);
+}
+
+.search-page #search .search-card::before {
+    display: none;
+}
+
+.search-page #search .search-card h3 {
+    color: #273449;
+    font-size: 0.96rem;
+}
+
+.search-page #search #search-blood {
+    border-color: #d7dde7;
+    color: #344054;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.search-page #search #search-blood:focus {
+    border-color: #f08a9e;
+    outline: 3px solid rgba(225, 29, 72, 0.1);
+}
+
+.search-page #search-results {
+    gap: 0.75rem;
+}
+
+.search-page #search-results > div:first-child {
+    margin-bottom: 0.1rem;
+    color: #647084;
+    font-size: 0.82rem;
+}
+
+.search-page #search-results .donor-card {
+    padding: 0.75rem 0.9rem !important;
+    border: 1px solid #e7ebf1;
+    border-radius: 0.9rem;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.055);
+}
+
+.search-page #search-results .donor-card:hover {
+    border-color: #f2cbd3;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.075);
+    transform: translateY(-1px);
+}
+
+.search-page #search-results .donor-card__avatar-image {
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 2.25rem;
+}
+
+.search-page #search-results .donor-card__name-text {
+    font-size: 0.95rem;
+    line-height: 1.25;
+}
+
+.search-page #search-results .donor-card .info-text {
+    font-size: 0.74rem;
+    line-height: 1.3;
+}
+
+.search-page #search-results .donor-card .info-text .label {
+    font-size: 0.74rem;
+}
+
+@media (max-width: 640px) {
+    .search-page #search {
+        padding-block: 1.25rem;
+    }
+
+    .search-page #search > .bg-gradient-to-r {
+        padding: 0.9rem;
+        border-radius: 1rem;
+    }
+
+    .search-page #search .search-card {
+        padding: 0.8rem;
+        border-radius: 0.9rem;
+    }
+
+    .search-page #search .search-card h3 {
+        font-size: 0.92rem;
+    }
+
+    .search-page #search-results .donor-card {
+        padding: 0.58rem 0.7rem !important;
+    }
+
+    .search-page #search-results .donor-card__name-text {
+        font-size: 0.9rem;
+    }
+
+    .search-page #search-results .donor-card .info-text,
+    .search-page #search-results .donor-card .info-text .label {
+        font-size: 0.71rem;
+    }
+}

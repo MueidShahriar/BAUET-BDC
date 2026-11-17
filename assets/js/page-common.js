@@ -11,12 +11,12 @@ import {
 import { firebaseConfig } from "./modules/firebase-config.js";
 
 import { initPreloader } from "./modules/preloader.js";
-import { initHeader, initMobileMenu } from "./modules/header.js";
+import { initHeader, initMobileMenu } from "./modules/header.js?v=3";
 import { initFloatObserver } from "./modules/float-observer.js";
-import { initBackToTop } from "./modules/back-to-top.js?v=3";
+import { initBackToTop } from "./modules/back-to-top.js?v=11";
 import { openModal, closeModal, showModalMessage } from "./modules/modals.js";
-import { updateLoginButtonState, initAuth } from "./modules/auth.js";
-import { initLanguageSystem } from "./modules/language-ui.js";
+import { updateLoginButtonState, initAuth } from "./modules/auth.js?v=7";
+import { initLanguageSystem } from "./modules/language-ui.js?v=4";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
 import state from "./modules/state.js";
 

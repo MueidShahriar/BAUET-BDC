@@ -1,7 +1,9 @@
 import state from './state.js';
 import { openModal, closeModal, showModalMessage } from './modals.js';
-import { t } from './language-ui.js';
+import { t } from './language-ui.js?v=2';
 import { getTextValue, getDefaultAvatarImageUrl } from './utils.js';
+import { updateBirthdayWish } from './birthday-wish.js?v=5';
+import { getFriendlyAuthError } from './auth-errors.js?v=1';
 
 function getAuthRedirectOverlay() {
     let overlay = document.getElementById('auth-redirect-overlay');
@@ -91,6 +93,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             
             function applyUserUiUpdates(resolvedUserData) {
                 state.currentUserProfile = { ...resolvedUserData, uid: state.currentUser?.uid || null };
+                updateBirthdayWish(state.currentUserProfile);
                 const photoUrl = resolvedUserData.profilePhoto || getDefaultAvatarImageUrl(resolvedUserData.gender);
                 const displayName = getTextValue(resolvedUserData.fullName || resolvedUserData.name, 'User');
                 if (loginBtn) {
@@ -175,6 +178,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         if (mobileLogoutBtn) { mobileLogoutBtn.classList.add('hidden'); mobileLogoutBtn.classList.remove('block'); }
         if (profileUserId) profileUserId.textContent = '';
         state.currentUserProfile = null;
+        updateBirthdayWish(null);
         adminPanel?.classList.add('hidden');
         document.body.classList.remove('admin-mode');
         leaderboardSections.forEach(section => section.classList.remove('hidden'));
@@ -255,7 +259,7 @@ export function initAuth({
                 }, { onlyOnce: true });
             })
             .catch((error) => {
-                showModalMessage('success-modal', `Login failed: ${error.message}`, 'Login Failed');
+                showModalMessage('success-modal', getFriendlyAuthError(error, 'login'), t('authLoginFailedTitle'));
             });
     });
 
@@ -273,21 +277,33 @@ export function initAuth({
                 closeModal(loginModal);
             })
             .catch((error) => {
-                showModalMessage('success-modal', `Failed to send reset email: ${error.message}`, 'Password Reset Error');
+                showModalMessage('success-modal', getFriendlyAuthError(error, 'reset'), t('authResetTitle'));
             });
     });
 
     const pwToggle = document.getElementById('toggle-password');
     const pwInput = document.getElementById('login-password');
+    function syncPasswordToggle() {
+        if (!pwToggle || !pwInput) return;
+        const isVisible = pwInput.type === 'text';
+        const labelKey = isVisible ? 'loginHidePassword' : 'loginShowPassword';
+        const label = t(labelKey);
+        pwToggle.dataset.i18n = labelKey;
+        pwToggle.setAttribute('aria-label', label);
+        pwToggle.setAttribute('aria-pressed', isVisible ? 'true' : 'false');
+        pwToggle.title = label;
+        pwToggle.querySelector('i')?.classList.toggle('fa-eye', !isVisible);
+        pwToggle.querySelector('i')?.classList.toggle('fa-eye-slash', isVisible);
+    }
+
+    syncPasswordToggle();
     pwToggle?.addEventListener('click', () => {
         if (!pwInput) return;
         const isHidden = pwInput.getAttribute('type') === 'password';
         pwInput.setAttribute('type', isHidden ? 'text' : 'password');
-        pwToggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
-        pwToggle.setAttribute('title', isHidden ? 'Hide password' : 'Show password');
-        const icon = pwToggle.querySelector('i');
-        if (icon) { icon.classList.toggle('fa-eye'); icon.classList.toggle('fa-eye-slash'); }
+        syncPasswordToggle();
     });
+    window.addEventListener('languageChanged', syncPasswordToggle);
 
     onAuthStateChanged(auth, (user) => {
         state.currentUser = user;
