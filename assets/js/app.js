@@ -11,12 +11,12 @@ import {
 
 import { firebaseConfig } from "./modules/firebase-config.js";
 import { chartLabels, chartColors, getPieChartOptions } from "./modules/chart-config.js";
-import { initLanguageSystem, t } from "./modules/language-ui.js?v=4";
+import { initLanguageSystem, t } from "./modules/language-ui.js?v=6";
 import { createMonthlyReportDownloader } from "./modules/pdf-report.js?v=1";
 
 import state from "./modules/state.js";
-import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js";
-import { initHeader, initMobileMenu } from "./modules/header.js?v=3";
+import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js?v=2";
+import { initHeader, initMobileMenu } from "./modules/header.js?v=5";
 import { initFloatObserver } from "./modules/float-observer.js";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";
 import {
@@ -28,15 +28,15 @@ import {
     normalizeDonorId, getDonorIdNumber, getMaxDonorIdNumber, DONOR_ID_COUNTER_SEED,
     formatPhoneForDisplay
 } from "./modules/utils.js";
-import { setCountTarget, initStatsCounter } from "./modules/stats-counter.js";
+import { setCountTarget, initStatsCounter } from "./modules/stats-counter.js?v=3";
 import {
     ensureDashboardCharts, refreshDashboardCharts,
     setupStatsVisibilityObserver, initDashboardRefreshTimer
-} from "./modules/dashboard.js";
+} from "./modules/dashboard.js?v=3";
 import { renderPublicEvents, initEventControls } from "./modules/events-render.js";
 import {
     renderRecentDonorsCarousel, setRecentLoading, initCarousel
-} from "./modules/carousel.js";
+} from "./modules/carousel.js?v=2";
 import {
     renderSearchResults, setSearchLoading, runSearch, initSearch
 } from "./modules/search.js?v=3";
@@ -45,13 +45,12 @@ import {
     clearAdminEventForm, clearAdminRecentDonorForm, clearAdminMemberForm,
     applyAdminMemberSearchFilters, resetAdminMemberSearchFilters, initAdminTabs,
     renderAdminRecentDonationsList, renderAdminFeedbackList
-} from "./modules/admin.js?v=5";
-import { updateLoginButtonState, initAuth } from "./modules/auth.js?v=7";
+} from "./modules/admin.js?v=6";
+import { updateLoginButtonState, initAuth } from "./modules/auth.js?v=8";
 import { initJoinForm } from "./modules/join-form.js?v=5";
 import { initFeedback } from "./modules/feedback.js";
-import { initFooter } from "./modules/footer.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
-import { initLeaderboardFilters, renderDonorLeaderboard, renderDonorTicker } from "./modules/leaderboard.js";
+import { initLeaderboardFilters, renderDonorLeaderboard, renderDonorTicker } from "./modules/leaderboard.js?v=3";
 
 const app = initializeApp(firebaseConfig);
 try { analyticsIsSupported().then(ok => { if (ok) getAnalytics(app); }); } catch (_) {}
@@ -767,9 +766,11 @@ function initContactScroll() {
     });
 }
 
-window.onload = function () {
+function initPage() {
     const isAdminPage = /\/(pages\/)?admin\.html$/i.test(window.location.pathname || '');
-    runInitStep('preloader', () => initPreloader({ waitForAuth: isAdminPage, waitForData: isLeaderboardRoute }));
+    if (!document.body.classList.contains('home-page')) {
+        runInitStep('preloader', () => initPreloader({ waitForAuth: isAdminPage, waitForData: isLeaderboardRoute }));
+    }
     if (isLeaderboardRoute) {
         setPreloaderProgress(24);
         leaderboardInitialData.initialized = true;
@@ -808,7 +809,6 @@ window.onload = function () {
     runInitStep('chatbot loader', () => scheduleChatbotInit());
 
     runInitStep('feedback', () => initFeedback(feedbackRef, push));
-    runInitStep('footer', () => initFooter());
     const isHomePage = /\/(index\.html)?(\?.*)?(\#.*)?$/i.test(window.location.pathname);
     runInitStep('visitor tracker', () => initVisitorTracker(database, isHomePage)); 
     runInitStep('join form', () => initJoinForm({ auth, database, ref, set, runTransaction, createUserWithEmailAndPassword }));
@@ -980,4 +980,10 @@ window.onload = function () {
     document.getElementById('admin-monthly-report-btn')?.addEventListener('click', () =>
         downloadMonthlyReportPdf(document.getElementById('admin-monthly-report-btn'))
     );
-};
+}
+
+if (document.body.classList.contains('home-page')) {
+    document.addEventListener('DOMContentLoaded', initPage, { once: true });
+} else {
+    window.addEventListener('load', initPage, { once: true });
+}

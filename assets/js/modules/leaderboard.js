@@ -8,7 +8,6 @@ import {
     getDefaultAvatarImageMarkup
 } from './utils.js';
 
-const tickerControllers = new Map();
 let leaderboardFilterHandlersReady = false;
 let cachedLeaderboardEntries = [];
 
@@ -21,6 +20,18 @@ const badgeTierMap = {
 function getLeaderboardBadgeLabel(badge) {
     if (!badge || !badge.key) return '';
     return t(badge.key);
+}
+
+const htmlEntities = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+};
+
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, character => htmlEntities[character]);
 }
 
 function renderLeaderboardCard(entry, rank) {
@@ -63,147 +74,42 @@ function renderLeaderboardCard(entry, rank) {
     `;
 }
 
-function renderTickerCard(entry, rank) {
+function renderHomeDonorCard(entry, rank) {
     const { donor, badge, score, donationCount, lastDonationDate } = entry;
     const donorName = getTextValue(donor.fullName || donor.name, 'Unknown');
-    const initials = getInitials(donorName, '?');
     const location = getTextValue(donor.location, '—');
     const blood = normalizeBloodGroup(donor.bloodGroup || donor.blood || donor.blood_group) || '—';
     const lastDonation = lastDonationDate ? formatDateDisplay(lastDonationDate) : '—';
     const badgeLabel = getLeaderboardBadgeLabel(badge);
     const avatar = donor.profilePhoto
-        ? `<img src="${donor.profilePhoto}" alt="${initials}" class="ticker-avatar__img" />`
-        : getDefaultAvatarImageMarkup(donor.gender, 'ticker-avatar__img');
-    const medalClass = rank === 1 ? 'ticker-rank--gold'
-        : rank === 2 ? 'ticker-rank--silver'
-        : rank === 3 ? 'ticker-rank--bronze'
-        : 'ticker-rank--neutral';
+        ? `<img src="${escapeHtml(donor.profilePhoto)}" alt="" loading="lazy" decoding="async" />`
+        : getDefaultAvatarImageMarkup(donor.gender);
+    const badgeTier = badge?.tier || 'neutral';
+    const badgeMarkup = badgeLabel
+        ? `<span class="donor-badge ${badge.className}">${badgeLabel}</span>`
+        : '';
 
     return `
-        <article class="ticker-card">
-            <span class="ticker-rank ${medalClass}">${rank}</span>
-            <div class="ticker-card__header">
-                <div class="ticker-avatar">${avatar}</div>
+        <article class="home-donor-card" data-badge-tier="${badgeTier}">
+            <div class="home-donor-card-heading">
+                <div class="home-donor-avatar" aria-hidden="true">${avatar}</div>
                 <div>
-                    <h3 class="ticker-name">${donorName}</h3>
-                    <span class="donor-badge ticker-badge ${badge?.className || ''}">${badge?.icon || ''} ${badgeLabel}</span>
+                    <h3>${escapeHtml(donorName)}</h3>
+                    ${badgeMarkup}
                 </div>
+                <span class="home-donor-rank">#${rank}</span>
             </div>
-            <div class="ticker-meta">
-                <span><i class="fa-solid fa-droplet"></i> ${blood}</span>
-                <span><i class="fa-solid fa-location-dot"></i> ${location}</span>
-                <span><i class="fa-solid fa-calendar-check"></i> ${t('leaderboardLastDonation')} ${lastDonation}</span>
+            <div class="home-donor-meta">
+                <span><i class="fa-solid fa-droplet" aria-hidden="true"></i> ${escapeHtml(blood)}</span>
+                <span><i class="fa-solid fa-location-dot" aria-hidden="true"></i> ${escapeHtml(location)}</span>
+                <span><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> ${t('leaderboardLastDonation')} ${escapeHtml(lastDonation)}</span>
             </div>
-            <div class="ticker-stats">
-                <span><i class="fa-solid fa-chart-line"></i> ${t('leaderboardScore')}: ${score}</span>
-                <span><i class="fa-solid fa-hand-holding-droplet"></i> ${t('leaderboardDonations')}: ${donationCount}</span>
+            <div class="home-donor-metrics">
+                <span>${t('leaderboardDonations')}: <strong>${donationCount}</strong></span>
+                <span>${t('leaderboardScore')}: <strong>${score}</strong></span>
             </div>
         </article>
     `;
-}
-
-function normalizeTickerOffset(offset, width) {
-    if (!width) return offset;
-    let next = offset;
-    while (next <= -width) next += width;
-    while (next > 0) next -= width;
-    return next;
-}
-
-function initDonorTickerScroll(track, options = {}) {
-    if (!track) return;
-    const trackId = track.id || 'donor-ticker-track';
-    const existing = tickerControllers.get(trackId);
-    if (existing) existing.destroy();
-
-    const speed = Number(track.dataset.speed || options.speed || 0.04);
-    const mask = track.closest('.donor-ticker__mask') || track.parentElement;
-
-    const state = {
-        offset: 0,
-        isDragging: false,
-        startX: 0,
-        startOffset: 0,
-        lastTs: 0,
-        rafId: 0,
-        width: 0
-    };
-
-    let resizeObserver;
-
-    const syncWidth = () => {
-        state.width = Math.max(0, Math.floor(track.scrollWidth / 2));
-        state.offset = normalizeTickerOffset(state.offset, state.width);
-        track.style.transform = `translate3d(${state.offset}px, 0, 0)`;
-    };
-
-    const scheduleSync = () => requestAnimationFrame(syncWidth);
-
-    const step = (ts) => {
-        if (!state.lastTs) state.lastTs = ts;
-        const delta = Math.min(ts - state.lastTs, 32);
-        state.lastTs = ts;
-        if (!state.isDragging) {
-            state.offset -= speed * delta;
-        }
-        state.offset = normalizeTickerOffset(state.offset, state.width);
-        track.style.transform = `translate3d(${state.offset}px, 0, 0)`;
-        state.rafId = requestAnimationFrame(step);
-    };
-
-    const onPointerDown = (event) => {
-        state.isDragging = true;
-        state.startX = event.clientX;
-        state.startOffset = state.offset;
-        state.lastTs = performance.now();
-        track.classList.add('is-dragging');
-        mask?.setPointerCapture?.(event.pointerId);
-    };
-
-    const onPointerMove = (event) => {
-        if (!state.isDragging) return;
-        const delta = event.clientX - state.startX;
-        state.offset = normalizeTickerOffset(state.startOffset + delta, state.width);
-        track.style.transform = `translate3d(${state.offset}px, 0, 0)`;
-    };
-
-    const onPointerUp = (event) => {
-        if (!state.isDragging) return;
-        state.isDragging = false;
-        track.classList.remove('is-dragging');
-        mask?.releasePointerCapture?.(event.pointerId);
-    };
-
-    syncWidth();
-    state.rafId = requestAnimationFrame(step);
-
-    if (typeof ResizeObserver !== 'undefined') {
-        resizeObserver = new ResizeObserver(scheduleSync);
-        resizeObserver.observe(track);
-        if (mask) resizeObserver.observe(mask);
-    }
-
-    track.querySelectorAll('img').forEach((img) => {
-        img.addEventListener('load', scheduleSync, { once: true });
-    });
-
-    mask?.addEventListener('pointerdown', onPointerDown);
-    window.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
-    window.addEventListener('pointercancel', onPointerUp);
-    window.addEventListener('resize', scheduleSync);
-
-    tickerControllers.set(trackId, {
-        destroy: () => {
-            cancelAnimationFrame(state.rafId);
-            mask?.removeEventListener('pointerdown', onPointerDown);
-            window.removeEventListener('pointermove', onPointerMove);
-            window.removeEventListener('pointerup', onPointerUp);
-            window.removeEventListener('pointercancel', onPointerUp);
-            window.removeEventListener('resize', scheduleSync);
-            resizeObserver?.disconnect();
-        }
-    });
 }
 
 function getLeaderboardEntries(donors, recentDonations) {
@@ -298,28 +204,18 @@ export function renderDonorTicker(donors = [], recentDonations = [], options = {
     const container = document.getElementById(containerId);
     if (!container) return;
     const section = container.closest('#donor-leaderboard');
+    const list = container.closest('.home-donor-list');
     const emptyEl = document.getElementById(emptyId);
 
     section?.classList.remove('hidden');
 
-    if (!donors.length) {
-        container.innerHTML = '';
-        if (emptyEl) emptyEl.classList.remove('hidden');
-        return;
-    }
-
     const limit = Number(container.dataset.limit || 10);
-    const ranked = buildDonorLeaderboard(donors, recentDonations, Number.isFinite(limit) ? limit : 10);
-    if (!ranked.length) {
-        container.innerHTML = '';
-        if (emptyEl) emptyEl.classList.remove('hidden');
-        return;
-    }
-
-    if (emptyEl) emptyEl.classList.add('hidden');
-    const cards = ranked.map((entry, index) => renderTickerCard(entry, index + 1)).join('');
-    container.innerHTML = cards + cards;
-    initDonorTickerScroll(container);
+    const ranked = donors.length
+        ? buildDonorLeaderboard(donors, recentDonations, Number.isFinite(limit) ? limit : 10)
+        : [];
+    container.innerHTML = ranked.map((entry, index) => renderHomeDonorCard(entry, index + 1)).join('');
+    if (list) list.hidden = ranked.length === 0;
+    emptyEl?.classList.toggle('hidden', ranked.length > 0);
 }
 
 export function initLeaderboardFilters(donors = [], recentDonations = []) {

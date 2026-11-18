@@ -22,10 +22,10 @@ import { finishPreloader } from "./modules/preloader.js";
 import {
   initLanguageSystem,
   updatePageLanguage,
-} from "./modules/language-ui.js?v=4";
+} from "./modules/language-ui.js?v=6";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";
 import { initFeedback } from "./modules/feedback.js";
-import { initHeader, initMobileMenu } from "./modules/header.js?v=3";
+import { initHeader, initMobileMenu, syncAdminNavbar } from "./modules/header.js?v=5";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
 import { initChatbot } from "./modules/chatbot.js?v=6";
 import { updateBirthdayWish } from "./modules/birthday-wish.js?v=5";
@@ -35,7 +35,6 @@ import {
   formatDateDisplay,
   formatPhoneForDisplay,
   getDonorEligibilityStatus,
-  getDefaultAvatarImageUrl,
 } from "./modules/utils.js";
 
 const app = initializeApp(firebaseConfig);
@@ -54,6 +53,8 @@ const displayEmail = document.getElementById("profile-display-email");
 const displayDonorId = document.getElementById("profile-display-id");
 const statLast = document.getElementById("profile-stat-last");
 const statEligible = document.getElementById("profile-stat-eligible");
+const statEligibilityDate = document.getElementById("profile-stat-eligible-date");
+const statNextDate = document.getElementById("profile-stat-next-date");
 const statDonations = document.getElementById("profile-stat-donations");
 const statRole = document.getElementById("profile-stat-role");
 const statMemberSince = document.getElementById("profile-stat-member-since");
@@ -86,38 +87,18 @@ const recentAge = document.getElementById("profile-recent-age");
 const recentWeight = document.getElementById("profile-recent-weight");
 
 const logoutHeaderBtn = document.getElementById("pf-logout-header");
-const logoutHeaderHome = logoutHeaderBtn?.parentElement;
 const deleteBtn = document.getElementById("pf-delete");
 const certBtn = document.getElementById("pf-certificate");
 const donorCardBtn = document.getElementById("pf-donor-card");
 const deleteModal = document.getElementById("delete-confirm-modal");
 
-function updateProfileHeaderMenu(role) {
-  const isAdmin = role === "admin";
-  const desktopMenu = document.getElementById("desktop-nav-menu");
-  const desktopMenuToggle = document.getElementById("desktop-menu-toggle");
-
-  document.body.classList.toggle("admin-profile-menu", isAdmin);
-
-  if (isAdmin && desktopMenu && logoutHeaderBtn) {
-    logoutHeaderBtn.classList.add("desktop-menu-account");
-    if (!desktopMenu.contains(logoutHeaderBtn)) desktopMenu.append(logoutHeaderBtn);
-    if (logoutHeaderBtn.dataset.adminMenuCloseBound !== "true") {
-      logoutHeaderBtn.addEventListener("click", () => {
-        desktopMenu.classList.remove("is-open");
-        desktopMenuToggle?.setAttribute("aria-expanded", "false");
-        document.querySelector("header")?.classList.remove("desktop-menu-open");
-      });
-      logoutHeaderBtn.dataset.adminMenuCloseBound = "true";
-    }
-    return;
-  }
-
-  if (!isAdmin && desktopMenu?.contains(logoutHeaderBtn)) {
-    logoutHeaderHome?.insertBefore(logoutHeaderBtn, document.getElementById("menu-toggle"));
-    logoutHeaderBtn.classList.remove("desktop-menu-account");
-  }
+function updateProfileNavbar(isAdmin) {
+  document.body.classList.toggle("admin-mode", isAdmin);
+  syncAdminNavbar(isAdmin);
+  document.getElementById("profile-brand-link")
+    ?.setAttribute("href", isAdmin ? "admin.html" : "../index.html");
 }
+
 const deleteCancelBtn = document.getElementById("delete-cancel");
 const deleteConfirmBtn = document.getElementById("delete-confirm");
 
@@ -174,6 +155,21 @@ function getInitials(name) {
   return parts[0][0]?.toUpperCase() || "?";
 }
 
+function renderProfilePhoto(photo, name) {
+  if (avatarText) avatarText.textContent = getInitials(name);
+  if (profileAvatarImg) {
+    if (photo) {
+      profileAvatarImg.src = photo;
+    } else {
+      profileAvatarImg.removeAttribute("src");
+    }
+    profileAvatarImg.style.display = photo ? "block" : "none";
+  }
+  if (profilePhotoRemoveBtn) {
+    profilePhotoRemoveBtn.style.display = photo ? "flex" : "none";
+  }
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return "Not recorded";
   try {
@@ -203,14 +199,7 @@ function populateProfile(data, email) {
   const loc = data.location || "—";
   const role = data.role || "member";
 
-  if (profileAvatarImg) {
-    profileAvatarImg.src = data.profilePhoto || getDefaultAvatarImageUrl(data.gender);
-    profileAvatarImg.style.display = "block";
-  }
-  if (avatarText) avatarText.style.display = "none";
-  if (profilePhotoRemoveBtn) {
-    profilePhotoRemoveBtn.style.display = data.profilePhoto ? "flex" : "none";
-  }
+  renderProfilePhoto(data.profilePhoto, name);
   if (displayName) displayName.textContent = name;
   if (displayBlood)
     displayBlood.querySelector("span:last-child").textContent = blood;
@@ -233,18 +222,10 @@ function populateProfile(data, email) {
           ? "#6b7280"
           : "#d97706";
 
-    const eligibleDateEl = document.getElementById(
-      "profile-stat-eligible-date",
-    );
-
-    if (eligibleDateEl) {
-      if (elig === "Eligible") {
-        eligibleDateEl.textContent = "";
-      } else if (elig !== "Unknown") {
-        eligibleDateEl.textContent = `NEXT ELIGIBLE DATE: ${getEligibleDate(data.lastDonateDate)}`;
-      } else {
-        eligibleDateEl.textContent = "—";
-      }
+    if (statEligibilityDate && statNextDate) {
+      const waiting = elig === "Waiting";
+      statEligibilityDate.hidden = !waiting;
+      statNextDate.textContent = waiting ? getEligibleDate(data.lastDonateDate) : "";
     }
   }
 
@@ -359,29 +340,22 @@ onAuthStateChanged(auth, (user) => {
   if (!user) {
     state.currentUserProfile = null;
     updateBirthdayWish(null);
-    document.body.classList.remove("admin-mode");
-    updateProfileHeaderMenu("member");
-    document.querySelectorAll('header nav a[id^="nav-"]:not(#nav-dashboard-link)')
-      .forEach((link) => link.classList.remove("hidden"));
-    document.getElementById("nav-dashboard-link")?.classList.add("hidden");
-    document.querySelectorAll('#mobile-menu a[id^="mobile-"]:not(#admin-mobile-link)')
-      .forEach((link) => link.classList.remove("hidden"));
-    document.getElementById("admin-mobile-link")?.classList.add("hidden");
-    document.getElementById("profile-brand-link")?.setAttribute("href", "../index.html");
+    updateProfileNavbar(false);
     hideLoader();
     notLoggedIn?.classList.remove("hidden");
     profileContent?.classList.add("hidden");
-    if (logoutHeaderBtn) logoutHeaderBtn.style.display = "none";
+    logoutHeaderBtn?.classList.add("hidden");
     if (mobileLogoutBtn) mobileLogoutBtn.classList.add("hidden");
     return;
   }
-  if (logoutHeaderBtn) logoutHeaderBtn.style.display = "";
+  logoutHeaderBtn?.classList.remove("hidden");
   if (mobileLogoutBtn) mobileLogoutBtn.classList.remove("hidden");
 
   const userRef = ref(database, `donors/${user.uid}`);
   onValue(
     userRef,
     (snapshot) => {
+      if (currentUser?.uid !== user.uid) return;
       const data = snapshot.val() || {};
       state.currentUserProfile = {
         ...data,
@@ -396,70 +370,13 @@ onAuthStateChanged(auth, (user) => {
       notLoggedIn?.classList.add("hidden");
       profileContent?.classList.remove("hidden");
 
-      const role = data.role || "member";
-      const adminBadge = document.getElementById("admin-badge");
-      const adminMobileLink = document.getElementById("admin-mobile-link");
-      const adminDesktopLink = document.getElementById("nav-dashboard-link");
-      const brandLink = document.getElementById("profile-brand-link");
-
-      const navLinkIds = [
-        "nav-home-link",
-        "nav-about-link",
-        "nav-how-link",
-        "nav-events-link",
-        "nav-join-link",
-        "nav-search-link",
-        "nav-contact-link",
-      ];
-      const mobileNavIds = [
-        "mobile-home-link",
-        "mobile-about-link",
-        "mobile-how-link",
-        "mobile-events-link",
-        "mobile-join-link",
-        "mobile-search-link",
-        "mobile-contact-link",
-      ];
-
-      if (role === "admin") {
-        document.body.classList.add("admin-mode");
-        updateProfileHeaderMenu(role);
-        if (brandLink) brandLink.href = "admin.html";
-
-        if (adminBadge) {
-          adminBadge.classList.add("hidden");
-          adminBadge.classList.remove("inline-flex");
-        }
-
-        adminMobileLink?.classList.remove("hidden");
-        if (adminDesktopLink) {
-          adminDesktopLink.classList.remove("hidden");
-        }
-
-        navLinkIds.forEach((id) =>
-          document.getElementById(id)?.classList.add("hidden"),
-        );
-        mobileNavIds.forEach((id) =>
-          document.getElementById(id)?.classList.add("hidden"),
-        );
-      } else {
-        document.body.classList.remove("admin-mode");
-        updateProfileHeaderMenu(role);
-        if (brandLink) brandLink.href = "../index.html";
-        if (adminBadge) {
-          adminBadge.classList.add("hidden");
-          adminBadge.classList.remove("inline-flex");
-        }
-        adminMobileLink?.classList.add("hidden");
-        if (adminDesktopLink) {
-          adminDesktopLink.classList.add("hidden");
-        }
-        navLinkIds.forEach((id) =>
-          document.getElementById(id)?.classList.remove("hidden"),
-        );
-        mobileNavIds.forEach((id) =>
-          document.getElementById(id)?.classList.remove("hidden"),
-        );
+      updateProfileNavbar(data.role === "admin");
+      if (data.role !== "admin") {
+        onValue(ref(database, `admins/${user.uid}`), (adminSnapshot) => {
+          if (currentUser?.uid === user.uid) {
+            updateProfileNavbar(Boolean(adminSnapshot.val()) || currentDonorData.role === "admin");
+          }
+        }, () => {}, { onlyOnce: true });
       }
     },
     () => {
@@ -572,12 +489,8 @@ profilePhotoInput?.addEventListener("change", async (e) => {
       "donors/" + currentUser.uid + "/profilePhoto",
     );
     await set(userRef, base64);
-    if (profileAvatarImg) {
-      profileAvatarImg.src = base64;
-      profileAvatarImg.style.display = "block";
-    }
-    if (avatarText) avatarText.style.display = "none";
     currentDonorData.profilePhoto = base64;
+    renderProfilePhoto(base64, currentDonorData.fullName);
     showToast("Profile photo updated!", "success");
   } catch (err) {
     console.error("Photo upload failed:", err);
@@ -593,13 +506,8 @@ profilePhotoRemoveBtn?.addEventListener("click", async () => {
   }
   try {
     await remove(ref(database, "donors/" + currentUser.uid + "/profilePhoto"));
-    if (profileAvatarImg) {
-      profileAvatarImg.src = getDefaultAvatarImageUrl(currentDonorData.gender);
-      profileAvatarImg.style.display = "block";
-    }
-    if (avatarText) avatarText.style.display = "none";
-    if (profilePhotoRemoveBtn) profilePhotoRemoveBtn.style.display = "none";
     currentDonorData.profilePhoto = null;
+    renderProfilePhoto(null, currentDonorData.fullName);
     showToast("Profile photo removed.", "success");
   } catch (err) {
     console.error("Photo remove failed:", err);
@@ -683,7 +591,7 @@ certBtn?.addEventListener("click", async () => {
     return;
   }
   try {
-    const { showCertificateModal } = await import("./modules/certificate.js?v=1");
+    const { showCertificateModal } = await import("./modules/certificate.js?v=2");
     const donorData = {
       ...currentDonorData,
       fullName: fFullName?.value || "",
@@ -706,7 +614,7 @@ donorCardBtn?.addEventListener("click", async () => {
     return;
   }
   try {
-    const { showDonorCardModal } = await import("./modules/certificate.js?v=1");
+    const { showDonorCardModal } = await import("./modules/certificate.js?v=2");
     const donorData = {
       ...currentDonorData,
       fullName: fFullName?.value || "",

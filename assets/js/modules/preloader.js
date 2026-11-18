@@ -28,6 +28,7 @@ function hidePreloader(pageLoader) {
     document.body.classList.remove('loading');
     setTimeout(() => {
         pageLoader.style.display = 'none';
+        document.dispatchEvent(new Event('preloader:done'));
     }, 500);
 }
 
@@ -60,13 +61,19 @@ export function finishPreloader() {
     hidePreloader(pageLoader);
 }
 
-export function initPreloader({ waitForAuth = false, waitForData = false } = {}) {
+export function initPreloader({ waitForAuth = false, waitForData = false, maxWaitMs = 0 } = {}) {
     if (waitForAuth || waitForData) return;
 
-    const finishAfterLoad = () => finishPreloader();
+    let fallbackTimer;
+    const finishAfterLoad = () => {
+        window.clearTimeout(fallbackTimer);
+        window.removeEventListener('load', finishAfterLoad);
+        finishPreloader();
+    };
     if (document.readyState === 'complete') {
         finishAfterLoad();
     } else {
         window.addEventListener('load', finishAfterLoad, { once: true });
+        if (maxWaitMs > 0) fallbackTimer = window.setTimeout(finishAfterLoad, maxWaitMs);
     }
 }

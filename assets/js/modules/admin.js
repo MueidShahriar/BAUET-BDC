@@ -616,8 +616,11 @@ export function initAdminTabs() {
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const target = tab.getAttribute('data-tab');
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
+            tabs.forEach(t => {
+                const active = t === tab;
+                t.classList.toggle('active', active);
+                t.setAttribute('aria-pressed', String(active));
+            });
             panels.forEach(p => {
                 p.classList.toggle('hidden', p.getAttribute('data-panel') !== target);
             });

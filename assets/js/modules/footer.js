@@ -1,23 +1,32 @@
-const FOOTER_HTML = (isHomePage, inPagesDir) => {
-    const assetPrefix = inPagesDir ? '../' : '';
-    const pagesPrefix = inPagesDir ? '' : 'pages/';
-    const homeHref = isHomePage ? '#' : (inPagesDir ? '../index.html' : 'index.html');
-    const contactHref = isHomePage ? '#contact' : `${inPagesDir ? '../index.html' : 'index.html'}#contact`;
+const siteUrl = new URL('../../../', import.meta.url);
+const homeUrl = new URL('index.html', siteUrl);
+const pagesUrl = new URL('pages/', siteUrl);
+
+const FOOTER_HTML = () => {
+    const isHomePage = [siteUrl.pathname, homeUrl.pathname].includes(window.location.pathname);
+    const homeHref = isHomePage ? '#' : homeUrl.href;
+    const contactHref = isHomePage ? '#contact' : `${homeUrl.href}#contact`;
+    const feedbackText = `
+        <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+        <span data-i18n="footerFeedback">Share Feedback</span>`;
+    const feedback = document.getElementById('feedback-modal')
+        ? `<button id="feedback-btn" class="footer-feedback" type="button">${feedbackText}</button>`
+        : `<a class="footer-feedback" href="${homeUrl.href}#feedback-btn">${feedbackText}</a>`;
     const year = new Date().getFullYear();
 
     return `
-    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500/60 to-transparent"></div>
-    <div class="footer-glow"></div>
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+    <div class="footer-top-rule" aria-hidden="true"></div>
+    <div class="footer-glow" aria-hidden="true"></div>
+    <div class="footer-inner">
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="footer-brand-title">
-                    <img src="${assetPrefix}image/blood-drop.png" alt="BAUET BDC" loading="lazy" decoding="async" />
+                    <img src="${new URL('image/blood-drop.png', siteUrl).href}" width="40" height="40" alt="" loading="lazy" decoding="async" />
                     <span data-i18n="siteTitle">BAUET BDC</span>
                 </div>
                 <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives through the power of blood
                     donation. We connect donors with patients in urgent need.</p>
-                <div class="footer-socials mt-3">
+                <div class="footer-socials">
                     <a href="https://www.facebook.com/share/1CLTZN8DmU/?mibextid=wwXIfr" class="social-facebook" aria-label="Facebook"
                         target="_blank" rel="noopener noreferrer">
                         <i class="fab fa-facebook-f"></i>
@@ -35,44 +44,38 @@ const FOOTER_HTML = (isHomePage, inPagesDir) => {
             <div>
                 <h4 class="footer-col-title" data-i18n="footerQuickLinks">QUICK LINKS</h4>
                 <ul class="footer-links">
-                    <li><a href="${pagesPrefix}about.html"><i class="fa-solid fa-chevron-right"></i> <span
+                    <li><a href="${pagesUrl}about.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> <span
                                 data-i18n="navAbout">About</span></a></li>
-                    <li><a href="${pagesPrefix}donationGuide.html"><i class="fa-solid fa-chevron-right"></i> <span
+                    <li><a href="${pagesUrl}donationGuide.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> <span
                                 data-i18n="navHow">Donation Guide</span></a></li>
-                    <li><a href="${pagesPrefix}events.html"><i class="fa-solid fa-chevron-right"></i> <span
+                    <li><a href="${pagesUrl}events.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> <span
                                 data-i18n="navEvents">Events</span></a></li>
-                    <li><a href="${pagesPrefix}join.html"><i class="fa-solid fa-chevron-right"></i> <span
+                    <li><a href="${pagesUrl}join.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> <span
                                 data-i18n="navJoin">Join</span></a></li>
-                    <li><a href="${pagesPrefix}search.html"><i class="fa-solid fa-chevron-right"></i> <span
+                    <li><a href="${pagesUrl}search.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> <span
                                 data-i18n="navSearch">Search</span></a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="footer-col-title" data-i18n="footerContactInfo">Contact Info</h4>
                 <ul class="footer-links">
-                    <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope"></i>
-                            <span>bauet.bdc@gmail.com</span></a></li>
-                    <li><a href="tel:+8801712460423"><i class="fa-solid fa-phone"></i>
-                            <span>01712460423</span></a></li>
-                    <li><a href="${contactHref}"><i class="fa-solid fa-message"></i> <span
+                    <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                            <span data-i18n="contactEmail">bauet.bdc@gmail.com</span></a></li>
+                    <li><a href="tel:+8801712460423"><i class="fa-solid fa-phone" aria-hidden="true"></i>
+                            <span data-i18n="contactPhone">01712460423</span></a></li>
+                    <li><a href="${contactHref}"><i class="fa-solid fa-message" aria-hidden="true"></i> <span
                                 data-i18n="navContact">Contact</span></a></li>
                 </ul>
             </div>
         </div>
-        <div class="footer-feedback-wrap">
-            <button id="feedback-btn" type="button"
-                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-sm font-semibold shadow-lg backdrop-blur border border-white/10 transition-all duration-300 hover:scale-[1.03]">
-                <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
-                <span data-i18n="footerFeedback">Share Feedback</span>
-            </button>
-        </div>
+        <div class="footer-feedback-wrap">${feedback}</div>
         <hr class="footer-divider" />
         <div class="footer-bottom">
             <p class="footer-copy">
-                &copy; ${year} <a href="${homeHref}">BAUET BDC</a> &mdash; All rights reserved.
+                &copy; ${year} <a href="${homeHref}">BAUET BDC</a> All rights reserved.
             </p>
             <p class="footer-copy">
-                <span data-i18n="footerDeveloper">Developed by Md. Mueid Shahriar, </span> CSE-16th, BAUET
+                <span data-i18n="footerDeveloper">Developed by Md. Mueid Shahriar</span>, CSE-16th, BAUET
             </p>
             <div class="footer-developer-socials" aria-label="Developer social links">
                 <a href="https://www.linkedin.com/in/mueid16/" class="social-linkedin" aria-label="Md. Mueid Shahriar on LinkedIn"
@@ -90,23 +93,9 @@ const FOOTER_HTML = (isHomePage, inPagesDir) => {
 
 export function initFooter() {
     const footerEl = document.getElementById('app-footer');
-    if (!footerEl) return;
-
-    const path = window.location.pathname;
-    const isHomePage = /\/(index\.html)?(\?.*)?(\#.*)?$/i.test(path) || path === '/' || path.endsWith('/');
-    const inPagesDir = path.includes('/pages/');
-
-    footerEl.innerHTML = FOOTER_HTML(isHomePage, inPagesDir);
+    if (!footerEl || footerEl.querySelector('.footer-inner')) return;
+    footerEl.innerHTML = FOOTER_HTML();
     window.updatePageLanguage?.();
-
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                footerEl.classList.add('footer-visible');
-                observer.unobserve(footerEl);
-            }
-        });
-    }, { threshold: 0.05 });
-    observer.observe(footerEl);
 }
+
+initFooter();

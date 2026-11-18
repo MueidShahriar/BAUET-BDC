@@ -1,268 +1,133 @@
 
-import { t } from './language-ui.js?v=4';
+import { t } from './language-ui.js?v=6';
 import { formatPhoneForDisplay } from './utils.js';
 
-function getSignatureImagePath() {
-    return window.location.pathname.includes('/pages/') ? '../image/sign.png' : 'image/sign.png';
-}
+const logoUrl = new URL('../../../image/bauet-bdc-logo.webp', import.meta.url).href;
+const signatureUrl = new URL('../../../image/sign.png', import.meta.url).href;
+const donorCardMotto = 'Donate Blood, Save Lives';
 
-export function generateCertificate(donorData) {
-    return new Promise((resolve, reject) => {
-        const canvas = document.createElement('canvas');
-        canvas.width = 1200;
-        canvas.height = 850;
-        const ctx = canvas.getContext('2d');
-
-        
-        const fontPromise = document.fonts.load('bold 48px "Dancing Script"').catch(() => {});
-
-        const signImg = new Image();
-        signImg.src = getSignatureImagePath();
-        
-        signImg.onload = function() {
-            fontPromise.then(() => {
-                drawCertificate(canvas, ctx, donorData, signImg);
-                resolve(canvas);
-            });
-        };
-        
-        signImg.onerror = function() {
-            fontPromise.then(() => {
-                drawCertificate(canvas, ctx, donorData, null);
-                resolve(canvas);
-            });
-        };
+function loadArtwork(src) {
+    return new Promise(resolve => {
+        const image = new Image();
+        image.crossOrigin = 'anonymous';
+        image.onload = () => resolve(image);
+        image.onerror = () => resolve(null);
+        image.src = src;
     });
 }
 
-function drawCertificate(canvas, ctx, donorData, signImg) {
-
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, '#fef2f2');
-    gradient.addColorStop(0.5, '#ffffff');
-    gradient.addColorStop(1, '#fef2f2');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.strokeStyle = '#dc2626';
-    ctx.lineWidth = 12;
-    ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
-
-    ctx.strokeStyle = '#ef4444';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
-
-    drawElegantCorner(ctx, 70, 70, 60);
-    drawElegantCorner(ctx, canvas.width - 70, 70, 60, true);
-    drawElegantCorner(ctx, 70, canvas.height - 70, 60, false, true);
-    drawElegantCorner(ctx, canvas.width - 70, canvas.height - 70, 60, true, true);
-
-    ctx.shadowColor = 'rgba(220, 38, 38, 0.2)';
-    ctx.shadowBlur = 10;
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
-    
-    ctx.fillStyle = '#991b1b';
-    ctx.font = 'bold 50px Georgia, serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('CERTIFICATE', canvas.width / 2, 110);
-    
-    ctx.font = 'bold 32px Georgia, serif';
-    ctx.fillStyle = '#dc2626';
-    ctx.fillText('OF APPRECIATION', canvas.width / 2, 150);
-
-    ctx.shadowColor = 'transparent';
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-
-    ctx.fillStyle = '#374151';
-    ctx.font = 'italic 22px Georgia, serif';
-    ctx.fillText('BAUET BDC', canvas.width / 2, 185);
-
-    ctx.fillStyle = '#dc2626';
-    ctx.fillRect(350, 205, 500, 2);
-    ctx.beginPath();
-    ctx.arc(350, 206, 4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(850, 206, 4, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = '#6b7280';
-    ctx.font = 'italic 22px Georgia, serif';
-    ctx.fillText('This is proudly presented to', canvas.width / 2, 250);
-
-    ctx.fillStyle = '#1f2937';
-    ctx.font = 'bold 52px "Dancing Script", "Brush Script MT", cursive';
-    const donorName = donorData.fullName || 'Donor Name';
-    ctx.fillText(donorName, canvas.width / 2, 315);
-
-    const nameWidth = ctx.measureText(donorName).width;
-    const gradient2 = ctx.createLinearGradient((canvas.width - nameWidth) / 2, 325, (canvas.width + nameWidth) / 2, 325);
-    gradient2.addColorStop(0, 'rgba(220, 38, 38, 0)');
-    gradient2.addColorStop(0.5, '#dc2626');
-    gradient2.addColorStop(1, 'rgba(220, 38, 38, 0)');
-    ctx.strokeStyle = gradient2;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo((canvas.width - nameWidth) / 2 - 30, 330);
-    ctx.lineTo((canvas.width + nameWidth) / 2 + 30, 330);
-    ctx.stroke();
-
-    ctx.fillStyle = '#374151';
-    ctx.font = '22px Georgia, serif';
-    ctx.fillText('for the noble act of donating blood on', canvas.width / 2, 380);
-
-    const _padCert = n => String(n).padStart(2, '0');
-    const _fmtDMY = dt => `${_padCert(dt.getDate())}/${_padCert(dt.getMonth()+1)}/${dt.getFullYear()}`;
-    const donationDate = donorData.lastDonateDate 
-        ? _fmtDMY(new Date(donorData.lastDonateDate))
-        : _fmtDMY(new Date());
-    
-    ctx.fillStyle = '#fef2f2';
-    ctx.fillRect(canvas.width / 2 - 180, 400, 360, 50);
-    ctx.strokeStyle = '#dc2626';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(canvas.width / 2 - 180, 400, 360, 50);
-    
-    ctx.fillStyle = '#dc2626';
-    ctx.font = 'bold 24px Georgia, serif';
-    ctx.fillText(donationDate, canvas.width / 2, 433);
-
-    const bloodGroup = donorData.bloodGroup || 'O+';
-    ctx.fillStyle = '#dc2626';
-    ctx.beginPath();
-    ctx.roundRect(canvas.width / 2 - 80, 470, 160, 80, 10);
-    ctx.fill();
-    
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.roundRect(canvas.width / 2 - 75, 475, 150, 70, 8);
-    ctx.stroke();
-    
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 42px Arial';
-    ctx.fillText(bloodGroup, canvas.width / 2, 523);
-
-    ctx.fillStyle = '#1f2937';
-    ctx.font = '21px Georgia, serif';
-    ctx.fillText('Your selfless act has the potential to save up to three lives.', canvas.width / 2, 590);
-    ctx.fillStyle = '#dc2626';
-    ctx.font = 'italic 20px Georgia, serif';
-    ctx.fillText('Thank you for being a hero in our community!', canvas.width / 2, 620);
-
-    const certificateId = generateCertificateId(donorData);
-    ctx.fillStyle = '#f3f4f6';
-    ctx.fillRect(400, 670, 400, 30);
-    ctx.fillStyle = '#6b7280';
-    ctx.font = '14px Courier New, monospace';
-    ctx.fillText(`Certificate ID: ${certificateId}`, canvas.width / 2, 690);
-
-    ctx.strokeStyle = '#374151';
-    ctx.lineWidth = 2;
-    
-    ctx.beginPath();
-    ctx.moveTo(180, 735);
-    ctx.lineTo(420, 735);
-    ctx.stroke();
-    
-    if (signImg) {
-        const signWidth = 120;
-        const signHeight = 60;
-        const signX = 300 - signWidth / 2;
-        const signY = 665;
-        ctx.drawImage(signImg, signX, signY, signWidth, signHeight);
-    } else {
-        ctx.strokeStyle = '#1f2937';
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        
-        ctx.beginPath();
-        ctx.moveTo(200, 705);
-        ctx.quadraticCurveTo(220, 695, 250, 700);
-        ctx.quadraticCurveTo(270, 705, 280, 690);
-        ctx.quadraticCurveTo(290, 680, 310, 695);
-        ctx.stroke();
-        
-        ctx.beginPath();
-        ctx.moveTo(250, 700);
-        ctx.quadraticCurveTo(260, 710, 270, 705);
-        ctx.stroke();
-        
-        ctx.beginPath();
-        ctx.moveTo(320, 700);
-        ctx.quadraticCurveTo(340, 690, 360, 700);
-        ctx.quadraticCurveTo(380, 710, 400, 695);
-        ctx.stroke();
-    }
-    
-    ctx.strokeStyle = '#374151';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(780, 735);
-    ctx.lineTo(1020, 735);
-    ctx.stroke();
-    
-    ctx.fillStyle = '#6b7280';
-    ctx.font = 'italic 16px Georgia, serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Authorized Signature', 300, 760);
-    
-    const _issueDt = new Date();
-    const _pI = n => String(n).padStart(2,'0');
-    const issueDate = `${_pI(_issueDt.getDate())}/${_pI(_issueDt.getMonth()+1)}/${_issueDt.getFullYear()}`;
-    ctx.fillStyle = '#1f2937';
-    ctx.font = '18px Georgia, serif';
-    ctx.fillText(issueDate, 900, 725);
-
-    ctx.fillStyle = '#dc2626';
-    for (let i = 0; i < 3; i++) {
-        ctx.beginPath();
-        ctx.arc(canvas.width / 2 - 20 + (i * 20), 705, 2.5, 0, Math.PI * 2);
-        ctx.fill();
-    }
+function formatDocumentDate(value) {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString('en-GB');
 }
 
-function drawElegantCorner(ctx, x, y, size, flipX = false, flipY = false) {
-    ctx.save();
-    ctx.translate(x, y);
-    if (flipX) ctx.scale(-1, 1);
-    if (flipY) ctx.scale(1, -1);
-    
-    ctx.strokeStyle = '#dc2626';
-    ctx.lineWidth = 3;
-    
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(size, 0);
-    ctx.stroke();
-    
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, size);
-    ctx.stroke();
-    
-    ctx.beginPath();
-    ctx.arc(0, 0, size / 2, 0, Math.PI / 2);
-    ctx.stroke();
-    
-    ctx.fillStyle = '#dc2626';
-    ctx.beginPath();
-    ctx.arc(size * 0.7, size * 0.7, 5, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.beginPath();
-    ctx.arc(size, 0, 4, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.beginPath();
-    ctx.arc(0, size, 4, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.restore();
+function prepareSignature(image) {
+    const canvas = document.createElement('canvas');
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(image, 0, 0);
+    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    // Turn paper brightness into transparency while keeping the antialiased ink edges.
+    for (let index = 0; index < pixels.data.length; index += 4) {
+        const brightness = 0.2126 * pixels.data[index] + 0.7152 * pixels.data[index + 1] + 0.0722 * pixels.data[index + 2];
+        const inkOpacity = Math.min(1, Math.max(0, (247 - brightness) / 210));
+        pixels.data[index] = 38;
+        pixels.data[index + 1] = 28;
+        pixels.data[index + 2] = 26;
+        pixels.data[index + 3] *= inkOpacity;
+    }
+    ctx.putImageData(pixels, 0, 0);
+    return canvas;
+}
+
+export async function generateCertificate(donorData) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1200;
+    canvas.height = 850;
+    const [logo, signature] = await Promise.all([loadArtwork(logoUrl), loadArtwork(signatureUrl)]);
+    drawCertificate(canvas, donorData, logo, signature ? prepareSignature(signature) : null);
+    return canvas;
+}
+
+function drawCertificate(canvas, donorData, logo, signature) {
+    const ctx = canvas.getContext('2d');
+    const { width, height } = canvas;
+    const center = width / 2;
+    const accent = '#842146';
+    const ink = '#33232c';
+    const muted = '#69515b';
+    ctx.fillStyle = '#fffaf3';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 8;
+    ctx.strokeRect(26, 26, width - 52, height - 52);
+    ctx.strokeStyle = '#ba9761';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(45, 45, width - 90, height - 90);
+
+    if (logo) ctx.drawImage(logo, center - 36, 76, 72, 72);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = accent;
+    ctx.font = 'bold 24px Arial, sans-serif';
+    ctx.fillText('BAUET BLOOD DONATION CLUB', center, 182);
+
+    ctx.fillStyle = ink;
+    ctx.font = 'bold 60px Georgia, serif';
+    ctx.fillText('Certificate of Appreciation', center, 265, 1040);
+    ctx.fillStyle = '#ba9761';
+    ctx.fillRect(center - 110, 292, 220, 2);
+
+    ctx.fillStyle = muted;
+    ctx.font = '24px Georgia, serif';
+    ctx.fillText('Presented to', center, 347);
+    ctx.fillStyle = accent;
+    ctx.font = 'bold 65px Georgia, serif';
+    ctx.fillText(donorData.fullName || 'Donor', center, 427, 1020);
+
+    ctx.fillStyle = ink;
+    ctx.font = '25px Georgia, serif';
+    ctx.fillText('In appreciation of your voluntary blood donation.', center, 484);
+
+    const date = donorData.lastDonateDate ? formatDocumentDate(donorData.lastDonateDate + 'T00:00:00') : '—';
+    const group = donorData.bloodGroup || '—';
+    [['Donation date', date, 398], ['Blood group', group, 624]].forEach(([label, value, left]) => {
+        ctx.fillStyle = '#f6eaf0';
+        ctx.beginPath();
+        ctx.roundRect(left, 527, 178, 78, 12);
+        ctx.fill();
+        ctx.fillStyle = muted;
+        ctx.font = '16px Arial, sans-serif';
+        ctx.fillText(label, left + 89, 553);
+        ctx.fillStyle = accent;
+        ctx.font = 'bold 27px Arial, sans-serif';
+        ctx.fillText(value, left + 89, 583, 154);
+    });
+
+    ctx.fillStyle = muted;
+    ctx.font = '17px Arial, sans-serif';
+    ctx.fillText('Certificate ID', center, 714);
+    ctx.fillStyle = ink;
+    ctx.font = 'bold 18px monospace';
+    ctx.fillText(generateCertificateId(donorData), center, 744, 316);
+
+    if (signature) {
+        const height = 74;
+        const width = height * signature.width / signature.height;
+        ctx.drawImage(signature, 294 - width / 2, 652, width, height);
+    }
+    ctx.fillStyle = '#ba9761';
+    ctx.fillRect(178, 731, 232, 1);
+    ctx.fillRect(790, 731, 232, 1);
+    ctx.fillStyle = ink;
+    ctx.font = 'bold 20px Georgia, serif';
+    ctx.fillText(formatDocumentDate(new Date()), 906, 712);
+    ctx.fillStyle = muted;
+    ctx.font = '17px Arial, sans-serif';
+    ctx.fillText('Authorized signature', 294, 756);
+    ctx.fillText('Date issued', 906, 756);
 }
 
 function generateCertificateId(donorData) {
@@ -317,676 +182,309 @@ export function shareCertificate(canvas, donorName) {
     canvas.toBlob((blob) => {
         const file = new File([blob], 'certificate.png', { type: 'image/png' });
         
-        if (navigator.share && navigator.canShare({ files: [file] })) {
+        if (navigator.share && navigator.canShare?.({ files: [file] })) {
             navigator.share({
                 title: 'Blood Donation Certificate',
                 text: `I donated blood and received this certificate from BAUET BDC! 🩸 #BloodDonation #SaveLives`,
                 files: [file]
             }).catch((error) => {
+                if (error.name === 'AbortError') return;
                 console.error('Error sharing:', error);
-                fallbackShare(canvas);
+                fallbackShare(canvas, donorName);
             });
         } else {
-            fallbackShare(canvas);
+            fallbackShare(canvas, donorName);
         }
     });
 }
 
-function fallbackShare(canvas) {
-    const shareOptions = `
-        <div class="flex flex-col gap-3">
-            <p class="text-gray-700">Share your certificate:</p>
-            <button onclick="downloadFromModal()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
-                <i class="fa-solid fa-download mr-2"></i>Download Certificate
-            </button>
-            <div class="text-center text-gray-500 text-sm mt-2">
-                Download and share on your social media platforms!
+function fallbackShare(canvas, donorName) {
+    const content = showModal(t('certShare'), `
+        <div class="document-sheet">
+            <p>${t('certShareDownload')}</p>
+            <div class="document-actions">
+                <button type="button" class="document-action document-action--primary">
+                    <i class="fa-solid fa-download" aria-hidden="true"></i> ${t('certDownload')}
+                </button>
             </div>
         </div>
-    `;
-    
-    showModal('Share Certificate', shareOptions);
+    `);
+    content.querySelector('button').addEventListener('click', () => downloadCertificate(canvas, donorName));
 }
 
-export function showCertificateModal(donorData) {
-    generateCertificate(donorData).then(canvas => {
-        const imageUrl = canvas.toDataURL('image/png');
-        
-        const modalContent = `
-            <div class="flex flex-col gap-4">
-                <div class="bg-gray-50 rounded-lg p-4 max-h-96 overflow-auto">
-                    <img src="${imageUrl}" alt="Donation Certificate" class="w-full h-auto rounded shadow-lg">
+export async function showCertificateModal(donorData) {
+    try {
+        const canvas = await generateCertificate(donorData);
+        const name = donorData.fullName || 'Donor';
+        const content = showModal(t('certTitle'), `
+            <div class="document-sheet">
+                <div class="document-preview">
+                    <img src="${canvas.toDataURL('image/png')}" alt="${t('certTitle')}" width="1200" height="850">
                 </div>
-                <div class="flex gap-3 justify-center">
-                    <button onclick="downloadCertificateFromModal('${donorData.fullName}')" 
-                        class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition flex items-center gap-2">
-                        <i class="fa-solid fa-download"></i>
-                        <span data-i18n="certDownload">Download</span>
+                <div class="document-actions">
+                    <button type="button" class="document-action" data-document-action="share">
+                        <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> ${t('certShare')}
                     </button>
-                    <button onclick="shareCertificateFromModal('${donorData.fullName}')" 
-                        class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
-                        <i class="fa-solid fa-share-nodes"></i>
-                        <span data-i18n="certShare">Share</span>
+                    <button type="button" class="document-action document-action--primary" data-document-action="download">
+                        <i class="fa-solid fa-download" aria-hidden="true"></i> ${t('certPdfDownload')}
                     </button>
                 </div>
             </div>
-        `;
-        
-        showModal(t('certTitle') || 'Your Donation Certificate', modalContent);
-        
-        window.currentCertificateCanvas = canvas;
-        window.currentDonorName = donorData.fullName;
-    }).catch(error => {
+        `);
+        content.querySelector('[data-document-action="download"]').addEventListener('click', () => downloadCertificate(canvas, name));
+        content.querySelector('[data-document-action="share"]').addEventListener('click', () => shareCertificate(canvas, name));
+    } catch (error) {
         console.error('Error generating certificate:', error);
-        showModal('Error', '<p class="text-red-600">Failed to generate certificate. Please try again.</p>');
-    });
+        showModal(t('certTitle'), `<p>${t('certPreviewError')}</p>`);
+    }
 }
 
-export function showDonorCardModal(donorData, containerEl) {
-    const esc = (value) => {
-        const text = value == null || value === '' ? '—' : String(value);
-        return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    };
-
-    const name = esc(donorData.fullName || 'Donor');
-    const blood = esc(donorData.bloodGroup || '—');
-    const location = esc(donorData.location || '—');
-    const phone = esc(formatPhoneForDisplay(donorData.phone || '—'));
-    const email = esc(donorData.email || '—');
-    const gender = esc(donorData.gender || '—');
-    const initials = (donorData.fullName || 'D').split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0,2).toUpperCase();
-    const lastDonate = donorData.lastDonateDate
-        ? (() => { const _d = new Date(donorData.lastDonateDate + 'T00:00:00'); const _p = n => String(n).padStart(2,'0'); return `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`; })()
-        : 'Not recorded';
-
-    
-    const totalDonations = donorData.totalDonations || 0;
-
-    
+function getDonorDocument(donorData) {
+    const name = donorData.fullName || 'Donor';
+    const initials = name.split(/\s+/).filter(Boolean).map(part => part[0]).join('').slice(0, 2).toUpperCase();
+    let lastDonation = '—';
     let nextEligible = '—';
     if (donorData.lastDonateDate) {
         const last = new Date(donorData.lastDonateDate + 'T00:00:00');
-        const nextDate = new Date(last.getTime() + 90 * 24 * 60 * 60 * 1000);
-        const now = new Date();
-        if (nextDate <= now) {
-            nextEligible = '<span style="color:#059669;font-weight:800">✓ Eligible Now</span>';
-        } else {
-            nextEligible = esc((() => { const _p = n => String(n).padStart(2,'0'); return `${_p(nextDate.getDate())}/${_p(nextDate.getMonth()+1)}/${nextDate.getFullYear()}`; })());
-        }
+        lastDonation = formatDocumentDate(last);
+        const next = new Date(last.getTime() + 90 * 24 * 60 * 60 * 1000);
+        nextEligible = next <= new Date() ? 'Eligible Now' : formatDocumentDate(next);
     }
 
-    
-    let ageDisplay = '—';
+    let age = '';
     if (donorData.dateOfBirth) {
-        const dob = new Date(donorData.dateOfBirth + 'T00:00:00');
-        const now = new Date();
-        let age = now.getFullYear() - dob.getFullYear();
-        if (now.getMonth() < dob.getMonth() || (now.getMonth() === dob.getMonth() && now.getDate() < dob.getDate())) age--;
-        ageDisplay = `${age} years`;
+        const birthday = new Date(donorData.dateOfBirth + 'T00:00:00');
+        const today = new Date();
+        age = today.getFullYear() - birthday.getFullYear();
+        if (today.getMonth() < birthday.getMonth() ||
+            (today.getMonth() === birthday.getMonth() && today.getDate() < birthday.getDate())) age--;
+        age = Number.isNaN(age) ? '' : `${age} years`;
     }
 
-    
-    let memberSince = '—';
-    const memberSinceSource = donorData.createdAt || donorData.memberSince;
-    if (memberSinceSource) {
-        const _d = new Date(memberSinceSource);
-        if (!isNaN(_d.getTime())) {
-            const _p = n => String(n).padStart(2,'0');
-            memberSince = `${_p(_d.getDate())}/${_p(_d.getMonth()+1)}/${_d.getFullYear()}`;
-        }
-    }
+    const joined = donorData.createdAt || donorData.memberSince;
+    return {
+        name,
+        initials,
+        blood: donorData.bloodGroup || '—',
+        email: donorData.email || '—',
+        description: [donorData.gender, age].filter(Boolean).join(' · '),
+        details: [
+            ['profileLocation', donorData.location || '—'],
+            ['profilePhone', formatPhoneForDisplay(donorData.phone || '—')],
+            ['profileLastDonationLabel', lastDonation],
+            ['profileNextEligible', nextEligible],
+            ['profileMemberSince', joined ? formatDocumentDate(joined) : '—'],
+        ],
+    };
+}
 
-    
-    let badgeLabel = 'New Donor';
-    let badgeColor = '#6b7280';
-    let badgeIcon = 'fa-seedling';
-    if (totalDonations >= 20) { badgeLabel = 'Platinum'; badgeColor = '#7c3aed'; badgeIcon = 'fa-gem'; }
-    else if (totalDonations >= 10) { badgeLabel = 'Gold'; badgeColor = '#d97706'; badgeIcon = 'fa-crown'; }
-    else if (totalDonations >= 5) { badgeLabel = 'Silver'; badgeColor = '#475569'; badgeIcon = 'fa-medal'; }
-    else if (totalDonations >= 2) { badgeLabel = 'Bronze'; badgeColor = '#b45309'; badgeIcon = 'fa-award'; }
+function escapeMarkup(value) {
+    return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 
-    const cardHtml = `
-        <div class="flex flex-col items-center gap-3 sm:gap-4" id="donor-card-wrapper">
-            <div id="donor-card-preview" class="w-full" style="max-width:min(22rem,100%)">
-                <div style="position:relative;border-radius:1.8rem;overflow:hidden;background:linear-gradient(135deg,#b91c1c 0%,#dc2626 20%,#ef4444 45%,#f97316 70%,#fbbf24 100%);padding:3px;box-shadow:0 25px 70px rgba(185,28,28,0.18),0 8px 24px rgba(185,28,28,0.08)">
-                    <div style="border-radius:1.6rem;background:linear-gradient(180deg,#fff 0%,#fffbfb 60%,#fef8f8 100%);padding:0;position:relative;overflow:hidden">
-                        <!-- Top colored band with org name -->
-                        <div style="background:linear-gradient(135deg,#b91c1c 0%,#dc2626 35%,#ef4444 65%,#f97316 100%);padding:0.8rem 1rem 5.5rem;text-align:center;position:relative;overflow:hidden">
-                            <div style="position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.06)"></div>
-                            <div style="position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.04)"></div>
-                            <div style="display:flex;align-items:center;justify-content:center">
-                                <span style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.85);font-weight:700">BAUET BDC</span>
-                            </div>
-                            <div style="font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:0.12em;margin-top:4px;text-shadow:0 2px 8px rgba(0,0,0,0.1)">DONOR CARD</div>
-                        </div>
-                        <!-- Photo overlapping header/body boundary -->
-                        <div style="display:flex;flex-direction:column;align-items:center;margin-top:-3rem;position:relative;z-index:2">
-                            <div style="padding:4px;border-radius:50%;background:transparent;box-shadow:0 0 0 3px rgba(220,38,38,0.08)">
-                                <div id="donor-card-photo-area" style="width:160px;height:160px;border-radius:50%;background:linear-gradient(135deg,#b91c1c,#dc2626,#f97316);color:#fff;display:flex;align-items:center;justify-content:center;font-size:3rem;font-weight:900;flex-shrink:0;overflow:hidden;border:4px solid #fff;box-shadow:0 10px 40px rgba(185,28,28,0.2);cursor:pointer;position:relative;transition:transform 0.3s,box-shadow 0.3s" title="Click to upload photo" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-                                    <span id="donor-card-initials">${initials}</span>
-                                    <img id="donor-card-photo-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0" />
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Name & info centered below photo -->
-                        <div style="text-align:center;padding:1.2rem 1rem 0.15rem">
-                            <div style="font-size:1.3rem;font-weight:800;color:#1f2937;line-height:1.2;letter-spacing:-0.01em">${name}</div>
-                            <div style="font-size:0.72rem;color:#6b7280;margin-top:4px;letter-spacing:0.01em">${email}</div>
-                            ${gender !== '—' ? '<div style="font-size:0.7rem;color:#9ca3af;font-weight:600;margin-top:4px;letter-spacing:0.02em">' + gender + (ageDisplay !== '—' ? ' &bull; ' + ageDisplay : '') + '</div>' : (ageDisplay !== '—' ? '<div style="font-size:0.7rem;color:#9ca3af;font-weight:600;margin-top:4px">' + ageDisplay + '</div>' : '')}
-                        </div>
-                        <!-- Blood group badge centered -->
-                        <div style="display:flex;justify-content:center;padding:0.25rem 0 0.2rem">
-                            <div style="background:linear-gradient(135deg,#b91c1c,#dc2626,#ef4444);color:#fff;font-size:1.5rem;font-weight:900;padding:0.4rem 1.4rem;border-radius:0.8rem;letter-spacing:0.04em;line-height:1;box-shadow:0 6px 20px rgba(185,28,28,0.22),inset 0 1px 0 rgba(255,255,255,0.15)">${blood}</div>
-                        </div>
-                        <!-- Divider -->
-                        <div style="margin:0.25rem 1.5rem;height:1px;background:linear-gradient(90deg,transparent,rgba(220,38,38,0.1),transparent)"></div>
-                        <!-- Info rows (vertical, stacked) -->
-                        <div style="padding:0.1rem 1rem 0.1rem;display:flex;flex-direction:column;gap:0.2rem">
-                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.75rem;border-radius:0.7rem;background:rgba(254,242,242,0.45);transition:background 0.2s">
-                                <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.06));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-location-dot" style="color:#dc2626;font-size:0.75rem"></i></div>
-                                <div style="min-width:0;flex:1"><div style="font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#b0b0b0">Location</div><div style="font-size:0.9rem;font-weight:700;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${location}</div></div>
-                            </div>
-                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.75rem;border-radius:0.7rem;background:rgba(252,231,243,0.3);transition:background 0.2s">
-                                <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.06));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-phone" style="color:#dc2626;font-size:0.75rem"></i></div>
-                                <div style="min-width:0;flex:1"><div style="font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#b0b0b0">Phone</div><div style="font-size:0.9rem;font-weight:700;color:#1f2937">${phone}</div></div>
-                            </div>
-                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.75rem;border-radius:0.7rem;background:rgba(254,242,242,0.45);transition:background 0.2s">
-                                <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.06));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-calendar-days" style="color:#dc2626;font-size:0.75rem"></i></div>
-                                <div style="min-width:0;flex:1"><div style="font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#b0b0b0">Last Donation</div><div style="font-size:0.9rem;font-weight:700;color:#1f2937">${lastDonate}</div></div>
-                            </div>
-                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.75rem;border-radius:0.7rem;background:rgba(252,231,243,0.3);transition:background 0.2s">
-                                <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.06));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-calendar-check" style="color:#059669;font-size:0.75rem"></i></div>
-                                <div style="min-width:0;flex:1"><div style="font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#b0b0b0">Next Eligible</div><div style="font-size:0.9rem;font-weight:700;color:#1f2937">${nextEligible}</div></div>
-                            </div>
-                            <div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0.75rem;border-radius:0.7rem;background:rgba(254,242,242,0.45);transition:background 0.2s">
-                                <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(99,102,241,0.06));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fa-solid fa-user-clock" style="color:#6366f1;font-size:0.75rem"></i></div>
-                                <div style="min-width:0;flex:1"><div style="font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#b0b0b0">Member Since</div><div style="font-size:0.9rem;font-weight:700;color:#1f2937">${memberSince}</div></div>
-                            </div>
-                        </div>
-                        <!-- Footer -->
-                        <div style="display:flex;align-items:center;justify-content:center;padding:0.3rem 1rem;background:linear-gradient(135deg,rgba(185,28,28,0.05),rgba(249,115,22,0.03));border-top:1px solid rgba(220,38,38,0.04)">
-                            <span style="font-size:0.65rem;font-weight:700;color:#dc2626;letter-spacing:0.08em"><i class="fa-solid fa-heart" style="margin-right:5px;font-size:0.6rem"></i>Donate Blood, Save Life</span>
-                        </div>
+export function showDonorCardModal(donorData, containerEl) {
+    const card = getDonorDocument(donorData);
+    const fields = card.details.map(([label, value]) => `
+        <div><dt>${t(label)}</dt><dd>${escapeMarkup(value)}</dd></div>
+    `).join('');
+    const markup = `
+        <div class="donor-document">
+            <article id="donor-card-preview" class="donor-document__card">
+                <div class="donor-document__brand">
+                    <img src="${logoUrl}" alt="" width="36" height="36">
+                    <div><span>BAUET BDC</span><strong>${t('profileDonorCard')}</strong></div>
+                </div>
+                <div class="donor-document__identity">
+                    <button type="button" id="donor-card-photo-area" class="donor-document__photo" aria-label="${t('profileUploadPhoto')}">
+                        <span aria-hidden="true">${escapeMarkup(card.initials)}</span>
+                        <img id="donor-card-photo-img" alt="" hidden>
+                    </button>
+                    <div>
+                        <h3>${escapeMarkup(card.name)}</h3>
+                        <p>${escapeMarkup(card.email)}</p>
+                        ${card.description ? `<p>${escapeMarkup(card.description)}</p>` : ''}
+                        <span class="donor-document__blood">${escapeMarkup(card.blood)}</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Upload + download area -->
-            <div class="flex flex-col items-center gap-2.5 w-full" style="max-width:min(22rem,100%)">
-                <label id="donor-card-upload-label" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.55rem 1.2rem;border-radius:0.8rem;border:1.5px dashed rgba(220,38,38,0.3);background:rgba(254,242,242,0.6);color:#dc2626;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.25s" onmouseover="this.style.borderColor='#dc2626';this.style.background='#fef2f2';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='rgba(220,38,38,0.3)';this.style.background='rgba(254,242,242,0.6)';this.style.transform='translateY(0)'">
-                    <i class="fa-solid fa-camera"></i>
-                    <span id="donor-card-upload-text">Upload Photo</span>
-                    <input type="file" id="donor-card-photo-input" accept="image/*" style="display:none" />
+                <dl class="donor-document__details">${fields}</dl>
+                <div class="donor-document__footer">${donorCardMotto}</div>
+            </article>
+            <div class="document-actions">
+                <label class="document-action" for="donor-card-photo-input">
+                    <i class="fa-solid fa-camera" aria-hidden="true"></i>
+                    <span id="donor-card-upload-text">${t('profileUploadPhoto')}</span>
+                    <input type="file" id="donor-card-photo-input" accept="image/*" class="sr-only">
                 </label>
-                <button id="donor-card-download-btn" onclick="window.__downloadDonorCard()" disabled style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.55rem 1.5rem;border-radius:0.8rem;background:#d1d5db;color:#fff;font-size:0.85rem;font-weight:700;border:none;cursor:not-allowed;box-shadow:none;transition:all 0.25s;opacity:0.7">
-                    <i class="fa-solid fa-download"></i>
-                    Download Donor Card
+                <button type="button" id="donor-card-download-btn" class="document-action document-action--primary" disabled>
+                    <i class="fa-solid fa-download" aria-hidden="true"></i> ${t('certDownload')}
                 </button>
-                <p id="donor-card-photo-hint" style="font-size:0.72rem;color:#dc2626;text-align:center;font-weight:600;margin:0"><i class="fa-solid fa-circle-info" style="margin-right:3px"></i>Please upload your photo first to download the card.</p>
             </div>
+            <p class="donor-document__status" id="donor-card-photo-hint" role="status">${t('donorCardPhotoRequired')}</p>
         </div>
     `;
 
-    
-    if (containerEl) {
-        containerEl.innerHTML = cardHtml;
-    } else {
-        showModal('Your Donor Card', cardHtml);
+    if (containerEl) containerEl.innerHTML = markup;
+    const content = containerEl || showModal(t('profileDonorCard'), markup, 'card');
+    const photoInput = content.querySelector('#donor-card-photo-input');
+    const photoImage = content.querySelector('#donor-card-photo-img');
+    const photoHint = content.querySelector('#donor-card-photo-hint');
+    const uploadText = content.querySelector('#donor-card-upload-text');
+    const download = content.querySelector('#donor-card-download-btn');
+    let photo = '';
+
+    function showPhoto(src) {
+        photo = src;
+        photoImage.src = src;
+        photoImage.hidden = false;
+        uploadText.textContent = t('donorCardChangePhoto');
+        photoHint.textContent = '';
+        download.disabled = false;
     }
 
-    
-    setTimeout(() => {
-        const fileInput = document.getElementById('donor-card-photo-input');
-        const photoArea = document.getElementById('donor-card-photo-area');
-        const photoImg = document.getElementById('donor-card-photo-img');
-        const initialsEl = document.getElementById('donor-card-initials');
-        const uploadText = document.getElementById('donor-card-upload-text');
-
-        
-        if (donorData.profilePhoto) {
-            if (photoImg) {
-                photoImg.src = donorData.profilePhoto;
-                photoImg.style.display = 'block';
-            }
-            if (initialsEl) initialsEl.style.display = 'none';
-            if (uploadText) uploadText.textContent = 'Change Photo';
-            const dlBtn = document.getElementById('donor-card-download-btn');
-            if (dlBtn) {
-                dlBtn.disabled = false;
-                dlBtn.style.background = 'linear-gradient(135deg,#0f766e,#14b8a6)';
-                dlBtn.style.cursor = 'pointer';
-                dlBtn.style.opacity = '1';
-                dlBtn.style.boxShadow = '0 4px 14px rgba(20,184,166,0.2)';
-                dlBtn.onmouseover = function(){ this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(20,184,166,0.3)'; };
-                dlBtn.onmouseout = function(){ this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(20,184,166,0.2)'; };
-            }
-            const hint = document.getElementById('donor-card-photo-hint');
-            if (hint) { hint.style.color = '#10b981'; hint.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:3px"></i>Profile photo loaded! You can download your card.'; }
-        }
-
-        photoArea?.addEventListener('click', () => fileInput?.click());
-
-        fileInput?.addEventListener('change', (e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                if (photoImg) {
-                    photoImg.src = ev.target.result;
-                    photoImg.style.display = 'block';
-                }
-                if (initialsEl) initialsEl.style.display = 'none';
-                if (uploadText) uploadText.textContent = 'Change Photo';
-                
-                const dlBtn = document.getElementById('donor-card-download-btn');
-                if (dlBtn) {
-                    dlBtn.disabled = false;
-                    dlBtn.style.background = 'linear-gradient(135deg,#0f766e,#14b8a6)';
-                    dlBtn.style.cursor = 'pointer';
-                    dlBtn.style.opacity = '1';
-                    dlBtn.style.boxShadow = '0 4px 14px rgba(20,184,166,0.2)';
-                    dlBtn.onmouseover = function(){ this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(20,184,166,0.3)'; };
-                    dlBtn.onmouseout = function(){ this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(20,184,166,0.2)'; };
-                }
-                const hint = document.getElementById('donor-card-photo-hint');
-                if (hint) { hint.style.color = '#10b981'; hint.innerHTML = '<i class="fa-solid fa-circle-check" style="margin-right:3px"></i>Photo uploaded! You can now download your card.'; }
-            };
-            reader.readAsDataURL(file);
-        });
-
-        
-        window.__downloadDonorCard = function() {
-            const preview = document.getElementById('donor-card-preview');
-            if (!preview) return;
-            if (!photoImg?.src || photoImg.style.display === 'none') {
-                const hint = document.getElementById('donor-card-photo-hint');
-                if (hint) { hint.style.color = '#dc2626'; hint.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="margin-right:3px"></i>Photo is required! Please upload your photo first.'; }
-                return;
-            }
-            _renderDonorCardCanvas(donorData, photoImg.src)
-                .then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `Donor_Card_${(donorData.fullName || 'card').replace(/\s+/g, '_')}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                });
-        };
-    }, 100);
-}
-
-function _renderDonorCardCanvas(donorData, photoSrc) {
-    return new Promise((resolve) => {
-        const SCALE = 3;
-        const W = 420, H = 770;
-        const canvas = document.createElement('canvas');
-        canvas.width = W * SCALE; canvas.height = H * SCALE;
-        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
-        const ctx = canvas.getContext('2d');
-        ctx.scale(SCALE, SCALE);
-
-        
-        ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
-        
-        const bodyGrad = ctx.createLinearGradient(0, 0, 0, H);
-        bodyGrad.addColorStop(0, 'rgba(255,255,255,0)');
-        bodyGrad.addColorStop(0.6, 'rgba(255,251,251,0.5)');
-        bodyGrad.addColorStop(1, 'rgba(254,248,248,0.8)');
-        ctx.fillStyle = bodyGrad; ctx.fillRect(0, 0, W, H);
-
-        
-        const headerH = 120;
-        const photoS = 160;
-        const photoX = (W - photoS) / 2;
-        const photoY = 72;
-        const photoCX = photoX + photoS / 2;
-        const photoCY = photoY + photoS / 2;
-        const photoR = photoS / 2;
-
-        
-        ctx.strokeStyle = 'rgba(220,38,38,0.06)'; ctx.lineWidth = 8;
-        ctx.beginPath(); ctx.arc(photoCX, photoCY, photoR + 12, 0, Math.PI * 2); ctx.stroke();
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath(); ctx.arc(photoCX, photoCY, photoR + 6, 0, Math.PI * 2); ctx.fill();
-
-        
-        const hGrad = ctx.createLinearGradient(0, 0, W, 0);
-        hGrad.addColorStop(0, '#b91c1c'); hGrad.addColorStop(0.35, '#dc2626'); hGrad.addColorStop(0.65, '#ef4444'); hGrad.addColorStop(1, '#f97316');
-        ctx.fillStyle = hGrad; ctx.fillRect(0, 0, W, headerH);
-
-        
-        ctx.fillStyle = 'rgba(255,255,255,0.05)';
-        ctx.beginPath(); ctx.arc(W - 35, -15, 90, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,0.03)';
-        ctx.beginPath(); ctx.arc(40, headerH + 10, 60, 0, Math.PI * 2); ctx.fill();
-
-        
-        ctx.strokeStyle = 'rgba(220,38,38,0.15)'; ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.arc(photoCX, photoCY, photoR + 3, 0, Math.PI * 2); ctx.stroke();
-
-        
-        ctx.save();
-        ctx.beginPath(); ctx.arc(photoCX, photoCY, photoR, 0, Math.PI * 2); ctx.clip();
-        const circGrad = ctx.createLinearGradient(photoX, photoY, photoX + photoS, photoY + photoS);
-        circGrad.addColorStop(0, '#fecaca'); circGrad.addColorStop(0.5, '#fef2f2'); circGrad.addColorStop(1, '#ffe4e6');
-        ctx.fillStyle = circGrad;
-        ctx.fillRect(photoX, photoY, photoS, photoS);
-        ctx.restore();
-
-        
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-
-        ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = '700 9px Arial, sans-serif';
-        ctx.fillText('BAUET BDC', W / 2, 24);
-        ctx.fillStyle = '#ffffff'; ctx.font = '900 18px Arial, sans-serif';
-        ctx.shadowColor = 'rgba(0,0,0,0.08)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
-        ctx.fillText('DONOR CARD', W / 2, 46);
-        ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-
-        
-        let nextEligible = '--';
-        if (donorData.lastDonateDate) {
-            const last = new Date(donorData.lastDonateDate + 'T00:00:00');
-            const nextDate = new Date(last.getTime() + 90 * 24 * 60 * 60 * 1000);
-            if (nextDate <= new Date()) { nextEligible = 'Eligible Now'; }
-            else { const _p = n => String(n).padStart(2, '0'); nextEligible = `${_p(nextDate.getDate())}/${_p(nextDate.getMonth() + 1)}/${nextDate.getFullYear()}`; }
-        }
-        let ageDisplay = '--';
-        if (donorData.dateOfBirth) {
-            const dob = new Date(donorData.dateOfBirth + 'T00:00:00');
-            const now = new Date();
-            let age = now.getFullYear() - dob.getFullYear();
-            if (now.getMonth() < dob.getMonth() || (now.getMonth() === dob.getMonth() && now.getDate() < dob.getDate())) age--;
-            ageDisplay = age + ' years';
-        }
-        const lastD = donorData.lastDonateDate
-            ? (() => { const _d = new Date(donorData.lastDonateDate + 'T00:00:00'); const _p = n => String(n).padStart(2, '0'); return `${_p(_d.getDate())}/${_p(_d.getMonth() + 1)}/${_d.getFullYear()}`; })()
-            : 'Not recorded';
-        const donorName = donorData.fullName || 'Donor';
-
-        
-        const drawLocationPin = (cx, cy, color) => {
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.arc(cx, cy - 2, 4.5, Math.PI, 0);
-            ctx.lineTo(cx, cy + 7);
-            ctx.closePath();
-            ctx.fill();
-            
-            ctx.fillStyle = '#fff';
-            ctx.beginPath(); ctx.arc(cx, cy - 2, 2, 0, Math.PI * 2); ctx.fill();
-        };
-
-        const drawPhoneIcon = (cx, cy, color) => {
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.roundRect(cx - 3.5, cy - 5.5, 7, 11, 1.5);
-            ctx.fill();
-            ctx.fillStyle = '#fff';
-            ctx.beginPath(); ctx.arc(cx, cy + 3, 1, 0, Math.PI * 2); ctx.fill();
-            ctx.fillRect(cx - 2, cy - 4, 4, 5);
-        };
-
-        const drawCalendarIcon = (cx, cy, color) => {
-            ctx.fillStyle = color;
-            ctx.beginPath(); ctx.roundRect(cx - 5.5, cy - 4, 11, 10, 1.5); ctx.fill();
-            
-            ctx.fillStyle = color;
-            ctx.fillRect(cx - 5.5, cy - 4, 11, 3.5);
-            
-            ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
-            ctx.beginPath(); ctx.moveTo(cx - 2.5, cy - 5.5); ctx.lineTo(cx - 2.5, cy - 3); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(cx + 2.5, cy - 5.5); ctx.lineTo(cx + 2.5, cy - 3); ctx.stroke();
-            
-            ctx.fillStyle = '#fff';
-            ctx.fillRect(cx - 3.5, cy + 0.5, 2, 1.5);
-            ctx.fillRect(cx - 0.5, cy + 0.5, 2, 1.5);
-            ctx.fillRect(cx + 2, cy + 0.5, 2, 1.5);
-            ctx.fillRect(cx - 3.5, cy + 3, 2, 1.5);
-            ctx.fillRect(cx - 0.5, cy + 3, 2, 1.5);
-        };
-
-        const drawCalendarCheckIcon = (cx, cy, color) => {
-            ctx.fillStyle = color;
-            ctx.beginPath(); ctx.roundRect(cx - 5.5, cy - 4, 11, 10, 1.5); ctx.fill();
-            ctx.fillRect(cx - 5.5, cy - 4, 11, 3.5);
-            ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
-            ctx.beginPath(); ctx.moveTo(cx - 2.5, cy - 5.5); ctx.lineTo(cx - 2.5, cy - 3); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(cx + 2.5, cy - 5.5); ctx.lineTo(cx + 2.5, cy - 3); ctx.stroke();
-            
-            ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.8; ctx.lineJoin = 'round';
-            ctx.beginPath(); ctx.moveTo(cx - 2.5, cy + 2); ctx.lineTo(cx - 0.5, cy + 4); ctx.lineTo(cx + 3, cy + 0.5); ctx.stroke();
-        };
-
-        const drawHeartShape = (cx, cy, size, color) => {
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            const s = size;
-            ctx.moveTo(cx, cy + s * 0.4);
-            ctx.bezierCurveTo(cx - s * 0.5, cy - s * 0.1, cx - s * 0.5, cy - s * 0.5, cx - s * 0.25, cy - s * 0.5);
-            ctx.bezierCurveTo(cx - s * 0.05, cy - s * 0.5, cx, cy - s * 0.25, cx, cy - s * 0.1);
-            ctx.bezierCurveTo(cx, cy - s * 0.25, cx + s * 0.05, cy - s * 0.5, cx + s * 0.25, cy - s * 0.5);
-            ctx.bezierCurveTo(cx + s * 0.5, cy - s * 0.5, cx + s * 0.5, cy - s * 0.1, cx, cy + s * 0.4);
-            ctx.fill();
-        };
-
-        const drawRest = () => {
-            
-            const nameY = photoY + photoS + 40;
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#1f2937';
-            ctx.font = '800 22px Arial, Helvetica, sans-serif';
-            ctx.fillText(String(donorName), W / 2, nameY);
-
-            
-            ctx.fillStyle = '#6b7280';
-            ctx.font = '400 11.5px Arial, Helvetica, sans-serif';
-            ctx.fillText(String(donorData.email || '--'), W / 2, nameY + 20);
-
-            
-            let subLine = '';
-            const genderVal = donorData.gender || '';
-            if (genderVal && genderVal !== '--' && genderVal !== '\u2014') subLine += genderVal;
-            if (ageDisplay !== '--') subLine += (subLine ? ' \u2022 ' : '') + ageDisplay;
-            if (subLine) {
-                ctx.fillStyle = '#9ca3af';
-                ctx.font = '600 10.5px Arial, Helvetica, sans-serif';
-                ctx.fillText(subLine, W / 2, nameY + 36);
-            }
-
-            
-            const badgeW = 84, badgeH = 36;
-            const badgeX = (W - badgeW) / 2, badgeY = nameY + 50;
-            const bGrad = ctx.createLinearGradient(badgeX, badgeY, badgeX + badgeW, badgeY + badgeH);
-            bGrad.addColorStop(0, '#b91c1c'); bGrad.addColorStop(0.5, '#dc2626'); bGrad.addColorStop(1, '#ef4444');
-            ctx.fillStyle = bGrad;
-            ctx.beginPath(); ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 9); ctx.fill();
-            
-            ctx.fillStyle = 'rgba(255,255,255,0.1)';
-            ctx.fillRect(badgeX, badgeY, badgeW, badgeH / 2);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '900 20px Arial, Helvetica, sans-serif';
-            ctx.fillText(String(donorData.bloodGroup || '--'), W / 2, badgeY + badgeH / 2);
-            ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-
-            
-            const divY = badgeY + badgeH + 14;
-            const divGrad = ctx.createLinearGradient(50, 0, W - 50, 0);
-            divGrad.addColorStop(0, 'rgba(220,38,38,0)'); divGrad.addColorStop(0.5, 'rgba(220,38,38,0.1)'); divGrad.addColorStop(1, 'rgba(220,38,38,0)');
-            ctx.fillStyle = divGrad; ctx.fillRect(50, divY, W - 100, 1);
-
-            
-            const rowX = 28, rowW = W - 56;
-            const rowH = 44;
-            const rowGap = 5;
-            let rY = divY + 12;
-            const iconBoxS = 30;
-
-            const drawInfoRow = (label, value, y, bgColor, iconColor, drawIcon) => {
-                
-                ctx.fillStyle = bgColor;
-                ctx.beginPath(); ctx.roundRect(rowX, y, rowW, rowH, 9); ctx.fill();
-
-                
-                const iconBgX = rowX + 10, iconBgY = y + (rowH - iconBoxS) / 2;
-                ctx.fillStyle = 'rgba(255,255,255,0.7)';
-                ctx.beginPath(); ctx.roundRect(iconBgX, iconBgY, iconBoxS, iconBoxS, 8); ctx.fill();
-
-                
-                drawIcon(iconBgX + iconBoxS / 2, iconBgY + iconBoxS / 2, iconColor);
-
-                
-                ctx.fillStyle = '#b0b0b0';
-                ctx.font = '700 7.5px Arial, Helvetica, sans-serif';
-                ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-                ctx.fillText(label, rowX + iconBoxS + 18, y + 16);
-
-                
-                ctx.fillStyle = '#1f2937';
-                ctx.font = '700 14px Arial, Helvetica, sans-serif';
-                ctx.fillText(String(value), rowX + iconBoxS + 18, y + 33);
-            };
-
-            drawInfoRow('LOCATION', donorData.location || '--', rY, 'rgba(254,242,242,0.5)', '#dc2626', drawLocationPin);
-            rY += rowH + rowGap;
-            drawInfoRow('PHONE', formatPhoneForDisplay(donorData.phone || '--'), rY, 'rgba(252,231,243,0.3)', '#dc2626', drawPhoneIcon);
-            rY += rowH + rowGap;
-            drawInfoRow('LAST DONATION', lastD, rY, 'rgba(254,242,242,0.5)', '#dc2626', drawCalendarIcon);
-            rY += rowH + rowGap;
-            drawInfoRow('NEXT ELIGIBLE', nextEligible, rY, 'rgba(252,231,243,0.3)', '#059669', drawCalendarCheckIcon);
-            rY += rowH + rowGap;
-
-            
-            let memberSinceCanvas = '--';
-            const memberSinceSrcCanvas = donorData.createdAt || donorData.memberSince;
-            if (memberSinceSrcCanvas) {
-                const _d = new Date(memberSinceSrcCanvas);
-                if (!isNaN(_d.getTime())) {
-                    const _p = n => String(n).padStart(2, '0');
-                    memberSinceCanvas = `${_p(_d.getDate())}/${_p(_d.getMonth() + 1)}/${_d.getFullYear()}`;
-                }
-            }
-            const drawClockIcon = (cx, cy, color) => {
-                ctx.strokeStyle = color; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
-                ctx.beginPath(); ctx.arc(cx, cy, 5.5, 0, Math.PI * 2); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(cx, cy - 3); ctx.lineTo(cx, cy); ctx.lineTo(cx + 2.5, cy + 1.5); ctx.stroke();
-                
-                ctx.fillStyle = color;
-                ctx.beginPath(); ctx.arc(cx - 4, cy - 4, 1.5, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.arc(cx - 4, cy - 1.5, 2, Math.PI, 0); ctx.fill();
-            };
-            drawInfoRow('MEMBER SINCE', memberSinceCanvas, rY, 'rgba(238,242,255,0.5)', '#6366f1', drawClockIcon);
-
-            
-            const footH = 36;
-            const footY = H - footH;
-            
-            const footGrad = ctx.createLinearGradient(0, footY, 0, H);
-            footGrad.addColorStop(0, 'rgba(254,242,242,0.6)');
-            footGrad.addColorStop(1, 'rgba(252,231,243,0.4)');
-            ctx.fillStyle = footGrad; ctx.fillRect(0, footY, W, footH);
-            
-            ctx.fillStyle = 'rgba(220,38,38,0.06)'; ctx.fillRect(0, footY, W, 1);
-
-            
-            const heartX = W / 2 - 72, heartY = footY + footH / 2;
-            ctx.fillStyle = '#dc2626';
-            ctx.beginPath();
-            ctx.moveTo(heartX, heartY - 1);
-            ctx.bezierCurveTo(heartX - 5, heartY - 6, heartX - 9, heartY - 2, heartX, heartY + 5);
-            ctx.moveTo(heartX, heartY - 1);
-            ctx.bezierCurveTo(heartX + 5, heartY - 6, heartX + 9, heartY - 2, heartX, heartY + 5);
-            ctx.fill();
-
-            
-            ctx.fillStyle = '#b91c1c';
-            ctx.font = '700 11px Arial, Helvetica, sans-serif';
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText('Donate Blood, Save Life', W / 2 + 6, footY + footH / 2);
-            ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-
-            
-            ctx.strokeStyle = 'rgba(220,38,38,0.08)'; ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.roundRect(1, 1, W - 2, H - 2, 14); ctx.stroke();
-
-            resolve(canvas);
-        };
-
-        if (photoSrc) {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = () => {
-                ctx.save();
-                ctx.beginPath(); ctx.arc(photoCX, photoCY, photoR, 0, Math.PI * 2); ctx.clip();
-                ctx.drawImage(img, photoX, photoY, photoS, photoS);
-                ctx.restore();
-                drawRest();
-            };
-            img.onerror = () => {
-                const init = (donorName).split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0, 2).toUpperCase();
-                ctx.fillStyle = '#b91c1c'; ctx.font = '900 52px Arial, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText(init, photoCX, photoCY); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-                drawRest();
-            };
-            img.src = photoSrc;
-        } else {
-            const init = (donorName).split(/\s+/).filter(Boolean).map(p => p[0]).join('').slice(0, 2).toUpperCase();
-            ctx.fillStyle = '#b91c1c'; ctx.font = '900 52px Arial, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(init, photoCX, photoCY); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-            drawRest();
+    if (donorData.profilePhoto) showPhoto(donorData.profilePhoto);
+    content.querySelector('#donor-card-photo-area').addEventListener('click', () => photoInput.click());
+    photoInput.addEventListener('change', () => {
+        const file = photoInput.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => showPhoto(reader.result);
+        reader.readAsDataURL(file);
+        photoInput.value = '';
+    });
+    download.addEventListener('click', async () => {
+        download.disabled = true;
+        try {
+            const canvas = await renderDonorCardCanvas(card, photo);
+            const link = document.createElement('a');
+            link.download = `Donor_Card_${card.name.replace(/\s+/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        } catch (error) {
+            console.error('Error downloading donor card:', error);
+            photoHint.textContent = t('donorCardDownloadError');
+        } finally {
+            download.disabled = false;
         }
     });
 }
 
-window.downloadCertificateFromModal = function(donorName) {
-    if (window.currentCertificateCanvas) {
-        downloadCertificate(window.currentCertificateCanvas, donorName || window.currentDonorName);
-    }
-};
+async function renderDonorCardCanvas(card, photo) {
+    const [logo, image] = await Promise.all([loadArtwork(logoUrl), loadArtwork(photo)]);
+    if (!image) throw new Error('Photo could not be loaded');
+    const width = 540;
+    const height = 475;
+    const scale = 3;
+    const canvas = document.createElement('canvas');
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
 
-window.shareCertificateFromModal = function(donorName) {
-    if (window.currentCertificateCanvas) {
-        shareCertificate(window.currentCertificateCanvas, donorName || window.currentDonorName);
-    }
-};
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, width, height);
+    const band = ctx.createLinearGradient(0, 0, width, 82);
+    band.addColorStop(0, '#301b2c');
+    band.addColorStop(1, '#7a2948');
+    ctx.fillStyle = band;
+    ctx.fillRect(0, 0, width, 82);
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.roundRect(23, 19, 45, 45, 8);
+    ctx.fill();
+    if (logo) ctx.drawImage(logo, 27, 23, 37, 37);
+    ctx.fillStyle = '#f8d8e6';
+    ctx.font = '13px Arial, sans-serif';
+    ctx.fillText('BAUET BDC', 82, 35);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 22px Arial, sans-serif';
+    ctx.fillText('Donor Card', 82, 60);
 
-function showModal(title, content) {
+    const photoSize = 99;
+    const crop = Math.min(image.naturalWidth, image.naturalHeight);
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(23, 104, photoSize, photoSize, 12);
+    ctx.clip();
+    ctx.drawImage(image, (image.naturalWidth - crop) / 2, (image.naturalHeight - crop) / 2, crop, crop, 23, 104, photoSize, photoSize);
+    ctx.restore();
+
+    ctx.fillStyle = '#31202c';
+    ctx.font = 'bold 26px Arial, sans-serif';
+    ctx.fillText(card.name, 141, 129, 376);
+    ctx.fillStyle = '#6d5866';
+    ctx.font = '15px Arial, sans-serif';
+    ctx.fillText(card.email, 141, 154, 376);
+    if (card.description) ctx.fillText(card.description, 141, 176, 376);
+    ctx.fillStyle = '#fae8f1';
+    ctx.beginPath();
+    ctx.roundRect(141, 184, 67, 30, 6);
+    ctx.fill();
+    ctx.fillStyle = '#78223f';
+    ctx.font = 'bold 17px Arial, sans-serif';
+    ctx.fillText(card.blood, 153, 205, 42);
+
+    const labels = ['Location', 'Phone', 'Last donation', 'Next eligible', 'Member since'];
+    card.details.forEach(([, value], index) => {
+        const left = 23 + (index % 2) * 253;
+        const top = 231 + Math.floor(index / 2) * 60;
+        ctx.fillStyle = '#fdf2f7';
+        ctx.beginPath();
+        ctx.roundRect(left, top, 241, 51, 7);
+        ctx.fill();
+        ctx.fillStyle = '#6d5866';
+        ctx.font = '13px Arial, sans-serif';
+        ctx.fillText(labels[index], left + 11, top + 18);
+        ctx.fillStyle = '#31202c';
+        ctx.font = 'bold 15px Arial, sans-serif';
+        ctx.fillText(String(value), left + 11, top + 39, 219);
+    });
+
+    ctx.fillStyle = '#fdf2f7';
+    ctx.fillRect(0, 429, width, 46);
+    ctx.fillStyle = '#78223f';
+    ctx.font = 'bold 14px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(donorCardMotto, width / 2, 457);
+    return canvas;
+}
+
+function showModal(title, content, variant = '') {
     const modal = document.getElementById('certificate-modal') || createCertificateModal();
-    const modalTitle = modal.querySelector('#certificate-modal-title');
-    const modalContent = modal.querySelector('#certificate-modal-content');
-    
-    modalTitle.textContent = title;
-    modalContent.innerHTML = content;
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
+    modal.classList.toggle('document-dialog--card', variant === 'card');
+    modal.querySelector('#certificate-modal-title').textContent = title;
+    const body = modal.querySelector('#certificate-modal-content');
+    body.innerHTML = content;
+    if (!modal.open) modal.showModal();
+    modal.scrollTop = 0;
+    modal.querySelector('[data-document-close]').focus();
+    return body;
 }
 
 function createCertificateModal() {
-    const modal = document.createElement('div');
+    const modal = document.createElement('dialog');
     modal.id = 'certificate-modal';
-    modal.className = 'fixed inset-0 hidden items-center justify-center z-[60]';
+    modal.className = 'document-dialog';
+    modal.setAttribute('aria-labelledby', 'certificate-modal-title');
     modal.innerHTML = `
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeCertificateModal()"></div>
-        <div class="bg-white rounded-2xl shadow-2xl p-5 sm:p-6 w-[95vw] sm:w-auto sm:max-w-3xl z-10 relative max-h-[92vh] overflow-y-auto overscroll-contain" style="-webkit-overflow-scrolling:touch;scroll-behavior:smooth">
-            <button onclick="closeCertificateModal()" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 hover:bg-red-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition" aria-label="Close">
-                <i class="fa-solid fa-times text-sm"></i>
+        <div class="document-dialog__header">
+            <h2 id="certificate-modal-title"></h2>
+            <button type="button" class="document-dialog__close" data-document-close aria-label="${t('documentClose')}">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
-            <h3 id="certificate-modal-title" class="text-xl sm:text-2xl font-bold text-red-700 mb-4 pr-8"></h3>
-            <div id="certificate-modal-content"></div>
         </div>
+        <div id="certificate-modal-content" class="document-dialog__content"></div>
     `;
+    modal.querySelector('[data-document-close]').addEventListener('click', () => modal.close());
+    modal.addEventListener('click', event => {
+        if (event.target !== modal) return;
+        const rect = modal.getBoundingClientRect();
+        if (event.clientX < rect.left || event.clientX > rect.right ||
+            event.clientY < rect.top || event.clientY > rect.bottom) modal.close();
+    });
     document.body.appendChild(modal);
     return modal;
 }
 
-window.closeCertificateModal = function() {
-    const modal = document.getElementById('certificate-modal');
-    if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-};
-
 export function initCertificateFeature() {
-    createCertificateModal();
-    console.log('Certificate feature initialized');
+    if (!document.getElementById('certificate-modal')) createCertificateModal();
 }

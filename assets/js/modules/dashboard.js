@@ -1,9 +1,10 @@
 import state from './state.js';
 import { chartLabels, chartColors, getPieChartOptions } from './chart-config.js';
 import { inferAgeValue, toggleEmptyState } from './utils.js';
-import { flushPendingCounts } from './stats-counter.js';
+import { flushPendingCounts } from './stats-counter.js?v=3';
 
 const CHART_RETRY_DELAY_MS = 350;
+const lazyChartSection = document.querySelector('#dashboard-insights[data-chart-src]');
 
 function scheduleDashboardChartRetry() {
     if (state.dashboardChartRetryTimer) return;
@@ -19,7 +20,7 @@ function scheduleDashboardChartRetry() {
 
 export function ensureDashboardCharts() {
     if (typeof Chart === 'undefined') {
-        scheduleDashboardChartRetry();
+        if (!lazyChartSection) scheduleDashboardChartRetry();
         return false;
     }
     if (state.dashboardChartRetryTimer) {
@@ -221,14 +222,38 @@ export function updateMonthlyDonationsChart() {
 }
 
 export function refreshDashboardCharts() {
+    if (lazyChartSection && typeof Chart === 'undefined') return;
     updateAgeGroupChart();
     updateMonthlyDonationsChart();
     updateBloodGroupChart();
 }
 
+function loadHomepageCharts() {
+    const script = document.createElement('script');
+    script.src = lazyChartSection.dataset.chartSrc;
+    script.addEventListener('load', refreshDashboardCharts, { once: true });
+    script.addEventListener('error', () => {
+        lazyChartSection.querySelector('[data-chart-error]').hidden = false;
+    }, { once: true });
+    document.head.append(script);
+}
+
 export function setupStatsVisibilityObserver() {
     if (state.isStatsObserverInitialized) return;
     state.isStatsObserverInitialized = true;
+    if (lazyChartSection) {
+        if (!('IntersectionObserver' in window)) {
+            loadHomepageCharts();
+            return;
+        }
+        const chartObserver = new IntersectionObserver((entries) => {
+            if (!entries.some(entry => entry.isIntersecting)) return;
+            chartObserver.disconnect();
+            loadHomepageCharts();
+        }, { rootMargin: '300px 0px' });
+        chartObserver.observe(lazyChartSection);
+        return;
+    }
     const section = document.getElementById('dashboard-insights');
     if (!section || !('IntersectionObserver' in window)) {
         window.__statsVisible__ = true;

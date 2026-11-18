@@ -19,9 +19,13 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="../assets/css/common.css?v=141">
-    <link rel="stylesheet" href="../assets/css/profile.css?v=2">
+    <link rel="stylesheet" href="../assets/css/common.css?v=143">
+    <link rel="stylesheet" href="../assets/css/profile.css?v=4">
     <meta name="description" content="Manage your donor profile at BAUET BDC.">
+    <link rel="stylesheet" href="../assets/css/footer.css?v=2">
+    <link rel="stylesheet" href="../assets/css/donor-documents.css?v=1">
+    <link rel="stylesheet" href="../assets/css/site-navbar.css?v=3">
+    <script type="module" src="../assets/js/modules/header.js?v=5"></script>
 </head>
 
 <body class="bg-white text-gray-900 loading" style="font-family:'Inter',sans-serif;">
@@ -37,75 +41,84 @@
         </div>
     </div>
 
-    <header class="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur shadow-lg rounded-b-xl">
-        <nav class="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-5 lg:px-6 py-2">
-            <div class="flex items-center gap-3">
-                <a id="profile-brand-link" href="../index.html" class="flex items-center gap-3 text-decoration-none">
-                    <img src="../image/blood-drop.png" alt="logo" class="h-10 w-10 header-logo border-red-600" />
-                    <span class="text-2xl font-extrabold text-red-700 tracking-tight site-title"
-                        data-i18n="siteTitle">BAUET BDC</span>
+    <header class="site-header site-navbar fixed">
+        <nav class="navbar-row" aria-label="Main navigation">
+            <div class="navbar-brand-group">
+                <a id="profile-brand-link" class="navbar-brand" href="../index.html">
+                    <img src="../image/bauet-bdc-logo.webp" width="36" height="36" alt="" />
+                    <span data-i18n="siteTitle">BAUET BDC</span>
                 </a>
-                <span id="admin-badge"
-                    class="hidden items-center gap-1 text-xs font-bold px-2 py-1 rounded bg-red-600 text-white shadow"
-                    data-i18n="adminBadge">Admin</span>
+                <span id="admin-badge" class="navbar-badge hidden" data-i18n="adminBadge">Admin</span>
             </div>
-            <div class="hidden md:flex items-center gap-1 text-base font-medium">
-                <a id="nav-home-link" href="../index.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
-                    data-i18n="navHome">Home</a>
-                <a id="nav-about-link" href="about.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
-                    data-i18n="navAbout">About</a>
-                <a id="nav-how-link" href="donationGuide.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
-                    data-i18n="navHow">Donation Guide</a>
-                <a id="nav-events-link" href="events.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
-                    data-i18n="navEvents">Events</a>
-                <a id="nav-join-link" href="join.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
-                    data-i18n="navJoin">Join</a>
-                <a id="nav-search-link" href="search.html" class="px-3 py-2 rounded hover:bg-red-50 text-red-700"
-                    data-i18n="navSearch">Search</a>
-                <a id="nav-contact-link" href="../index.html#contact"
-                    class="px-3 py-2 rounded hover:bg-red-50 text-red-700" data-i18n="navContact">Contact</a>
-                <a id="nav-dashboard-link" href="admin.html"
-                    class="hidden px-3 py-2 rounded hover:bg-red-50 text-red-700 font-bold"
-                    data-i18n="navDashboard">Dashboard</a>
+            <div id="desktop-nav-menu" class="navbar-desktop-links">
+                <a id="nav-home-link" href="../index.html" data-i18n="navHome">Home</a>
+                <a id="nav-about-link" href="about.html" data-i18n="navAbout">About</a>
+                <a id="nav-how-link" href="donationGuide.html" data-i18n="navHow">Donation Guide</a>
+                <a id="nav-events-link" href="events.html" data-i18n="navEvents">Events</a>
+                <a id="nav-join-link" href="join.html" data-i18n="navJoin">Join</a>
+                <a id="nav-search-link" href="search.html" data-i18n="navSearch">Search</a>
+                <a id="nav-leaderboard-link" href="leaderboard.html" data-i18n="navLeaderboard">Leaderboard</a>
+                <a id="nav-contact-link" href="../index.html#contact" data-i18n="navContact">Contact</a>
+                <a id="nav-dashboard-link" href="admin.html" class="hidden"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i><span data-i18n="navDashboard">Dashboard</span></a>
+                <a id="nav-admin-profile-link" href="profile.html" class="hidden" aria-current="page"><i class="fa-solid fa-user" aria-hidden="true"></i><span data-i18n="profileTitle">My Profile</span></a>
             </div>
-            <div class="flex items-center gap-2">
-                <button id="pf-logout-header" type="button"
-                    class="desktop-only inline-flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-700 transition">
-                    <img src="../image/logout.png" alt="Logout" class="inline-icon"> <span
-                        data-i18n="profileLogout">Logout</span>
-                </button>
-                <button id="menu-toggle" class="md:hidden p-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
-                    aria-label="Open menu" type="button">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
+            <div class="navbar-actions">
+                <button id="pf-logout-header" class="navbar-account-button navbar-logout hidden" type="button"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span data-i18n="profileLogout">Logout</span></button>
+                <button id="menu-toggle" class="navbar-menu-toggle" type="button" aria-controls="mobile-menu"
+                    aria-expanded="false" aria-label="Menu" data-i18n="desktopMenuLabel">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path class="navbar-menu-icon" stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+                        <path class="navbar-close-icon" stroke-linecap="round" d="m6 6 12 12M18 6 6 18" />
                     </svg>
                 </button>
             </div>
         </nav>
-        <div id="mobile-menu" class="md:hidden hidden bg-white/95 shadow-lg rounded-b-xl">
-            <div class="px-4 py-4 flex flex-col gap-2 text-red-700">
-                <a id="mobile-home-link" href="../index.html" class="block px-3 py-2 rounded hover:bg-red-50"
-                    data-i18n="navHome">Home</a>
-                <a id="mobile-about-link" href="about.html" class="block px-3 py-2 rounded hover:bg-red-50"
-                    data-i18n="navAbout">About</a>
-                <a id="mobile-how-link" href="donationGuide.html" class="block px-3 py-2 rounded hover:bg-red-50"
-                    data-i18n="navHow">Donation Guide</a>
-                <a id="mobile-events-link" href="events.html" class="block px-3 py-2 rounded hover:bg-red-50"
-                    data-i18n="navEvents">Events</a>
-                <a id="mobile-join-link" href="join.html" class="block px-3 py-2 rounded hover:bg-red-50"
-                    data-i18n="navJoin">Join</a>
-                <a id="mobile-search-link" href="search.html" class="block px-3 py-2 rounded hover:bg-red-50"
-                    data-i18n="navSearch">Search</a>
-                <a id="mobile-contact-link" href="../index.html#contact" class="block px-3 py-2 rounded hover:bg-red-50"
-                    data-i18n="navContact">Contact</a>
-                <a id="admin-mobile-link" href="admin.html" class="hidden px-3 py-2 rounded hover:bg-red-50"
-                    data-i18n="navDashboard">Dashboard</a>
-                <hr class="border-t border-red-200 my-1">
-                <button id="mobile-logout-btn"
-                    class="hidden text-left px-3 py-2 rounded hover:bg-red-50 text-red-600 font-medium">
-                    <img src="../image/logout.png" alt="Logout" class="inline-icon"> Logout
-                </button>
+        <div id="mobile-menu" class="navbar-popover hidden" role="navigation" aria-label="Menu">
+            <div class="navbar-panel">
+                <div class="navbar-mobile-links">
+                    <a id="mobile-home-link" href="../index.html">
+                        <i class="fa-solid fa-house" aria-hidden="true"></i>
+                        <span data-i18n="navHome">Home</span>
+                    </a>
+                    <a id="mobile-about-link" href="about.html">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        <span data-i18n="navAbout">About</span>
+                    </a>
+                    <a id="mobile-how-link" href="donationGuide.html">
+                        <i class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i>
+                        <span data-i18n="navHow">Donation Guide</span>
+                    </a>
+                    <a id="mobile-events-link" href="events.html">
+                        <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+                        <span data-i18n="navEvents">Events</span>
+                    </a>
+                    <a id="mobile-join-link" href="join.html">
+                        <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                        <span data-i18n="navJoin">Join</span>
+                    </a>
+                    <a id="mobile-search-link" href="search.html">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <span data-i18n="navSearch">Search</span>
+                    </a>
+                    <a id="mobile-leaderboard-link" href="leaderboard.html">
+                        <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+                        <span data-i18n="navLeaderboard">Leaderboard</span>
+                    </a>
+                    <a id="admin-mobile-link" href="admin.html" class="hidden">
+                        <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+                        <span data-i18n="navDashboard">Dashboard</span>
+                    </a>
+                    <a id="admin-mobile-profile-link" href="profile.html" class="hidden" aria-current="page">
+                        <i class="fa-solid fa-user" aria-hidden="true"></i>
+                        <span data-i18n="profileTitle">My Profile</span>
+                    </a>
+                </div>
+                <div class="navbar-mobile-account">
+                    <button id="mobile-logout-btn" class="navbar-logout hidden" type="button">
+                        <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+                        <span data-i18n="profileLogout">Logout</span>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -130,45 +143,49 @@
 
         <div id="profile-content" class="hidden">
             <div class="profile-hero-card">
-                <div class="profile-hero-bg"></div>
                 <div class="profile-hero-inner">
                     <div class="profile-avatar" id="profile-avatar">
-                        <span id="profile-avatar-text">?</span>
-                        <img id="profile-avatar-img" src="" alt=""
-                            style="display:none;width:100%;height:100%;object-fit:cover;border-radius:1.25rem;position:absolute;inset:0" />
-                        <label id="profile-avatar-upload-label" for="profile-photo-input"
-                            style="position:absolute;bottom:-4px;right:-4px;width:32px;height:32px;border-radius:50%;background:#fff;color:#111827;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 10px rgba(15,23,42,0.12);border:1px solid #e5e7eb;transition:transform 0.2s;z-index:2"
-                            title="Upload Photo">
-                            <i class="fa-solid fa-camera" style="font-size:0.7rem"></i>
+                        <span id="profile-avatar-text" aria-hidden="true">?</span>
+                        <img id="profile-avatar-img" alt="" />
+                        <input type="file" id="profile-photo-input" accept="image/png,image/jpeg" class="sr-only" />
+                        <label id="profile-avatar-upload-label" for="profile-photo-input" title="Upload Photo">
+                            <i class="fa-solid fa-camera" aria-hidden="true"></i>
+                            <span class="sr-only" data-i18n="profileUploadPhoto">Upload Profile Photo</span>
                         </label>
-                        <button id="profile-photo-remove" type="button"
-                            style="position:absolute;top:-4px;right:-4px;width:28px;height:28px;border-radius:50%;background:#fff;color:#111827;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 10px rgba(15,23,42,0.12);border:1px solid #e5e7eb;transition:transform 0.2s;z-index:2"
-                            title="Remove Photo" aria-label="Remove profile photo">
-                            <i class="fa-solid fa-xmark" style="font-size:0.75rem"></i>
+                        <button id="profile-photo-remove" type="button" title="Remove Photo" aria-label="Remove profile photo">
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                         </button>
-                        <input type="file" id="profile-photo-input" accept="image/png,image/jpeg"
-                            style="display:none" />
                     </div>
                     <div class="profile-hero-info">
-                        <h1 id="profile-display-name" class="text-xl sm:text-2xl font-extrabold text-gray-900">Donor
-                            Name</h1>
-                        <div class="flex flex-wrap items-center gap-2 mt-1.5">
+                        <p class="profile-section-label" data-i18n="profileTitle">My Profile</p>
+                        <h1 id="profile-display-name" class="profile-name">Donor Name</h1>
+                        <div class="profile-hero-meta">
                             <span id="profile-display-blood"
-                                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-bold">
+                                class="profile-blood-chip">
                                 <i class="fa-solid fa-droplet text-[10px]"></i>
                                 <span>—</span>
                             </span>
                             <span id="profile-display-location"
-                                class="inline-flex items-center gap-1 text-xs text-gray-500 font-medium">
+                                class="profile-location">
                                 <i class="fa-solid fa-location-dot text-[10px]"></i>
                                 <span>—</span>
                             </span>
                         </div>
-                        <p id="profile-display-email" class="text-xs text-gray-400 mt-1">email@example.com</p>
-                        <div class="profile-id-chip mt-2">
-                            <span class="profile-id-chip__label">Donor ID</span>
+                        <p id="profile-display-email" class="profile-email">—</p>
+                        <div class="profile-id-chip">
+                            <span class="profile-id-chip__label" data-i18n="profileDonorId">Donor ID</span>
                             <span id="profile-display-id" class="profile-id-chip__value">—</span>
                         </div>
+                    </div>
+                    <div class="profile-documents">
+                        <button id="pf-certificate" type="button" class="pf-btn pf-btn--document pf-btn--certificate">
+                            <i class="fa-solid fa-certificate" aria-hidden="true"></i>
+                            <span data-i18n="profileCertificate">Certificate</span>
+                        </button>
+                        <button id="pf-donor-card" type="button" class="pf-btn pf-btn--document">
+                            <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+                            <span data-i18n="profileDonorCard">Donor Card</span>
+                        </button>
                     </div>
                 </div>
                 <div class="profile-quick-stats">
@@ -189,7 +206,10 @@
 
                             <p id="profile-stat-eligible" class="profile-stat-value">—</p>
 
-                            <p id="profile-stat-eligible-date" class="text-xs text-gray-500 mt-1">—</p>
+                            <p id="profile-stat-eligible-date" class="profile-stat-detail" hidden>
+                                <span data-i18n="profileNextEligible">Next eligible</span>
+                                <span id="profile-stat-next-date"></span>
+                            </p>
                         </div>
                     </div>
                     <div class="profile-stat-item">
@@ -209,251 +229,210 @@
                         </div>
                     </div>
                     <div class="profile-stat-item">
-                        <span class="profile-stat-icon profile-stat-icon--purple"
-                            style="background:rgba(124,58,237,0.1);color:#7c3aed"><i
+                        <span class="profile-stat-icon profile-stat-icon--purple"><i
                                 class="fa-solid fa-calendar-plus"></i></span>
                         <div>
-                            <p class="profile-stat-label">Member Since</p>
+                            <p class="profile-stat-label" data-i18n="profileMemberSince">Member Since</p>
                             <p id="profile-stat-member-since" class="profile-stat-value">—</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="profile-form-card profile-recent-card">
-                <div class="profile-form-header">
-                    <div class="flex items-center gap-2.5">
-                        <span class="profile-form-header-icon"><i class="fa-solid fa-hand-holding-droplet"></i></span>
+            <div class="profile-workspace">
+                <div class="profile-form-card profile-recent-card">
+                    <div class="profile-form-header">
+                        <div class="flex items-center gap-2.5">
+                            <span class="profile-form-header-icon"><i class="fa-solid fa-hand-holding-droplet"></i></span>
+                            <div>
+                                <h2 data-i18n="profileRecentTitle">Recent Donation Details</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-form-body">
+                        <div id="profile-recent-empty" class="profile-recent-empty" data-i18n="profileRecentEmpty">No recent donation details yet.</div>
+                        <div id="profile-recent-grid" class="profile-recent-grid hidden">
+                            <div class="profile-recent-item">
+                                <span class="profile-recent-label" data-i18n="profileDonationDate">Donation Date</span>
+                                <span id="profile-recent-date" class="profile-recent-value">—</span>
+                            </div>
+                            <div class="profile-recent-item">
+                                <span class="profile-recent-label" data-i18n="profileBloodGroup">Blood Group</span>
+                                <span id="profile-recent-blood" class="profile-recent-value">—</span>
+                            </div>
+                            <div class="profile-recent-item">
+                                <span class="profile-recent-label" data-i18n="profileDonationLocation">Donation Location</span>
+                                <span id="profile-recent-location" class="profile-recent-value">—</span>
+                            </div>
+                            <div class="profile-recent-item">
+                                <span class="profile-recent-label" data-i18n="Department">Department</span>
+                                <span id="profile-recent-department" class="profile-recent-value">—</span>
+                            </div>
+                            <div class="profile-recent-item">
+                                <span class="profile-recent-label" data-i18n="Batch">Batch</span>
+                                <span id="profile-recent-batch" class="profile-recent-value">—</span>
+                            </div>
+                            <div class="profile-recent-item">
+                                <span class="profile-recent-label" data-i18n="profileDonationAge">Age</span>
+                                <span id="profile-recent-age" class="profile-recent-value">—</span>
+                            </div>
+                            <div class="profile-recent-item">
+                                <span class="profile-recent-label" data-i18n="profileDonationWeight">Weight</span>
+                                <span id="profile-recent-weight" class="profile-recent-value">—</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-form-card profile-editor">
+                    <div class="profile-form-header">
+                        <div class="flex items-center gap-2.5">
+                            <span class="profile-form-header-icon"><i class="fa-solid fa-pen-to-square"></i></span>
+                            <div>
+                                <h2 class="text-base sm:text-lg font-bold text-gray-900" data-i18n="profileEditTitle">Edit
+                                    Profile</h2>
+                                <p class="text-xs text-gray-500 mt-0.5" data-i18n="profileEditDesc">Update your personal and
+                                    donation details</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="profile-form" class="profile-form-body">
+                        <div class="profile-form-grid">
+                            <div class="pf-field">
+                                <label for="profile-fullName" class="pf-label">
+                                    <i class="fa-solid fa-user pf-label-icon"></i> <span data-i18n="profileFullName">Full
+                                        Name</span>
+                                </label>
+                                <input name="fullName" id="profile-fullName" type="text" required class="pf-input"
+                                    placeholder="Enter your full name" />
+                            </div>
+                            <div class="pf-field">
+                                <label for="profile-email" class="pf-label">
+                                    <i class="fa-solid fa-envelope pf-label-icon"></i> <span
+                                        data-i18n="profileEmail">Email</span>
+                                </label>
+                                <input name="email" id="profile-email" type="email" required class="pf-input"
+                                    placeholder="Enter your email" />
+                                <span class="pf-hint">Only @gmail.com addresses are accepted</span>
+                            </div>
+                            <div class="pf-field">
+                                <label for="profile-phone" class="pf-label">
+                                    <i class="fa-solid fa-phone pf-label-icon"></i> <span data-i18n="profilePhone">Phone
+                                        Number</span>
+                                </label>
+                                <input name="phone" id="profile-phone" type="tel" required class="pf-input"
+                                    placeholder="Enter phone number" />
+                            </div>
+                            <div class="pf-field">
+                                <label for="profile-bloodGroup" class="pf-label">
+                                    <i class="fa-solid fa-droplet pf-label-icon"></i> <span
+                                        data-i18n="profileBloodGroup">Blood Group</span>
+                                </label>
+                                <select name="bloodGroup" id="profile-bloodGroup" required class="pf-input">
+                                    <option value="">Select group</option>
+                                    <option>A+</option>
+                                    <option>A-</option>
+                                    <option>B+</option>
+                                    <option>B-</option>
+                                    <option>O+</option>
+                                    <option>O-</option>
+                                    <option>AB+</option>
+                                    <option>AB-</option>
+                                </select>
+                            </div>
+                            <div class="pf-field">
+                                <label for="profile-location" class="pf-label">
+                                    <i class="fa-solid fa-location-dot pf-label-icon"></i> <span
+                                        data-i18n="profileLocation">Current Location</span>
+                                </label>
+                                <input name="location" id="profile-location" type="text" required class="pf-input"
+                                    placeholder="Enter your location" maxlength="31" />
+                            </div>
+                            <div class="pf-field">
+                                <label for="profile-department" class="pf-label">
+                                    <i class="fa-solid fa-building-columns pf-label-icon"></i> <span
+                                        data-i18n="Department">Department</span>
+                                </label>
+                                <input name="department" id="profile-department" type="text" class="pf-input"
+                                    placeholder="Enter your department" />
+                            </div>
+                            <div class="pf-field">
+                                <label for="profile-batch" class="pf-label">
+                                    <i class="fa-solid fa-layer-group pf-label-icon"></i> <span
+                                        data-i18n="Batch">Batch</span>
+                                </label>
+                                <input name="batch" id="profile-batch" type="text" class="pf-input"
+                                    placeholder="Enter your batch" />
+                            </div>
+                            <div class="pf-field">
+                                <label for="profile-lastDonateDate" class="pf-label">
+                                    <i class="fa-solid fa-calendar-day pf-label-icon"></i> <span
+                                        data-i18n="profileLastDonation">Last Blood Donation</span>
+                                </label>
+                                <input name="lastDonateDate" id="profile-lastDonateDate" type="date" class="pf-input" />
+                            </div>
+                            <div class="pf-field">
+                                <label for="profile-dateOfBirth" class="pf-label">
+                                    <i class="fa-solid fa-cake-candles pf-label-icon"></i> <span>Date of Birth</span>
+                                </label>
+                                <input name="dateOfBirth" id="profile-dateOfBirth" type="date" class="pf-input" />
+                            </div>
+                            <div class="pf-field">
+                                <label for="profile-gender" class="pf-label">
+                                    <i class="fa-solid fa-venus-mars pf-label-icon"></i> <span>Gender</span>
+                                </label>
+                                <select name="gender" id="profile-gender" class="pf-input">
+                                    <option value="">Select</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="pf-field pf-field--full">
+                                <label for="profile-notes" class="pf-label">
+                                    <i class="fa-solid fa-note-sticky pf-label-icon"></i> <span
+                                        data-i18n="profileNotes">Additional Notes</span>
+                                </label>
+                                <textarea name="notes" id="profile-notes" rows="3" class="pf-input"
+                                    placeholder="Any additional information you'd like to share..."></textarea>
+                            </div>
+                        </div>
+                        <input name="role" id="profile-role" type="hidden" />
+
+                        <div class="profile-actions">
+                            <button type="submit" class="pf-btn pf-btn--primary">
+                                <i class="fa-solid fa-save"></i>
+                                <span data-i18n="profileSaveChanges">Save Changes</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="profile-account">
+                    <section class="profile-account-card" aria-labelledby="profile-security-title">
+                        <span class="profile-form-header-icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
                         <div>
-                            <h2 class="text-base sm:text-lg font-bold text-gray-900">Recent Donation Details</h2>
-                            <p class="text-xs text-gray-500 mt-0.5">Shown when an admin records a recent donation for
-                                you.</p>
+                            <h2 id="profile-security-title" data-i18n="profileSecurityTitle">Account Security</h2>
+                            <button id="pf-change-password" type="button" class="pf-btn">
+                                <i class="fa-solid fa-key" aria-hidden="true"></i>
+                                <span data-i18n="profileChangePassword">Change Password</span>
+                            </button>
                         </div>
-                    </div>
-                </div>
-                <div class="profile-form-body">
-                    <div id="profile-recent-empty" class="profile-recent-empty">No recent donation details yet.</div>
-                    <div id="profile-recent-grid" class="profile-recent-grid hidden">
-                        <div class="profile-recent-item">
-                            <span class="profile-recent-label">Donation Date</span>
-                            <span id="profile-recent-date" class="profile-recent-value">—</span>
-                        </div>
-                        <div class="profile-recent-item">
-                            <span class="profile-recent-label">Blood Group</span>
-                            <span id="profile-recent-blood" class="profile-recent-value">—</span>
-                        </div>
-                        <div class="profile-recent-item">
-                            <span class="profile-recent-label">Donation Location</span>
-                            <span id="profile-recent-location" class="profile-recent-value">—</span>
-                        </div>
-                        <div class="profile-recent-item">
-                            <span class="profile-recent-label">Department</span>
-                            <span id="profile-recent-department" class="profile-recent-value">—</span>
-                        </div>
-                        <div class="profile-recent-item">
-                            <span class="profile-recent-label">Batch</span>
-                            <span id="profile-recent-batch" class="profile-recent-value">—</span>
-                        </div>
-                        <div class="profile-recent-item">
-                            <span class="profile-recent-label">Age</span>
-                            <span id="profile-recent-age" class="profile-recent-value">—</span>
-                        </div>
-                        <div class="profile-recent-item">
-                            <span class="profile-recent-label">Weight</span>
-                            <span id="profile-recent-weight" class="profile-recent-value">—</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="profile-form-card">
-                <div class="profile-form-header">
-                    <div class="flex items-center gap-2.5">
-                        <span class="profile-form-header-icon"><i class="fa-solid fa-pen-to-square"></i></span>
+                    </section>
+                    <section class="profile-account-card profile-account-card--danger" aria-labelledby="profile-danger-title">
+                        <span class="profile-form-header-icon" aria-hidden="true"><i class="fa-solid fa-triangle-exclamation"></i></span>
                         <div>
-                            <h2 class="text-base sm:text-lg font-bold text-gray-900" data-i18n="profileEditTitle">Edit
-                                Profile</h2>
-                            <p class="text-xs text-gray-500 mt-0.5" data-i18n="profileEditDesc">Update your personal and
-                                donation details</p>
+                            <h2 id="profile-danger-title" data-i18n="profileDangerZone">Danger Zone</h2>
+                            <p data-i18n="profileDangerDesc">Permanently delete your account and all associated data. This
+                                action cannot be undone.</p>
+                            <button id="pf-delete" type="button" class="pf-btn">
+                                <i class="fa-solid fa-trash-alt" aria-hidden="true"></i>
+                                <span data-i18n="profileDeleteAccount">Delete My Account</span>
+                            </button>
                         </div>
-                    </div>
-                </div>
-
-                <form id="profile-form" class="profile-form-body">
-                    <div class="profile-form-grid">
-                        <div class="pf-field">
-                            <label for="profile-fullName" class="pf-label">
-                                <i class="fa-solid fa-user pf-label-icon"></i> <span data-i18n="profileFullName">Full
-                                    Name</span>
-                            </label>
-                            <input name="fullName" id="profile-fullName" type="text" required class="pf-input"
-                                placeholder="Enter your full name" />
-                        </div>
-                        <div class="pf-field">
-                            <label for="profile-email" class="pf-label">
-                                <i class="fa-solid fa-envelope pf-label-icon"></i> <span
-                                    data-i18n="profileEmail">Email</span>
-                            </label>
-                            <input name="email" id="profile-email" type="email" required class="pf-input"
-                                placeholder="Enter your email" />
-                            <span class="pf-hint">Only @gmail.com addresses are accepted</span>
-                        </div>
-                        <div class="pf-field">
-                            <label for="profile-phone" class="pf-label">
-                                <i class="fa-solid fa-phone pf-label-icon"></i> <span data-i18n="profilePhone">Phone
-                                    Number</span>
-                            </label>
-                            <input name="phone" id="profile-phone" type="tel" required class="pf-input"
-                                placeholder="Enter phone number" />
-                        </div>
-                        <div class="pf-field">
-                            <label for="profile-bloodGroup" class="pf-label">
-                                <i class="fa-solid fa-droplet pf-label-icon"></i> <span
-                                    data-i18n="profileBloodGroup">Blood Group</span>
-                            </label>
-                            <select name="bloodGroup" id="profile-bloodGroup" required class="pf-input">
-                                <option value="">Select group</option>
-                                <option>A+</option>
-                                <option>A-</option>
-                                <option>B+</option>
-                                <option>B-</option>
-                                <option>O+</option>
-                                <option>O-</option>
-                                <option>AB+</option>
-                                <option>AB-</option>
-                            </select>
-                        </div>
-                        <div class="pf-field">
-                            <label for="profile-location" class="pf-label">
-                                <i class="fa-solid fa-location-dot pf-label-icon"></i> <span
-                                    data-i18n="profileLocation">Current Location</span>
-                            </label>
-                            <input name="location" id="profile-location" type="text" required class="pf-input"
-                                placeholder="Enter your location" maxlength="31" />
-                        </div>
-                        <div class="pf-field">
-                            <label for="profile-department" class="pf-label">
-                                <i class="fa-solid fa-building-columns pf-label-icon"></i> <span
-                                    data-i18n="Department">Department</span>
-                            </label>
-                            <input name="department" id="profile-department" type="text" class="pf-input"
-                                placeholder="Enter your department" />
-                        </div>
-                        <div class="pf-field">
-                            <label for="profile-batch" class="pf-label">
-                                <i class="fa-solid fa-layer-group pf-label-icon"></i> <span
-                                    data-i18n="Batch">Batch</span>
-                            </label>
-                            <input name="batch" id="profile-batch" type="text" class="pf-input"
-                                placeholder="Enter your batch" />
-                        </div>
-                        <div class="pf-field">
-                            <label for="profile-lastDonateDate" class="pf-label">
-                                <i class="fa-solid fa-calendar-day pf-label-icon"></i> <span
-                                    data-i18n="profileLastDonation">Last Blood Donation</span>
-                            </label>
-                            <input name="lastDonateDate" id="profile-lastDonateDate" type="date" class="pf-input" />
-                        </div>
-                        <div class="pf-field">
-                            <label for="profile-dateOfBirth" class="pf-label">
-                                <i class="fa-solid fa-cake-candles pf-label-icon"></i> <span>Date of Birth</span>
-                            </label>
-                            <input name="dateOfBirth" id="profile-dateOfBirth" type="date" class="pf-input" />
-                        </div>
-                        <div class="pf-field">
-                            <label for="profile-gender" class="pf-label">
-                                <i class="fa-solid fa-venus-mars pf-label-icon"></i> <span>Gender</span>
-                            </label>
-                            <select name="gender" id="profile-gender" class="pf-input">
-                                <option value="">Select</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-
-                        <div class="pf-field pf-field--full">
-                            <label for="profile-notes" class="pf-label">
-                                <i class="fa-solid fa-note-sticky pf-label-icon"></i> <span
-                                    data-i18n="profileNotes">Additional Notes</span>
-                            </label>
-                            <textarea name="notes" id="profile-notes" rows="3" class="pf-input"
-                                placeholder="Any additional information you'd like to share..."></textarea>
-                        </div>
-                    </div>
-                    <input name="role" id="profile-role" type="hidden" />
-
-                    <div class="profile-actions">
-                        <button type="submit" class="pf-btn pf-btn--primary">
-                            <i class="fa-solid fa-save"></i>
-                            <span data-i18n="profileSaveChanges">Save Changes</span>
-                        </button>
-                        <button id="pf-certificate" type="button" class="pf-btn pf-btn--blue">
-                            <i class="fa-solid fa-certificate"></i>
-                            <span data-i18n="profileGenCert">Generate Certificate</span>
-                        </button>
-                        <button id="pf-donor-card" type="button" class="pf-btn pf-btn--teal">
-                            <i class="fa-solid fa-id-card"></i>
-                            <span>Donor Card</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-
-            <div class="profile-form-card"
-                style="margin-top:1.5rem;border:none;background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 50%,#fff7ed 100%);box-shadow:0 2px 12px rgba(245,158,11,0.1),0 0 0 1px rgba(245,158,11,0.08);position:relative;overflow:hidden;padding:1.5rem">
-                <div
-                    style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,0.12) 0%,transparent 70%)">
-                </div>
-                <div
-                    style="position:absolute;bottom:-15px;left:-15px;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,rgba(217,119,6,0.08) 0%,transparent 70%)">
-                </div>
-                <div class="flex items-start gap-3" style="position:relative;z-index:1">
-                    <div
-                        style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(245,158,11,0.3)">
-                        <i class="fa-solid fa-shield-halved" style="color:#fff;font-size:1.15rem"></i>
-                    </div>
-                    <div style="flex:1;min-width:0">
-                        <h2 style="font-size:1.05rem;font-weight:800;color:#92400e;margin:0">Change Password</h2>
-                        <p style="font-size:0.78rem;color:#b45309;margin-top:3px;opacity:0.8">Keep your account secure
-                            with a strong password</p>
-                        <button id="pf-change-password" type="button"
-                            style="margin-top:0.75rem;display:inline-flex;align-items:center;gap:0.5rem;padding:0.55rem 1.2rem;border-radius:0.7rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:0.82rem;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(245,158,11,0.25);transition:all 0.2s;font-family:'Inter',sans-serif"
-                            onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(245,158,11,0.35)'"
-                            onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 14px rgba(245,158,11,0.25)'">
-                            <i class="fa-solid fa-key" style="font-size:0.75rem"></i>
-                            <span>Change Password</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-
-            <div
-                style="margin-top:1.25rem;padding:1.5rem;background:linear-gradient(135deg,#fef2f2 0%,#fff1f2 50%,#fce7f3 100%);border-radius:1.25rem;border:1.5px solid rgba(220,38,38,0.1);box-shadow:0 2px 12px rgba(220,38,38,0.06);position:relative;overflow:hidden">
-                <div
-                    style="position:absolute;top:-20px;right:-20px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(220,38,38,0.08) 0%,transparent 70%)">
-                </div>
-                <div class="flex items-start gap-3" style="position:relative;z-index:1">
-                    <div
-                        style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#fecaca,#fca5a5);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(220,38,38,0.12)">
-                        <i class="fa-solid fa-triangle-exclamation" style="color:#dc2626;font-size:1rem"></i>
-                    </div>
-                    <div style="flex:1;min-width:0">
-                        <h3 style="font-size:0.95rem;font-weight:800;color:#991b1b;margin:0"
-                            data-i18n="profileDangerZone">Danger Zone</h3>
-                        <p style="font-size:0.75rem;color:#b91c1c;margin-top:3px;opacity:0.7"
-                            data-i18n="profileDangerDesc">Permanently delete your account and all associated data. This
-                            action cannot be undone.</p>
-                        <button id="pf-delete" type="button"
-                            style="margin-top:0.75rem;display:inline-flex;align-items:center;gap:0.45rem;padding:0.5rem 1.1rem;border-radius:0.65rem;background:#fff;color:#dc2626;font-size:0.8rem;font-weight:700;border:1.5px solid rgba(220,38,38,0.25);cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;box-shadow:0 1px 4px rgba(220,38,38,0.08)"
-                            onmouseover="this.style.background='#fef2f2';this.style.borderColor='rgba(220,38,38,0.4)';this.style.boxShadow='0 2px 8px rgba(220,38,38,0.12)'"
-                            onmouseout="this.style.background='#fff';this.style.borderColor='rgba(220,38,38,0.25)';this.style.boxShadow='0 1px 4px rgba(220,38,38,0.08)'">
-                            <i class="fa-solid fa-trash-alt" style="font-size:0.72rem"></i>
-                            <span data-i18n="profileDeleteAccount">Delete My Account</span>
-                        </button>
-                    </div>
+                    </section>
                 </div>
             </div>
         </div>
@@ -468,14 +447,14 @@
 
     <div id="delete-confirm-modal" class="fixed inset-0 hidden items-center justify-center z-50">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm mx-4 z-10 text-center">
+        <div class="profile-dialog-panel bg-white rounded-2xl shadow-2xl p-6 max-w-sm mx-4 z-10 text-center">
             <div class="w-14 h-14 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-4">
                 <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
             </div>
             <h3 class="text-xl font-bold text-gray-900 mb-2" data-i18n="profileDeleteTitle">Delete your account?</h3>
             <p class="text-sm text-gray-500" data-i18n="profileDeleteDesc">This will permanently remove your donor
                 profile and all associated data. This cannot be undone.</p>
-            <div class="mt-6 flex justify-center gap-3">
+            <div class="profile-dialog-actions mt-6 flex justify-center gap-3">
                 <button id="delete-cancel"
                     class="px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
                     data-i18n="modalCancel">Cancel</button>
@@ -489,7 +468,7 @@
 
     <div id="change-password-modal" class="fixed inset-0 hidden items-center justify-center z-50">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm mx-4 z-10">
+        <div class="profile-dialog-panel bg-white rounded-2xl shadow-2xl p-6 max-w-sm mx-4 z-10">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-11 h-11 rounded-full bg-amber-100 flex items-center justify-center">
                     <i class="fa-solid fa-lock text-amber-600"></i>
@@ -522,7 +501,7 @@
                         class="w-full rounded-lg border-2 border-gray-100 bg-white p-2.5 text-sm shadow-sm focus:border-amber-300 focus:outline-none" />
                 </div>
                 <p id="cp-error" class="text-xs text-red-600 hidden"></p>
-                <div class="flex justify-end gap-3 mt-1">
+                <div class="profile-dialog-actions flex justify-end gap-3 mt-1">
                     <button type="button" id="cp-cancel"
                         class="px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Cancel</button>
                     <button type="submit" id="cp-submit"
@@ -536,7 +515,7 @@
 
     <div id="email-change-modal" class="fixed inset-0 hidden items-center justify-center z-50">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm mx-4 z-10">
+        <div class="profile-dialog-panel bg-white rounded-2xl shadow-2xl p-6 max-w-sm mx-4 z-10">
             <div class="flex items-center gap-3 mb-5">
                 <div class="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center">
                     <i class="fa-solid fa-envelope text-blue-600"></i>
@@ -559,7 +538,7 @@
                         class="w-full rounded-lg border-2 border-gray-100 bg-white p-2.5 text-sm shadow-sm focus:border-blue-300 focus:outline-none" />
                 </div>
                 <p id="ec-error" class="text-xs text-red-600 hidden"></p>
-                <div class="flex justify-end gap-3 mt-1">
+                <div class="profile-dialog-actions flex justify-end gap-3 mt-1">
                     <button type="button" id="ec-cancel"
                         class="px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Cancel</button>
                     <button type="submit" id="ec-submit"
@@ -582,90 +561,8 @@
         </div>
     </div>
 
-    <footer
-        class="mt-0 relative text-gray-300 bg-slate-900/95 backdrop-blur rounded-t-2xl shadow-[0_-12px_40px_rgba(2,6,23,0.45)] overflow-hidden">
-        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500/60 to-transparent">
-        </div>
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <div class="footer-brand-title">
-                        <img src="../image/blood-drop.png" alt="BAUET BDC" />
-                        <span data-i18n="siteTitle">BAUET BDC</span>
-                    </div>
-                    <p data-i18n="footerBrandDesc">A passionate, volunteer-driven organization dedicated to saving lives
-                        through the power of blood donation. We connect donors with patients in urgent need.</p>
-                    <div class="footer-socials mt-2">
-                        <a href="https://www.facebook.com/share/1CLTZN8DmU/?mibextid=wwXIfr" class="social-facebook"
-                            aria-label="Facebook" target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/company/bauet-blood-donation-club/" class="social-linkedin"
-                            aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="https://wa.me/8801712460423" class="social-whatsapp" aria-label="WhatsApp"
-                            target="_blank" rel="noopener noreferrer">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="footer-col-title" data-i18n="footerQuickLinks">QUICK LINKS</h4>
-                    <ul class="footer-links">
-                        <li><a href="about.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navAbout">About</span></a></li>
-                        <li><a href="donationGuide.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navHow">Donation Guide</span></a></li>
-                        <li><a href="events.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navEvents">Events</span></a></li>
-                        <li><a href="join.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navJoin">Join</span></a></li>
-                        <li><a href="search.html"><i class="fa-solid fa-chevron-right"></i> <span
-                                    data-i18n="navSearch">Search</span></a></li>
-
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="footer-col-title" data-i18n="footerContactInfo">Contact Info</h4>
-                    <ul class="footer-links">
-                        <li><a href="mailto:bauet.bdc@gmail.com"><i class="fa-solid fa-envelope"></i>
-                                <span>bauet.bdc@gmail.com</span></a></li>
-                        <li><a href="tel:+8801712460423"><i class="fa-solid fa-phone"></i>
-                                <span>01712460423</span></a></li>
-                        <li><a href="../index.html#contact"><i class="fa-solid fa-message"></i> <span
-                                    data-i18n="navContact">Contact</span></a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-feedback-wrap">
-                <button id="feedback-btn" type="button"
-                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-red-600/90 text-white text-sm font-semibold shadow hover:bg-red-700 transition">
-                    <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
-                    <span data-i18n="footerFeedback">Share Feedback</span>
-                </button>
-            </div>
-            <hr class="footer-divider" />
-            <div class="footer-bottom">
-                <p class="footer-copy">
-                    &copy; 2026 <a href="../index.html">BAUET BDC</a> All rights reserved.
-                </p>
-                <p class="footer-copy">
-                    <span data-i18n="footerDeveloper">Developed by Md. Mueid Shahriar, </span> CSE-16th, BAUET
-                </p>
-                <div class="footer-developer-socials" aria-label="Developer social links">
-                    <a href="https://www.linkedin.com/in/mueid16/" class="social-linkedin" aria-label="Md. Mueid Shahriar on LinkedIn"
-                        target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a href="https://wa.me/8801712460423" class="social-whatsapp" aria-label="Contact Md. Mueid Shahriar on WhatsApp"
-                        target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-whatsapp"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <footer id="app-footer" class="site-footer"></footer>
+    <script type="module" src="../assets/js/modules/footer.js?v=2"></script>
 
     <div id="fab-wrap" class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
         <button type="button" id="back-to-top"
@@ -729,7 +626,7 @@
     </div>
 
     <script src="../assets/js/viewport.js" defer></script>
-    <script type="module" src="../assets/js/profile.js?v=13"></script>
+    <script type="module" src="../assets/js/profile.js?v=16"></script>
 </body>
 
 </html>

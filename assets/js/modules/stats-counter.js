@@ -1,6 +1,63 @@
 const __pendingCounts__ = new Map();
+const homeCountAnimations = new WeakMap();
+const homeCountFormat = new Intl.NumberFormat();
+const HOME_COUNT_DURATION_MS = 600;
+let homeCountsInView = false;
+
 window.__statsVisible__ = false;
 window.__animateCountTo__ = undefined;
+
+function showHomeCount(el) {
+    const loader = document.getElementById('page-loader');
+    if (!homeCountsInView || (loader && !loader.hidden && loader.style.display !== 'none')) return;
+
+    const target = Number(el.dataset.countTo);
+    const previous = homeCountAnimations.get(el);
+    if (!Number.isFinite(target) || previous?.target === target) return;
+    if (previous?.frame != null) cancelAnimationFrame(previous.frame);
+
+    const from = previous?.value ?? 0;
+    const animation = { target, value: from, frame: null };
+    homeCountAnimations.set(el, animation);
+    const write = (value) => {
+        animation.value = value;
+        el.textContent = homeCountFormat.format(value);
+    };
+
+    if (from === target || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        write(target);
+        return;
+    }
+
+    const startedAt = performance.now();
+    const step = (now) => {
+        const progress = Math.min(1, (now - startedAt) / HOME_COUNT_DURATION_MS);
+        const eased = 1 - (1 - progress) ** 2;
+        write(Math.round(from + (target - from) * eased));
+        animation.frame = progress < 1 ? requestAnimationFrame(step) : null;
+    };
+    write(from);
+    animation.frame = requestAnimationFrame(step);
+}
+
+function initHomeCounts() {
+    const metrics = document.getElementById('community-stats');
+    const counters = metrics?.querySelectorAll('[data-count-animate]');
+    if (!counters?.length) return;
+
+    const showCounts = () => counters.forEach(showHomeCount);
+    document.addEventListener('preloader:done', showCounts, { once: true });
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(([entry]) => {
+            homeCountsInView = entry.isIntersecting;
+            showCounts();
+        });
+        observer.observe(metrics);
+    } else {
+        homeCountsInView = true;
+        showCounts();
+    }
+}
 
 export function setCountTarget(id, value) {
     const v = Number(value || 0);
@@ -9,7 +66,15 @@ export function setCountTarget(id, value) {
         __pendingCounts__.set(id, v);
         return;
     }
+    if (el.hasAttribute('data-count-direct')) {
+        el.textContent = v.toLocaleString();
+        return;
+    }
     el.dataset.countTo = String(v);
+    if (el.hasAttribute('data-count-animate')) {
+        showHomeCount(el);
+        return;
+    }
     if (window.__statsVisible__ && typeof window.__animateCountTo__ === 'function') {
         window.__animateCountTo__(el, v);
     }
@@ -29,6 +94,7 @@ export function getPendingCounts() {
 }
 
 export function initStatsCounter() {
+    initHomeCounts();
     const statNums = document.querySelectorAll('.stat-card .num');
     const fmt = (n) => n.toLocaleString();
 
