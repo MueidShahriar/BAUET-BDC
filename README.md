@@ -1,6 +1,6 @@
 <div align="center">
   <img src="image/blood-drop.png" alt="BAUET BDC logo" width="88" />
-  <h1>BAUET Blood Donation Community</h1>
+  <h1>BAUET Blood Donation Club</h1>
   <p><strong>Connecting voluntary blood donors with the people who need them.</strong></p>
   <p>
     <a href="https://blood-donation-community.vercel.app/">Live application</a>
