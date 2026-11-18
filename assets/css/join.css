@@ -1,0 +1,207 @@
+#join-feedback {
+    border: 1px solid transparent;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+}
+
+#join-feedback.join-feedback--success {
+    background-color: #ecfdf5;
+    border-color: rgba(16, 185, 129, 0.35);
+    color: #047857;
+}
+
+#join-feedback.join-feedback--error {
+    background-color: #fef2f2;
+    border-color: rgba(248, 113, 113, 0.4);
+    color: #b91c1c;
+}
+
+#join-phone-toast {
+    position: fixed;
+    top: calc(var(--header-height, 4rem) + 0.75rem);
+    left: 50%;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: min(calc(100vw - 2rem), 30rem);
+    padding: 0.85rem 1rem;
+    border: 1px solid #fecaca;
+    border-radius: 0.9rem;
+    background: #fff;
+    color: #991b1b;
+    box-shadow: 0 12px 30px rgba(127, 29, 29, 0.16);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -0.5rem);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    pointer-events: none;
+}
+
+#join-phone-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #join-phone-toast {
+        transition: none;
+    }
+}
+
+section#join .join-form-card {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 32rem;
+    padding: clamp(1rem, 4.5vw, 2rem);
+}
+
+#join-form,
+#join-form .field-icon-left,
+#join-form .input-wrap {
+    min-width: 0;
+    width: 100%;
+}
+
+#join-form input,
+#join-form select {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 0.85rem !important;
+    background-color: #fff !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035) !important;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+#join-form input:hover,
+#join-form select:hover {
+    border-color: #cbd5e1 !important;
+}
+
+#join-form input:focus,
+#join-form select:focus {
+    border-color: #fb7185 !important;
+    box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.11) !important;
+    outline: none;
+}
+
+#join-form .field-icon-left > .fi,
+#join-form .field-icon-left .input-wrap > .fi {
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #be5264 !important;
+    font-size: 1rem;
+    transition: color 0.18s ease;
+}
+
+#join-form .field-icon-left:focus-within > .fi,
+#join-form .field-icon-left:focus-within .input-wrap > .fi {
+    color: #e11d48 !important;
+}
+
+#join-form .field-icon-left input,
+#join-form .field-icon-left select,
+#join-form .field-icon-left textarea {
+    padding-left: 2.85rem !important;
+}
+
+#join-form .password-field input {
+    padding-right: 3.25rem !important;
+}
+
+#join-form .password-visibility-toggle {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    right: 0.8rem;
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    place-items: center;
+    transform: translateY(-50%);
+    border: 0;
+    border-radius: 0.65rem;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+#join-form .password-visibility-toggle:hover,
+#join-form .password-visibility-toggle:focus-visible {
+    background: #fff1f2;
+    color: #be123c;
+    outline: none;
+}
+
+#join-form .field-icon-left label.absolute {
+    left: 2.85rem !important;
+}
+
+@media (max-width: 767px) {
+    #join-form .field-icon-left input,
+    #join-form .field-icon-left select,
+    #join-form .field-icon-left textarea {
+        padding-left: 3rem !important;
+    }
+
+    #join-form .field-icon-left label.absolute {
+        left: 3rem !important;
+    }
+}
+
+#join-form .join-form-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+#join-form .join-form-actions button {
+    min-width: 0;
+    min-height: 3.25rem;
+    white-space: normal;
+    word-break: normal;
+}
+
+#join-form #join-submit span {
+    white-space: nowrap;
+}
+
+#join-form #join-submit i {
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    main:has(#join) {
+        padding-bottom: 1rem;
+    }
+
+    main:has(#join) > #join {
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+
+    main:has(#join) + .visitor-stats-bar {
+        margin-top: 0.75rem;
+    }
+}
+
+@media (max-width: 520px) {
+    #join-form .join-form-actions {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    main:has(#join) > #join {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+}

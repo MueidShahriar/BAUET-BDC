@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e11d48" />
+    <title>Visitor Statistics - BAUET BDC</title>
+    <link rel="shortcut icon" href="../image/blood-drop.png" type="image/x-icon">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../assets/css/common.css?v=143">
+    <meta name="description" content="Real-time visitor statistics for BAUET BDC website.">
+    <style>
+        #page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center}
+        #page-loader.fade-out{opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s}
+        body.loading>*:not(#page-loader):not(script){opacity:0!important;visibility:hidden!important}
+
+        .vs-card {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+            padding: 2rem;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .vs-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .vs-number {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .vs-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .vs-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .vs-card:hover .vs-icon {
+            transform: scale(1.1) rotate(3deg);
+        }
+
+        @keyframes live-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+
+        .live-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+            display: inline-block;
+            animation: live-pulse 1.5s infinite;
+        }
+
+        .vs-info-card {
+            background: linear-gradient(135deg, #fef2f2 0%, #fff 60%);
+            border: 1px solid rgba(254, 202, 202, 0.6);
+            border-radius: 1.25rem;
+            padding: 1.75rem 2rem;
+            box-shadow: 0 2px 12px rgba(225, 29, 72, 0.04);
+        }
+
+        .vs-info-card h3 {
+            color: #b91c1c;
+        }
+
+        .vs-step-badge {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e11d48, #ef4444);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 800;
+            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.2);
+        }
+
+        .vs-code-block {
+            background: linear-gradient(160deg, #0f172a, #1e293b);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0.85rem;
+            padding: 1.25rem 1.5rem;
+            font-size: 0.82rem;
+            overflow-x: auto;
+            color: #e2e8f0;
+        }
+
+        .vs-code-block code {
+            font-family: 'Fira Code', 'JetBrains Mono', Consolas, monospace;
+        }
+    </style>
+    <link rel="stylesheet" href="../assets/css/footer.css?v=2">
+    <link rel="stylesheet" href="../assets/css/site-navbar.css?v=3">
+    <link rel="stylesheet" href="../assets/css/login.css?v=3">
+    <script type="module" src="../assets/js/modules/header.js?v=5"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-900 loading" style="font-family:'Inter',sans-serif;">
+    <div id="page-loader">
+        <div class="logo-wrapper">
+            <div class="logo-base">
+                <img src="../image/blood-drop.png" alt="" />
+            </div>
+            <div class="logo-fill">
+                <img src="../image/blood-drop.png" alt="Loading" />
+            </div>
+        </div>
+    </div>
+
+    <header class="site-header site-navbar fixed">
+        <nav class="navbar-row" aria-label="Main navigation">
+            <div class="navbar-brand-group">
+                <a class="navbar-brand" href="../index.html">
+                    <img src="../image/bauet-bdc-logo.webp" width="36" height="36" alt="" />
+                    <span data-i18n="siteTitle">BAUET BDC</span>
+                </a>
+                <span id="admin-badge" class="navbar-badge hidden" data-i18n="adminBadge">Admin</span>
+            </div>
+            <div id="desktop-nav-menu" class="navbar-desktop-links">
+                <a id="nav-home-link" href="../index.html" data-i18n="navHome">Home</a>
+                <a id="nav-about-link" href="about.html" data-i18n="navAbout">About</a>
+                <a id="nav-how-link" href="donationGuide.html" data-i18n="navHow">Donation Guide</a>
+                <a id="nav-events-link" href="events.html" data-i18n="navEvents">Events</a>
+                <a id="nav-join-link" href="join.html" data-i18n="navJoin">Join</a>
+                <a id="nav-search-link" href="search.html" data-i18n="navSearch">Search</a>
+                <a id="nav-leaderboard-link" href="leaderboard.html" data-i18n="navLeaderboard">Leaderboard</a>
+                <a id="nav-contact-link" href="../index.html#contact" data-i18n="navContact">Contact</a>
+                <a id="nav-dashboard-link" href="admin.html" class="hidden"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i><span data-i18n="navDashboard">Dashboard</span></a>
+                <a id="nav-admin-profile-link" href="profile.html" class="hidden"><i class="fa-solid fa-user" aria-hidden="true"></i><span data-i18n="profileTitle">My Profile</span></a>
+            </div>
+            <div class="navbar-actions">
+                <button id="login-btn" class="navbar-account-button" type="button"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span data-i18n="btnLogin">Login</span></button>
+                <button id="navbar-logout-btn" class="navbar-account-button navbar-logout hidden" type="button"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span data-i18n="profileLogout">Logout</span></button>
+                <button id="mobile-profile-btn" class="mobile-profile-btn hidden" type="button" aria-label="Profile">
+                    <span class="mobile-profile-btn__initials">U</span>
+                </button>
+                <button id="menu-toggle" class="navbar-menu-toggle" type="button" aria-controls="mobile-menu"
+                    aria-expanded="false" aria-label="Menu" data-i18n="desktopMenuLabel">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path class="navbar-menu-icon" stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+                        <path class="navbar-close-icon" stroke-linecap="round" d="m6 6 12 12M18 6 6 18" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="navbar-popover hidden" role="navigation" aria-label="Menu">
+            <div class="navbar-panel">
+                <div class="navbar-mobile-links">
+                    <a id="mobile-home-link" href="../index.html">
+                        <i class="fa-solid fa-house" aria-hidden="true"></i>
+                        <span data-i18n="navHome">Home</span>
+                    </a>
+                    <a id="mobile-about-link" href="about.html">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        <span data-i18n="navAbout">About</span>
+                    </a>
+                    <a id="mobile-how-link" href="donationGuide.html">
+                        <i class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i>
+                        <span data-i18n="navHow">Donation Guide</span>
+                    </a>
+                    <a id="mobile-events-link" href="events.html">
+                        <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+                        <span data-i18n="navEvents">Events</span>
+                    </a>
+                    <a id="mobile-join-link" href="join.html">
+                        <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                        <span data-i18n="navJoin">Join</span>
+                    </a>
+                    <a id="mobile-search-link" href="search.html">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <span data-i18n="navSearch">Search</span>
+                    </a>
+                    <a id="mobile-leaderboard-link" href="leaderboard.html">
+                        <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+                        <span data-i18n="navLeaderboard">Leaderboard</span>
+                    </a>
+                    <a id="admin-mobile-link" href="admin.html" class="hidden">
+                        <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+                        <span data-i18n="navDashboard">Dashboard</span>
+                    </a>
+                    <a id="admin-mobile-profile-link" href="profile.html" class="hidden">
+                        <i class="fa-solid fa-user" aria-hidden="true"></i>
+                        <span data-i18n="profileTitle">My Profile</span>
+                    </a>
+                </div>
+                <div class="navbar-mobile-account">
+                    <button id="mobile-login-btn" type="button"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span data-i18n="btnLogin">Login</span></button>
+                    <button id="mobile-logout-btn" class="navbar-logout hidden" type="button">
+                        <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+                        <span data-i18n="profileLogout">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
+        
+        <div class="text-center mb-12 float-in">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 text-red-600 text-xs font-bold uppercase tracking-wide mb-4 shadow-sm border border-red-100/50">
+                <i class="fa-solid fa-chart-line"></i> Live Statistics
+            </div>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight">
+                Visitor <span class="bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">Statistics</span>
+            </h1>
+            <p class="mt-4 text-gray-500 max-w-lg mx-auto text-sm leading-relaxed">
+                Real-time visitor tracking powered by Firebase. See how many people are visiting and browsing the BAUET BDC website.
+            </p>
+        </div>
+
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            
+            <div class="vs-card flex items-start gap-5 float-in" style="--delay: 100ms">
+                <div class="vs-icon" style="background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(99,102,241,0.05)); color: #6366f1;">
+                    <i class="fa-solid fa-eye"></i>
+                </div>
+                <div class="flex-1">
+                    <div id="vs-total-views" class="vs-number" style="background: linear-gradient(135deg,#6366f1,#818cf8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">
+                        0
+                    </div>
+                    <div class="vs-label">Total Page Views</div>
+                    <p class="text-xs text-gray-400 mt-2 leading-relaxed">
+                        Website-wide views counted once per page and browser session each day. Page refreshes don't increase the count.
+                    </p>
+                </div>
+            </div>
+
+            
+            <div class="vs-card flex items-start gap-5 float-in" style="--delay: 200ms; border: 1px solid rgba(16,185,129,0.12);">
+                <div class="vs-icon" style="background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.05)); color: #10b981;">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-3">
+                        <div id="vs-online-count" class="vs-number" style="background: linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">
+                            0
+                        </div>
+                        <span class="live-dot" title="Live"></span>
+                    </div>
+                    <div class="vs-label">Online Right Now</div>
+                    <p class="text-xs text-gray-400 mt-2 leading-relaxed">
+                        Shows the number of users currently on any page of the website. Updates in real-time.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="vs-info-card mb-12 float-in" style="--delay: 300ms">
+            <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-circle-info"></i> How Visitor Tracking Works
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-gray-600">
+                <div class="flex items-start gap-3">
+                    <span class="vs-step-badge">1</span>
+                    <p><strong>Page Views</strong> — Each page tracks visits independently. A browser session is counted once per page each day, so refreshes do not inflate the numbers.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="vs-step-badge">2</span>
+                    <p><strong>Online Users</strong> — Uses Firebase presence system. When you open the site, you're marked as "online". When you close the tab, you're automatically removed.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="vs-step-badge">3</span>
+                    <p><strong>Real-time</strong> — All numbers update instantly across all connected browsers without any page refresh needed.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="vs-step-badge">4</span>
+                    <p><strong>Privacy</strong> — No personal data is collected. Only anonymous session IDs are used for counting purposes.</p>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="vs-card mb-10 float-in" style="--delay: 350ms">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-database text-red-600"></i> Firebase Database Structure
+            </h3>
+            <pre class="vs-code-block"><code>{
+  "visitorTracking": {
+    "totalViews": 1234,
+    "dailyViews": { "2026-11-01": 43 },
+    "pageViews": {
+      "about": { "total": 15 }
+    },
+    "presence": {
+      "sess_17089...a3f": { "updatedAt": 1708900000000, "path": "/index.html" },
+      "sess_17089...b7e": { "updatedAt": 1708900000000, "path": "/pages/search.html" }
+    }
+  }
+}</code></pre>
+        </div>
+
+        
+        <div class="vs-card float-in" style="--delay: 400ms">
+            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-red-600"></i> Recommended Database Rules
+            </h3>
+            <pre class="vs-code-block"><code>{
+  "rules": {
+    "visitorTracking": {
+      "totalViews": {
+        ".read": true,
+        ".write": "newData.isNumber() && newData.val() >= 0"
+      },
+      "pageViews": {
+        ".read": true,
+        "$page": {
+          "$metric": {
+            ".write": "newData.isNumber() && newData.val() >= 0"
+          }
+        }
+      },
+      "dailyViews": {
+        ".read": true,
+        "$date": {
+          ".write": "newData.isNumber() && newData.val() >= 0"
+        }
+      },
+      "presence": {
+        ".read": true,
+        "$sessionId": {
+          ".write": "newData.val() === null || (newData.hasChildren(['updatedAt', 'path']) && newData.child('updatedAt').isNumber() && newData.child('path').isString())"
+        }
+      }
+    }
+  }
+}</code></pre>
+            <p class="mt-3 text-xs text-gray-400 leading-relaxed">
+                These rules allow anonymous, session-based tracking on the static site while restricting presence records to an expiry timestamp and page path. Session IDs are random and contain no member identity.
+            </p>
+        </div>
+    </main>
+
+    
+    <div class="visitor-stats-bar" aria-live="polite">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
+            <div class="visitor-stats-item">
+                <span class="visitor-stats-dot visitor-stats-dot--live"></span>
+                <i class="fa-solid fa-users text-xs" style="color:#10b981"></i>
+                <span class="text-sm font-semibold text-gray-700">Online Now:</span>
+                <span class="text-sm font-extrabold text-gray-900 online-users-count">0</span>
+            </div>
+        </div>
+    </div>
+
+    <footer id="app-footer" class="site-footer"></footer>
+    <script type="module" src="../assets/js/modules/footer.js?v=2"></script>
+
+    <div id="fab-wrap" class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
+        <button type="button" id="back-to-top"
+            class="bg-red-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-red-700 transition-all text-lg flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+        </button>
+    </div>
+
+    <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-[60]">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10">
+            <h3 class="text-lg font-bold text-red-700">Success!</h3>
+            <p class="mt-2 text-gray-700"></p>
+            <div class="mt-4 text-right">
+                <button id="success-close" class="px-4 py-2 bg-red-600 text-white rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedback-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10 w-full">
+            <div class="flex items-start justify-between mb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-red-700" data-i18n="feedbackTitle">Share Your Feedback</h3>
+                    <p class="text-sm text-gray-600" data-i18n="feedbackDesc">Let us know how we can improve the BAUET BDC.</p>
+                </div>
+                <button type="button" id="feedback-close" class="text-gray-400 hover:text-gray-600"
+                    aria-label="Close feedback form">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+            <form id="feedback-form" class="grid gap-4">
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-user"></i>
+                    <input name="name" id="feedback-name" type="text" placeholder=" "
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="feedback-name"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Name</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-envelope"></i>
+                    <input name="email" id="feedback-email" type="email" placeholder=" " autocomplete="email"
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="feedback-email"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email (optional)</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-comment"></i>
+                    <textarea name="message" id="feedback-message" placeholder=" " required rows="4"
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                    <label for="feedback-message"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Your feedback</label>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" id="feedback-cancel" class="px-4 py-2 rounded-lg border border-gray-200" data-i18n="modalCancel">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                        <span data-i18n="feedbackSend">Send</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="login-modal" class="login-dialog hidden" role="dialog" aria-labelledby="login-dialog-club login-dialog-title">
+        <div class="login-dialog-backdrop absolute inset-0" aria-hidden="true"></div>
+        <div class="login-dialog-panel">
+            <div class="login-dialog-heading">
+                <img class="login-dialog-mark" src="../image/bauet-bdc-logo.webp" width="44" height="44" alt="" />
+                <div>
+                    <p id="login-dialog-club" class="login-dialog-club" data-i18n="siteTitle">BAUET BDC</p>
+                    <h2 id="login-dialog-title" data-i18n="loginTitle">Login</h2>
+                </div>
+            </div>
+            <form id="login-form" class="login-dialog-form">
+                <div class="login-dialog-field">
+                    <label for="login-email" data-i18n="loginEmail">Email</label>
+                    <div class="login-dialog-input">
+                        <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                        <input id="login-email" name="email" type="email" autocomplete="username"
+                            inputmode="email" autocapitalize="none" spellcheck="false" required />
+                    </div>
+                </div>
+                <div class="login-dialog-field">
+                    <label for="login-password" data-i18n="loginPassword">Password</label>
+                    <div class="login-dialog-input login-dialog-input-password">
+                        <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                        <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+                        <button id="toggle-password" class="login-dialog-toggle" type="button" aria-label="Show password"
+                            title="Show password" aria-pressed="false" data-i18n="loginShowPassword">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <a id="forgot-password-link" class="login-dialog-recovery" href="#"
+                        data-i18n="loginForgotPassword">Forgot Password?</a>
+                </div>
+                <div class="login-dialog-actions">
+                    <button class="login-dialog-submit" type="submit"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span data-i18n="loginSignIn">Sign in</span></button>
+                    <button id="login-cancel" class="login-dialog-cancel" type="button" data-i18n="modalCancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../assets/js/viewport.js" defer></script>
+    <script type="module" src="../assets/js/pages/visitor-stats.js?v=14"></script>
+</body>
+
+</html>
