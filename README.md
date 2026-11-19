@@ -1,69 +1,121 @@
 <div align="center">
-  <img src="image/blood-drop.png" alt="BAUET BDC logo" width="88" />
-  <h1>BAUET Blood Donation Community</h1>
-  <p><strong>Connecting voluntary blood donors with the people who need them.</strong></p>
+  <img src="image/blood-drop.png" alt="BAUET Blood Donation Club logo" width="104" />
+
+  <h1>BAUET Blood Donation Club</h1>
+
+  <p><strong>Donate Blood. Save Lives. Build a Stronger Community.</strong></p>
+
   <p>
-    <a href="https://blood-donation-community.vercel.app/">Live application</a>
-    &nbsp;·&nbsp;
-    <a href="https://github.com/mueidshahriar/Blood-Donation-Community">Source repository</a>
+    A community-driven platform that connects voluntary blood donors with people in need across the BAUET community.
+  </p>
+
+  <p>
+    <a href="https://blood-donation-community.vercel.app/">
+      <img src="https://img.shields.io/badge/Live%20Application-Open%20Website-16a34a?style=for-the-badge&logo=vercel&logoColor=white" alt="Open live application" />
+    </a>
+    <a href="https://github.com/mueidshahriar/Blood-Donation-Community">
+      <img src="https://img.shields.io/badge/GitHub-Source%20Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="View source repository" />
+    </a>
+  </p>
+
+  <p>
+    <img src="https://img.shields.io/badge/Version-Unreleased-2563eb?style=flat-square" alt="Version: unreleased" />
+    <img src="https://img.shields.io/badge/License-Not%20Specified-lightgrey?style=flat-square" alt="License not specified" />
+    <img src="https://img.shields.io/badge/PWA-Supported-6d28d9?style=flat-square&logo=pwa" alt="Progressive Web App supported" />
+    <img src="https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js and Express backend" />
+    <img src="https://img.shields.io/badge/Database-Firebase-ffca28?style=flat-square&logo=firebase&logoColor=black" alt="Firebase database" />
   </p>
 </div>
 
-BAUET BDC is a responsive blood donation platform for the BAUET community. It helps people discover donors, manage donor profiles, coordinate events, and support day-to-day community operations.
+---
 
 ## Overview
 
-The application brings public donor services and administrative tools together in one web experience. It uses Firebase for authentication and realtime data, and can be installed as a Progressive Web App (PWA). An optional AI assistant is provided by the Node.js server.
+**BAUET Blood Donation Club (BAUET BDC)** is a responsive web platform built to make voluntary blood donation coordination easier, faster, and more accessible within the Bangladesh Army University of Engineering & Technology (BAUET) community.
+
+The platform brings donors and people seeking blood together through donor registration, blood group search, donation activity, events, and administrative tools. It also provides community insights and an optional AI assistant to help users navigate the platform and find general blood donation information.
+
+The mission is simple: **help people find potential donors faster and encourage a stronger culture of voluntary blood donation.**
+
+> **Live application:** [blood-donation-community.vercel.app](https://blood-donation-community.vercel.app/)  
+> **Source repository:** [github.com/mueidshahriar/Blood-Donation-Community](https://github.com/mueidshahriar/Blood-Donation-Community)
+
+## Table of Contents
+
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Application Pages](#application-pages)
+- [AI Assistant](#ai-assistant)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Configuration](#configuration)
+- [Available Commands](#available-commands)
+- [Deployment](#deployment)
+- [PWA Installation](#pwa-installation)
+- [Security and Privacy](#security-and-privacy)
+- [Medical and Emergency Disclaimer](#medical-and-emergency-disclaimer)
+- [Versioning and Releases](#versioning-and-releases)
+- [Contributing](#contributing)
+- [Support and Contact](#support-and-contact)
+- [License](#license)
 
 ## Features
 
-- Register and manage donor profiles.
-- Search for donors by blood group and location.
-- View donation events, recent donations, and community statistics.
-- Use an administration dashboard to manage members, events, donations, and feedback.
-- Review donation eligibility information and donor activity.
-- Access charts, a donor leaderboard, certificates, and donor cards.
-- Use the interface in English or Bangla.
-- Install the site as a PWA on supported devices.
-- Ask the optional AI assistant for donation guidance, website help, and safe general questions in English, Bangla, or Banglish.
+### Donor registration and profiles
+- Register as a voluntary blood donor.
+- Create and manage donor profiles.
+- Maintain relevant donor details and donation activity.
+- Access donor cards and donation certificates.
 
-## Technology
+### Donor discovery
+- Search for potential donors by blood group.
+- Narrow donor searches by location.
+- View donor information to help coordinate contact.
+- Use eligibility information as a general reference.
+
+### Donation activities and events
+- Explore upcoming blood donation events.
+- View recent donation records and community activity.
+- Follow donation activity through community statistics.
+- Recognize active donors through the leaderboard.
+
+### Administration dashboard
+- Manage registered members and donor information.
+- Create and manage blood donation events.
+- Record and review donation activity.
+- Review feedback submitted by users.
+- Monitor community information through dashboard statistics and charts.
+
+### User experience
+- Responsive interface for desktop, tablet, and mobile.
+- English and Bangla language support.
+- Progressive Web App (PWA) installation on supported devices.
+- Service worker caching for supported offline experiences.
+
+### Optional AI assistant
+- Ask general questions about blood donation.
+- Get help navigating BAUET BDC features.
+- Interact in English, Bangla, or Banglish.
+- Receive responses based on conversation and relevant website context.
+
+## Technology Stack
 
 | Area | Technologies |
-| --- | --- |
-| Frontend | HTML, CSS, JavaScript, Bootstrap, Tailwind CSS |
-| Authentication and data | Firebase Authentication, Firebase Realtime Database |
-| Charts | Chart.js |
-| AI assistant | Node.js, Express, Google Generative AI |
-| PWA | Web app manifest, service worker |
+|:---|:---|
+| Frontend | HTML5, CSS3, JavaScript |
+| UI and styling | Bootstrap, Tailwind CSS |
+| Authentication | Firebase Authentication |
+| Realtime data | Firebase Realtime Database |
+| Charts and insights | Chart.js |
+| Backend | Node.js, Express.js |
+| AI integration | Google Generative AI |
+| Progressive Web App | Web App Manifest, Service Worker |
 
-## AI assistant
-
-The assistant can help with BAUET BDC and blood-donation information, website guidance, and many safe general topics. It uses the conversation and relevant website context; it does not browse the live web, so verify time-sensitive information with a current source. The project does not fine-tune a model—AI replies are generated by the configured Google Generative AI service.
-
-The assistant requires the Node.js backend and a `GEMINI_API_KEY`. Keep the key in the server environment or an uncommitted `.env` file; never place it in frontend code.
-
-## Project structure
-
-```text
-.
-├── assets/
-│   ├── css/                 # Shared and page-specific styles
-│   └── js/                  # Application modules and page controllers
-├── firebase-rules/          # Realtime Database rules
-├── image/                   # Logos and image assets
-├── pages/                   # Public, profile, and admin pages
-├── index.html               # Homepage
-├── manifest.webmanifest     # PWA metadata
-├── server.js                # Static server and AI assistant endpoint
-└── service-worker.js        # PWA caching and offline support
-```
-
-### Main pages
+## Application Pages
 
 | Page | Description |
-| --- | --- |
-| `index.html` | Homepage, community statistics, and recent activity |
+|:---|:---|
+| `index.html` | Homepage, community overview, statistics, and recent activity |
 | `pages/join.html` | Donor registration |
 | `pages/search.html` | Donor search |
 | `pages/events.html` | Blood donation events |
@@ -72,76 +124,283 @@ The assistant requires the Node.js backend and a `GEMINI_API_KEY`. Keep the key 
 | `pages/leaderboard.html` | Donor leaderboard |
 | `pages/donationGuide.html` | Blood donation guidance |
 
-## Getting started
+## AI Assistant
 
-### Requirements
+BAUET BDC provides an optional AI assistant powered by the configured Google Generative AI service.
 
-- Node.js and npm
-- A Firebase project with Email/Password Authentication and Realtime Database enabled
-- A Google Generative AI API key only if you want to enable the AI assistant
+The assistant runs through the Node.js and Express backend. It can use conversation history and relevant website context to answer questions about the platform and provide general information.
 
-### Run locally
+**Requirements**
+- A working Node.js backend.
+- A valid `GEMINI_API_KEY` configured on the server.
 
-1. Clone the repository and enter the project directory:
+**Limitations**
+- The assistant does not browse the live internet.
+- It does not replace medical professionals or official blood donation screening.
+- AI-generated information may be incomplete or outdated.
+- Time-sensitive medical information must be checked with a qualified professional or reliable current source.
 
-   ```bash
-   git clone https://github.com/mueidshahriar/Blood-Donation-Community.git
-   cd Blood-Donation-Community
-   ```
+The project does not fine-tune its own AI model. Responses are generated by the configured Google Generative AI service.
 
-2. Install the server dependencies:
+## Project Structure
 
-   ```bash
-   npm install
-   ```
+```text
+Blood-Donation-Community/
+│
+├── assets/
+│   ├── css/                         # Shared and page-specific styles
+│   └── js/
+│       ├── modules/                 # Shared application modules
+│       └── ...                      # Page controllers and other scripts
+│
+├── firebase-rules/
+│   └── realtime-database.rules.json # Firebase Realtime Database rules
+│
+├── image/                           # Logos, icons, and image assets
+│
+├── pages/                           # Public, donor, and admin pages
+│
+├── index.html                       # Main application page
+├── manifest.webmanifest             # PWA metadata
+├── server.js                        # Node.js server and AI endpoint
+├── service-worker.js                # PWA caching and offline support
+├── package.json                     # Dependencies and npm scripts
+└── README.md
+```
 
-3. Configure the Firebase web app settings in `assets/js/modules/firebase-config.js` and set up the Realtime Database rules for your Firebase project.
+## Getting Started
 
-4. To enable the AI assistant, create a `.env` file in the project root:
+Follow these steps to run the project locally.
 
-   ```env
-   GEMINI_API_KEY=your_api_key
-   PORT=3000
-   ```
+### Prerequisites
 
-   The `.env` file is optional for running the site, but the AI assistant will remain unavailable without `GEMINI_API_KEY`.
+Install or prepare the following:
 
-5. Start the server:
+- [Node.js](https://nodejs.org/) (use a currently supported LTS release).
+- npm (included with Node.js).
+- A [Firebase project](https://console.firebase.google.com/).
+- A Google Generative AI API key, only if you want to enable the AI assistant.
 
-   ```bash
-   npm run dev
-   ```
+### 1. Clone the repository
 
-6. Open [http://localhost:3000](http://localhost:3000).
+```bash
+git clone https://github.com/mueidshahriar/Blood-Donation-Community.git
 
-### Available commands
+cd Blood-Donation-Community
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Firebase
+
+In the Firebase Console:
+
+1. Create or select a Firebase project.
+2. Register a Firebase web application.
+3. Enable Email/Password Authentication.
+4. Create and enable Firebase Realtime Database.
+5. Configure the web app settings in:
+
+```text
+assets/js/modules/firebase-config.js
+```
+
+Review the database rules in:
+
+```text
+firebase-rules/realtime-database.rules.json
+```
+
+Apply rules that match your deployment and access-control requirements. Do not deploy permissive test rules to production.
+
+### 4. Configure the AI assistant (optional)
+
+Create a `.env` file in the project root:
+
+```env
+GEMINI_API_KEY=your_google_generative_ai_api_key
+PORT=3000
+```
+
+Keep this file private. Do not commit API keys or other secrets to Git.
+
+If the AI assistant is not needed, you can skip this step. The main website can run without the Gemini API key, but AI features will be unavailable.
+
+### 5. Start the application
+
+Development command:
+
+```bash
+npm run dev
+```
+
+Alternative start command:
+
+```bash
+npm start
+```
+
+### 6. Open the local application
+
+Visit:
+
+```text
+http://localhost:3000
+```
+
+If the configured port is different, use the port set in your environment.
+
+## Configuration
+
+| Setting | Purpose | Required |
+|:---|:---|:---|
+| Firebase web configuration | Connects the frontend to Firebase services | Yes |
+| Firebase Authentication | Supports account registration and sign-in | Yes |
+| Firebase Realtime Database | Stores application data | Yes |
+| `GEMINI_API_KEY` | Enables the optional AI assistant | No |
+| `PORT` | Sets the Node.js server port | No, defaults to the configured server value |
+
+**Important:** Firebase client configuration is intended for browser use, but database access must still be protected with correct Firebase Security Rules. Never put private server credentials or the Gemini API key in frontend code.
+
+## Available Commands
 
 | Command | Description |
-| --- | --- |
-| `npm run dev` | Start the local Node.js server |
+|:---|:---|
+| `npm install` | Install project dependencies |
+| `npm run dev` | Start the development server |
 | `npm start` | Start the Node.js server |
-
-## Firebase and security
-
-- Review `firebase-rules/realtime-database.rules.json` and apply rules appropriate to your Firebase project before deployment.
-- Keep administrator access restricted to trusted accounts.
-- Never commit `.env` files, private keys, or service-account credentials.
-- Donor contact and profile information is sensitive; only make data available to users who need it.
 
 ## Deployment
 
-`server.js` serves the frontend files and the `/chat` endpoint. Deploy the application to a Node.js-compatible host to keep both the site and AI assistant available. If you host the frontend separately, configure the `/chat` route to reach the deployed Node.js server.
+The public application is available at:
 
-The PWA can be installed from the live site on supported browsers. On iOS, open the site in Safari and use **Share → Add to Home Screen**.
+**[https://blood-donation-community.vercel.app/](https://blood-donation-community.vercel.app/)**
+
+The project includes a Node.js server that serves application files and provides the `/chat` endpoint for the AI assistant.
+
+For deployment:
+
+1. Push the project to the intended GitHub repository.
+2. Configure Firebase Authentication and Realtime Database.
+3. Apply production-ready Firebase Security Rules.
+4. Configure server environment variables in the hosting provider.
+5. Deploy the Node.js server to a compatible hosting environment.
+6. Ensure frontend chat requests reach the deployed `/chat` endpoint.
+7. Test registration, sign-in, donor search, events, admin access, and AI functionality after deployment.
+
+If the frontend and backend are hosted separately, configure the frontend to call the correct backend URL. Do not assume that deploying static frontend files also deploys the Node.js AI endpoint.
+
+## PWA Installation
+
+BAUET BDC supports installation as a Progressive Web App on compatible browsers.
+
+### Android and desktop
+1. Open the [live application](https://blood-donation-community.vercel.app/).
+2. Open the browser menu.
+3. Select **Install App** or **Add to Home Screen**, if available.
+4. Follow the browser's installation prompt.
+
+### iPhone and iPad
+1. Open the live application in Safari.
+2. Tap the **Share** button.
+3. Select **Add to Home Screen**.
+4. Confirm the installation.
+
+PWA installation and offline behavior depend on browser support, HTTPS, service worker configuration, and the resources cached by the application.
+
+## Security and Privacy
+
+The platform may process personal donor information. Protecting that information is essential.
+
+- Apply Firebase Realtime Database Security Rules before production deployment.
+- Restrict administrative permissions to trusted accounts.
+- Collect and display only information needed for donor coordination.
+- Do not expose private donor information publicly without an appropriate purpose and consent.
+- Keep API keys, service-account credentials, and `.env` files out of source control.
+- Validate and authorize sensitive operations on the server or through secure Firebase rules.
+- Review access permissions whenever administrators or project maintainers change.
+- Use HTTPS for deployed environments.
+- Provide a clear process for handling requests to correct or remove personal information.
+
+If you discover a security issue, do not publish sensitive exploit details in a public issue. Contact the project maintainer privately.
+
+## Medical and Emergency Disclaimer
+
+BAUET Blood Donation Club is a donor discovery and community coordination platform. It is **not** a hospital, blood bank, diagnostic laboratory, or emergency medical service.
+
+The platform does not independently verify blood compatibility, donor eligibility, or medical suitability. Final donor screening, compatibility testing, and donation decisions must be handled by qualified healthcare professionals and the relevant medical facility.
+
+For emergencies, contact a hospital or appropriate emergency medical service directly. Do not rely on this website as the only source of emergency assistance.
+
+## Versioning and Releases
+
+The README currently identifies the project as **Unreleased** because no confirmed release tag or application version was provided.
+
+When publishing a stable release:
+
+1. Choose a version using [Semantic Versioning](https://semver.org/), such as `1.0.0`.
+2. Create a Git tag, for example `v1.0.0`.
+3. Publish a GitHub Release with a summary of changes.
+4. Update the version badge and release notes in this README.
+
+Suggested version format:
+
+- `MAJOR`: incompatible changes.
+- `MINOR`: new backward-compatible functionality.
+- `PATCH`: backward-compatible fixes.
+
+Do not treat the example version as the current application version until an actual release is published.
 
 ## Contributing
 
-Contributions are welcome. Create a focused branch, make and verify your changes, then open a pull request with a concise description.
+Contributions, bug reports, and suggestions are welcome.
 
-## Contact
+To contribute:
 
-**Md. Mueid Shahriar**
+1. Fork the repository.
+2. Create a focused branch for your change.
+3. Make your changes and keep the scope clear.
+4. Test the affected features.
+5. Commit your work with a descriptive message.
+6. Open a pull request explaining the change and how it was tested.
 
+For bugs or feature suggestions, use the repository's [Issues](https://github.com/mueidshahriar/Blood-Donation-Community/issues) page, if enabled.
+
+## Support and Contact
+
+For questions about the club or the application:
+
+**BAUET Blood Donation Club**
+- Website: [blood-donation-community.vercel.app](https://blood-donation-community.vercel.app/)
+- Email: [bauet.bdc@gmail.com](mailto:bauet.bdc@gmail.com)
+- Phone: [+880 1712-460423](tel:+8801712460423)
+- LinkedIn: [BAUET Blood Donation Club](https://www.linkedin.com/company/bauet-blood-donation-club)
+
+**Project Maintainer: Md. Mueid Shahriar**
 - Email: [mdmueidshahriar16@gmail.com](mailto:mdmueidshahriar16@gmail.com)
-- GitHub: [mueidshahriar](https://github.com/mueidshahriar)
-- Live application: [blood-donation-community.vercel.app](https://blood-donation-community.vercel.app/)
+- GitHub: [@mueidshahriar](https://github.com/mueidshahriar)
+
+## License
+
+**No open-source license has been specified in the project information provided for this README.**
+
+Until the project owner adds a `LICENSE` file, the project should be treated as having no granted open-source reuse permissions. Public availability on GitHub does not, by itself, grant permission to copy, modify, redistribute, or use the code.
+
+If the intention is to publish the project as open source, the maintainer should select and add an appropriate license. The [MIT License](https://choosealicense.com/licenses/mit/) is one common permissive option, but it should only be added after the project owner approves it.
+
+---
+
+<div align="center">
+  <h3>Every Drop Counts. Every Donor Matters.</h3>
+  <p><strong>Together, We Can Save Lives.</strong></p>
+  <p>Built with care for the BAUET community.</p>
+  <p>
+    <a href="https://blood-donation-community.vercel.app/">Visit the Live Application</a>
+    &nbsp; • &nbsp;
+    <a href="https://github.com/mueidshahriar/Blood-Donation-Community">Explore the Source Code</a>
+  </p>
+</div>
