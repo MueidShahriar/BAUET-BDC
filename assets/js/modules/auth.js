@@ -4,7 +4,7 @@ import { t } from './language-ui.js?v=6';
 import { getDefaultAvatarImageUrl } from './utils.js';
 import { updateBirthdayWish } from './birthday-wish.js?v=5';
 import { getFriendlyAuthError } from './auth-errors.js?v=1';
-import { syncAdminNavbar } from './header.js?v=5';
+import { syncAdminNavbar } from './header.js?v=9';
 
 function getAuthRedirectOverlay() {
     let overlay = document.getElementById('auth-redirect-overlay');
@@ -66,7 +66,7 @@ function restoreLoginButton(button) {
 export function updateLoginButtonState(database, ref, onValue, renderAdminMembersList, renderAdminEventsList, deleteMemberFn, deleteEventFn, afterRoleResolvedFn, promoteMemberFn, demoteMemberFn, toggleMemberStatusFn) {
     if (state.isAuthRedirecting) return;
     const assetPrefix = window.location.pathname.includes('/pages/') ? '../' : '';
-    const isAdminPage = /\/(pages\/)?admin\.html$/i.test(window.location.pathname || '');
+    const isAdminPage = /\/(?:pages\/)?admin(?:-(?:events|recent|members|search|feedback))?\.html$/i.test(window.location.pathname || '');
     const loginBtn = document.getElementById('login-btn');
     const mobileLoginBtn = document.getElementById('mobile-login-btn');
     const profileUserId = document.getElementById('profile-userId');

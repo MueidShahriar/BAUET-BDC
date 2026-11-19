@@ -3,14 +3,14 @@
     --login-accent: #a4224a;
     --login-accent-deep: #821b32;
     --login-line: #eadbe0;
-    --login-padding: clamp(1.2rem, 5vw, 2rem);
+    --login-padding: clamp(1.15rem, 3vw, 1.75rem);
     position: fixed;
     z-index: 55;
     inset: 0;
     box-sizing: border-box;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: clamp(0.75rem, 3vw, 1.5rem);
     color: var(--login-ink);
 }
 
@@ -25,23 +25,24 @@
 #login-modal > .login-dialog-backdrop.absolute.inset-0 {
     position: absolute;
     inset: 0;
-    background: rgba(38, 25, 32, 0.6) !important;
-    backdrop-filter: blur(3px);
+    background: rgba(31, 18, 25, 0.68) !important;
+    backdrop-filter: blur(7px);
 }
 
 #login-modal .login-dialog-panel {
     position: relative;
     z-index: 1;
     box-sizing: border-box;
-    width: min(100%, 26rem);
+    width: min(100%, 28rem);
     max-height: calc(100vh - 2rem);
     max-height: calc(100dvh - 2rem);
     overflow-y: auto;
     overscroll-behavior: contain;
     border: 1px solid var(--login-line);
-    border-radius: 1.25rem;
+    border-radius: 1.5rem;
     background: #fff;
-    box-shadow: 0 20px 52px rgba(38, 25, 32, 0.26);
+    box-shadow: 0 28px 75px rgba(38, 25, 32, 0.34);
+    animation: login-dialog-enter 180ms ease-out both;
 }
 
 #login-modal .login-dialog-heading {
@@ -50,21 +51,26 @@
     gap: 0.8rem;
     padding: var(--login-padding);
     border-bottom: 1px solid var(--login-line);
-    background: #fff9f8;
+    background: linear-gradient(135deg, #fffafd 0%, #fff2f5 100%);
 }
 
 #login-modal .login-dialog-mark {
     display: block;
     flex: none;
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 3.15rem;
+    height: 3.15rem;
+    padding: 0.3rem;
+    border: 1px solid #f0d8df;
+    border-radius: 0.9rem;
+    background: #fff;
+    box-shadow: 0 7px 18px rgba(130, 27, 50, 0.1);
     object-fit: contain;
 }
 
 #login-modal .login-dialog-club {
     margin: 0 0 0.2rem;
     color: var(--login-accent-deep);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 750;
     line-height: 1.2;
 }
@@ -72,7 +78,7 @@
 #login-modal .login-dialog-heading h2 {
     margin: 0;
     color: var(--login-ink);
-    font-size: clamp(1.4rem, 4vw, 1.7rem);
+    font-size: clamp(1.35rem, 3vw, 1.65rem);
     font-weight: 800;
     letter-spacing: -0.045em;
     line-height: 1.2;
@@ -80,7 +86,7 @@
 
 #login-modal .login-dialog-form {
     display: grid;
-    gap: 1rem;
+    gap: 1.05rem;
     padding: var(--login-padding);
 }
 
@@ -120,8 +126,8 @@
     padding: 0.75rem 0.85rem;
     padding-inline-start: 2.65rem;
     border: 1px solid var(--login-line);
-    border-radius: 0.7rem;
-    background: #fffdfd;
+    border-radius: 0.85rem;
+    background: #fffcfd;
     color: var(--login-ink);
     font-size: 1rem;
     line-height: 1.25;
@@ -129,8 +135,9 @@
 
 #login-modal .login-dialog-input input:focus {
     border-color: var(--login-accent);
-    outline: 2px solid #f5c5d1;
-    outline-offset: 1px;
+    outline: 3px solid rgba(164, 34, 74, 0.12);
+    outline-offset: 0;
+    background: #fff;
 }
 
 #login-modal .login-dialog-input-password input {
@@ -189,7 +196,7 @@
     min-height: 3rem;
     padding: 0.65rem 1rem;
     border: 1px solid transparent;
-    border-radius: 0.7rem;
+    border-radius: 0.85rem;
     font-size: 0.925rem;
     font-weight: 750;
     line-height: 1.25;
@@ -203,10 +210,12 @@
     gap: 0.45rem;
     background: var(--login-accent);
     color: #fff;
+    box-shadow: 0 10px 22px rgba(164, 34, 74, 0.22);
 }
 
 #login-modal .login-dialog-submit:hover {
     background: var(--login-accent-deep);
+    transform: translateY(-1px);
 }
 
 #login-modal .login-dialog-cancel {
@@ -217,6 +226,25 @@
 
 #login-modal .login-dialog-cancel:hover {
     background: #fff4f6;
+    border-color: #d9b9c3;
+}
+
+@keyframes login-dialog-enter {
+    from { opacity: 0; transform: translateY(10px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 480px) {
+    #login-modal.login-dialog { padding: 0.65rem; }
+    #login-modal .login-dialog-panel { max-height: calc(100dvh - 1.3rem);border-radius:1.2rem; }
+    #login-modal .login-dialog-heading { gap:0.7rem;padding-block:1rem; }
+    #login-modal .login-dialog-mark { width:2.75rem;height:2.75rem;border-radius:.75rem; }
+    #login-modal .login-dialog-heading h2 { font-size:1.35rem; }
+    #login-modal .login-dialog-form { gap:.85rem;padding:1rem; }
+    #login-modal .login-dialog-input input { min-height:3rem;font-size:1rem; }
+    #login-modal .login-dialog-actions { grid-template-columns:1fr; }
+    #login-modal .login-dialog-actions button { width:100%;min-height:2.9rem; }
+    #login-modal .login-dialog-cancel { grid-row:2; }
 }
 
 #login-modal :is(button, a):focus-visible {

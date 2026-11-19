@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#e11d48" />
+    <title>Events - BAUET BDC Admin</title>
+    <link rel="shortcut icon" href="../image/blood-drop.png" type="image/x-icon">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../assets/css/common.css?v=145">
+    <link rel="stylesheet" href="../assets/css/index.css?v=125">
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=19">
+
+    <meta name="description"
+        content="Admin dashboard for managing donors, events, and recent donations.">
+    <link rel="stylesheet" href="../assets/css/footer.css?v=2">
+    <link rel="stylesheet" href="../assets/css/site-navbar.css?v=8">
+    <link rel="stylesheet" href="../assets/css/login.css?v=4">
+    <script type="module" src="../assets/js/modules/header.js?v=9"></script>
+</head>
+
+<body class="bg-white text-gray-900 loading admin-section-page" data-admin-section="events">
+    <div id="page-loader">
+        <div class="logo-wrapper">
+            <div class="logo-base">
+                <img src="../image/blood-drop.png" alt="" />
+            </div>
+            <div class="logo-fill">
+                <img src="../image/blood-drop.png" alt="Loading" />
+            </div>
+        </div>
+    </div>
+    <script src="../assets/js/viewport.js" defer></script>
+    <script type="module" src="../assets/js/app.js?v=53"></script>
+
+    <header class="site-header site-navbar fixed">
+        <nav class="navbar-row" aria-label="Main navigation">
+            <div class="navbar-brand-group">
+                <a class="navbar-brand" href="../index.html">
+                    <img src="../image/bauet-bdc-logo.webp" width="36" height="36" alt="" />
+                    <span data-i18n="siteTitle">BAUET BDC</span>
+                </a>
+                <span id="admin-badge" class="navbar-badge hidden" data-i18n="adminBadge">Admin</span>
+            </div>
+            <div id="desktop-nav-menu" class="navbar-desktop-links">
+                <a id="nav-home-link" href="../index.html" data-i18n="navHome">Home</a>
+                <a id="nav-about-link" href="about.html" data-i18n="navAbout">About</a>
+                <a id="nav-how-link" href="donationGuide.html" data-i18n="navHow">Donation Guide</a>
+                <a id="nav-events-link" href="events.html" data-i18n="navEvents">Events</a>
+                <a id="nav-join-link" href="join.html" data-i18n="navJoin">Join</a>
+                <a id="nav-search-link" href="search.html" data-i18n="navSearch">Search</a>
+                <a id="nav-leaderboard-link" href="leaderboard.html" data-i18n="navLeaderboard">Leaderboard</a>
+                <a id="nav-contact-link" href="../index.html#contact" data-i18n="navContact">Contact</a>
+                <a id="nav-dashboard-link" href="#admin-panel" class="hidden" aria-current="page"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i><span data-i18n="navDashboard">Dashboard</span></a>
+                <a id="nav-admin-profile-link" href="profile.html" class="hidden"><i class="fa-solid fa-user" aria-hidden="true"></i><span data-i18n="profileTitle">My Profile</span></a>
+            </div>
+            <div class="navbar-actions">
+                <button id="login-btn" class="navbar-account-button" type="button"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span data-i18n="btnLogin">Login</span></button>
+                <button id="navbar-logout-btn" class="navbar-account-button navbar-logout hidden" type="button"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span data-i18n="profileLogout">Logout</span></button>
+                <button id="mobile-profile-btn" class="mobile-profile-btn hidden" type="button" aria-label="Profile">
+                    <span class="mobile-profile-btn__initials">U</span>
+                </button>
+                <button id="menu-toggle" class="navbar-menu-toggle" type="button" aria-controls="mobile-menu"
+                    aria-expanded="false" aria-label="Menu" data-i18n="desktopMenuLabel">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path class="navbar-menu-icon" stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+                        <path class="navbar-close-icon" stroke-linecap="round" d="m6 6 12 12M18 6 6 18" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="navbar-popover hidden" role="navigation" aria-label="Menu">
+            <div class="navbar-panel">
+                <div class="navbar-mobile-links">
+                    <a id="mobile-home-link" href="../index.html">
+                        <i class="fa-solid fa-house" aria-hidden="true"></i>
+                        <span data-i18n="navHome">Home</span>
+                    </a>
+                    <a id="mobile-about-link" href="about.html">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        <span data-i18n="navAbout">About</span>
+                    </a>
+                    <a id="mobile-how-link" href="donationGuide.html">
+                        <i class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i>
+                        <span data-i18n="navHow">Donation Guide</span>
+                    </a>
+                    <a id="mobile-events-link" href="events.html">
+                        <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+                        <span data-i18n="navEvents">Events</span>
+                    </a>
+                    <a id="mobile-join-link" href="join.html">
+                        <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+                        <span data-i18n="navJoin">Join</span>
+                    </a>
+                    <a id="mobile-search-link" href="search.html">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <span data-i18n="navSearch">Search</span>
+                    </a>
+                    <a id="mobile-leaderboard-link" href="leaderboard.html">
+                        <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+                        <span data-i18n="navLeaderboard">Leaderboard</span>
+                    </a>
+                    <a id="admin-mobile-link" href="#admin-panel" class="hidden" aria-current="page">
+                        <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+                        <span data-i18n="navDashboard">Dashboard</span>
+                    </a>
+                    <a id="admin-mobile-profile-link" href="profile.html" class="hidden">
+                        <i class="fa-solid fa-user" aria-hidden="true"></i>
+                        <span data-i18n="profileTitle">My Profile</span>
+                    </a>
+                </div>
+                <div class="navbar-mobile-account">
+                    <button id="mobile-login-btn" type="button"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span data-i18n="btnLogin">Login</span></button>
+                    <button id="mobile-logout-btn" class="navbar-logout hidden" type="button">
+                        <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+                        <span data-i18n="profileLogout">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-4 lg:px-6">
+
+        <section id="admin-panel" class="hidden" aria-labelledby="admin-dashboard-title">
+            <div class="admin-dashboard-header">
+                <div class="admin-dashboard-heading">
+                    <span class="admin-dashboard-icon" aria-hidden="true"><i class="fa-solid fa-table-columns"></i></span>
+                    <div>
+                        <h2 id="admin-dashboard-title" data-i18n="adminDashboardTitle">Admin Dashboard</h2>
+                        <p data-i18n="adminDashboardDesc">Manage donors, donations, events and feedback.</p>
+                    </div>
+                </div>
+                <button id="admin-monthly-report-btn" type="button">
+                    <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+                    <span data-i18n="adminMonthlyReport">Monthly Report (PDF)</span>
+                </button>
+            </div>
+
+            <div class="admin-overview-grid" aria-label="Admin overview">
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="members" data-admin-role="member">
+                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-users"></i></span>
+                    <span id="admin-overview-donors" class="admin-overview-value">0</span>
+                    <span class="admin-overview-label" data-i18n="adminTotalMembers">Total Members</span>
+                </div>
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="members" data-admin-role="admin">
+                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-user-shield"></i></span>
+                    <span id="admin-overview-admins" class="admin-overview-value">0</span>
+                    <span class="admin-overview-label" data-i18n="adminTotalAdmins">Total Admins</span>
+                </div>
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="recent">
+                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-hand-holding-droplet"></i></span>
+                    <span id="admin-overview-donations" class="admin-overview-value">0</span>
+                    <span class="admin-overview-label" data-i18n="adminTotalDonations">Total Donations</span>
+                </div>
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="events">
+                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-calendar-check"></i></span>
+                    <span id="admin-overview-events" class="admin-overview-value">0</span>
+                    <span class="admin-overview-label" data-i18n="adminTotalEvents">Total Events</span>
+                </div>
+            </div>
+
+            <div class="admin-workspace">
+                <div class="admin-tabs" role="group" aria-label="Dashboard sections">
+                    <button type="button" class="admin-tab active" data-tab="events" aria-pressed="true" aria-controls="admin-section-events"><i
+                            class="fa-solid fa-calendar-days" aria-hidden="true"></i><span data-i18n="navEvents">Events</span></button>
+                    <button type="button" class="admin-tab" data-tab="recent" aria-pressed="false" aria-controls="admin-section-recent"><i
+                            class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i><span data-i18n="adminRecentDonations">Recent Donations</span></button>
+                    <button type="button" class="admin-tab" data-tab="members" aria-pressed="false" aria-controls="admin-section-members"><i
+                            class="fa-solid fa-users" aria-hidden="true"></i><span data-i18n="adminMembers">Members</span></button>
+                    <button type="button" class="admin-tab" data-tab="search" aria-pressed="false" aria-controls="admin-section-search"><i
+                        class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span data-i18n="searchTitle">Find Donors</span></button>
+                    <button type="button" class="admin-tab" data-tab="feedback" aria-pressed="false" aria-controls="admin-section-feedback"><i
+                        class="fa-solid fa-comment-dots" aria-hidden="true"></i><span data-i18n="adminFeedback">Feedback</span></button>
+                </div>
+
+                <div class="admin-tabpanel">
+                    <div id="admin-section-events" data-panel="events">
+                        <div class="admin-panel-card">
+                            <div class="admin-panel-card__header">
+                                <span class="admin-panel-card__icon"><i class="fa-solid fa-calendar-days"></i></span>
+                                <div>
+                                    <h3 class="admin-panel-card__title" data-i18n="adminEventTitle">Event Details</h3>
+                                    <p class="admin-panel-card__subtitle" data-i18n="adminEventHelp">Create and manage upcoming blood donation events
+                                    </p>
+                                </div>
+                            </div>
+                            <form id="admin-event-form" class="admin-form-grid">
+                                <input type="hidden" id="admin-event-id" name="id" />
+                                <div class="admin-event-field">
+                                    <label for="event-title">
+                                        <i class="fa-solid fa-heading" aria-hidden="true"></i>
+                                        <span data-i18n="adminEventTitleField">Event Title</span>
+                                    </label>
+                                    <input name="title" id="event-title" type="text" required />
+                                </div>
+                                <div class="admin-event-field">
+                                    <label for="event-date">
+                                        <i class="fa-solid fa-calendar-day" aria-hidden="true"></i>
+                                        <span data-i18n="adminEventDate">Event Date</span>
+                                    </label>
+                                    <input name="date" id="event-date" type="date" required />
+                                </div>
+                                <div class="admin-event-field">
+                                    <label for="event-time">
+                                        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                                        <span data-i18n="adminEventTime">Event Time</span>
+                                    </label>
+                                    <input name="time" id="event-time" type="time" required />
+                                </div>
+                                <div class="admin-event-field">
+                                    <label for="event-location">
+                                        <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                                        <span data-i18n="adminEventLocation">Donation Center</span>
+                                    </label>
+                                    <input name="location" id="event-location" type="text" required />
+                                </div>
+                                <div class="admin-event-field admin-event-field--full">
+                                    <label for="event-description">
+                                        <i class="fa-solid fa-align-left" aria-hidden="true"></i>
+                                        <span data-i18n="adminEventDescription">Description</span>
+                                    </label>
+                                    <textarea name="description" id="event-description" rows="2"></textarea>
+                                </div>
+                                <div class="admin-form-actions">
+                                    <button type="submit" class="admin-btn admin-btn--primary">
+                                        <i class="fa-solid fa-calendar-plus" aria-hidden="true"></i>
+                                        <span>Add Event</span>
+                                    </button>
+                                    <button type="button" id="clear-event-btn"
+                                        class="admin-btn admin-btn--ghost">Clear</button>
+                                </div>
+                            </form>
+                            <div class="admin-list-section">
+                                <h4 class="admin-list-section__title"><i class="fa-solid fa-list" aria-hidden="true"></i> <span data-i18n="adminScheduledEvents">Scheduled Events</span></h4>
+                                <div id="admin-events-list" class="admin-card-list"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    
+    <div class="visitor-stats-bar" aria-live="polite">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
+            <div class="visitor-stats-item">
+                <span class="visitor-stats-dot" style="background:#6366f1"></span>
+                <i class="fa-solid fa-eye text-xs" style="color:#6366f1"></i>
+                <span class="text-sm font-semibold text-gray-700">Total Views:</span>
+                <span id="total-views-count" class="text-sm font-extrabold text-gray-900">0</span>
+            </div>
+            <div class="visitor-stats-item">
+                <span class="visitor-stats-dot visitor-stats-dot--live"></span>
+                <i class="fa-solid fa-users text-xs" style="color:#10b981"></i>
+                <span class="text-sm font-semibold text-gray-700">Online Now:</span>
+                <span id="online-users-count" class="text-sm font-extrabold text-gray-900 online-users-count">0</span>
+            </div>
+        </div>
+    </div>
+
+    <footer id="app-footer" class="site-footer"></footer>
+    <script type="module" src="../assets/js/modules/footer.js?v=2"></script>
+
+    <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-[60]">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10">
+            <h3 class="text-lg font-bold text-red-700">Success!</h3>
+            <p class="mt-2 text-gray-700"></p>
+            <div class="mt-4 text-right">
+                <button id="success-close" class="px-4 py-2 bg-red-600 text-white rounded">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-modal" class="login-dialog hidden" role="dialog" aria-labelledby="login-dialog-club login-dialog-title">
+        <div class="login-dialog-backdrop absolute inset-0" aria-hidden="true"></div>
+        <div class="login-dialog-panel">
+            <div class="login-dialog-heading">
+                <img class="login-dialog-mark" src="../image/bauet-bdc-logo.webp" width="44" height="44" alt="" />
+                <div>
+                    <p id="login-dialog-club" class="login-dialog-club" data-i18n="siteTitle">BAUET BDC</p>
+                    <h2 id="login-dialog-title" data-i18n="loginTitle">Login</h2>
+                </div>
+            </div>
+            <form id="login-form" class="login-dialog-form">
+                <div class="login-dialog-field">
+                    <label for="login-email" data-i18n="loginEmail">Email</label>
+                    <div class="login-dialog-input">
+                        <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                        <input id="login-email" name="email" type="email" autocomplete="username"
+                            inputmode="email" autocapitalize="none" spellcheck="false" required />
+                    </div>
+                </div>
+                <div class="login-dialog-field">
+                    <label for="login-password" data-i18n="loginPassword">Password</label>
+                    <div class="login-dialog-input login-dialog-input-password">
+                        <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                        <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+                        <button id="toggle-password" class="login-dialog-toggle" type="button" aria-label="Show password"
+                            title="Show password" aria-pressed="false" data-i18n="loginShowPassword">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <a id="forgot-password-link" class="login-dialog-recovery" href="#"
+                        data-i18n="loginForgotPassword">Forgot Password?</a>
+                </div>
+                <div class="login-dialog-actions">
+                    <button class="login-dialog-submit" type="submit"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span data-i18n="loginSignIn">Sign in</span></button>
+                    <button id="login-cancel" class="login-dialog-cancel" type="button" data-i18n="modalCancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="feedback-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10 w-full">
+            <div class="flex items-start justify-between mb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-red-700">Share Your Feedback</h3>
+                    <p class="text-sm text-gray-600">Let us know how we can improve the BAUET BDC.</p>
+                </div>
+                <button type="button" id="feedback-close" class="text-gray-400 hover:text-gray-600"
+                    aria-label="Close feedback form">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+            <form id="feedback-form" class="grid gap-4">
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-user"></i>
+                    <input name="name" id="feedback-name" type="text" placeholder=" "
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="feedback-name"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Name</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-envelope"></i>
+                    <input name="email" id="feedback-email" type="email" placeholder=" " autocomplete="email"
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none" />
+                    <label for="feedback-email"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3.5 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Email
+                        (optional)</label>
+                </div>
+                <div class="field-icon-left">
+                    <i class="fi fa-solid fa-comment"></i>
+                    <textarea name="message" id="feedback-message" placeholder=" " required rows="4"
+                        class="peer block w-full rounded-lg border-2 border-gray-100 bg-white p-3 text-gray-900 shadow-sm focus:border-red-300 focus:outline-none"></textarea>
+                    <label for="feedback-message"
+                        class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Your
+                        feedback</label>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" id="feedback-cancel"
+                        class="px-4 py-2 rounded-lg border border-gray-200">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                        <span>Send</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="delete-confirm-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm mx-4 z-10 text-center">
+            <h3 class="text-xl font-bold text-red-700 mb-2">Are you sure?</h3>
+            <p class="text-gray-700">Deleting your profile is permanent and cannot be undone. All your donor information
+                will be removed.</p>
+            <div class="mt-6 flex justify-center gap-4">
+                <button id="delete-cancel"
+                    class="px-5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
+                <button id="delete-confirm" class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fab-wrap" class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
+        <button type="button" id="back-to-top"
+            class="bg-red-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-red-700 transition-all text-lg flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+        </button>
+    </div>
+
+</body>
+
+</html>

@@ -161,7 +161,7 @@ function applyLeaderboardFilters() {
         if (emptyEl) emptyEl.classList.remove('hidden');
     } else {
         if (emptyEl) emptyEl.classList.add('hidden');
-        container.innerHTML = filtered.map((entry, index) => renderLeaderboardCard(entry, index + 1)).join('');
+        container.innerHTML = filtered.map((entry, index) => renderHomeDonorCard(entry, index + 1)).join('');
     }
 
     if (countEl) countEl.textContent = `${filtered.length} donors`;
@@ -192,7 +192,7 @@ export function renderDonorLeaderboard(donors = [], recentDonations = [], option
     }
 
     if (emptyEl) emptyEl.classList.add('hidden');
-    container.innerHTML = ranked.map((entry, index) => renderLeaderboardCard(entry, index + 1)).join('');
+    container.innerHTML = ranked.map((entry, index) => renderHomeDonorCard(entry, index + 1)).join('');
 }
 
 export function renderDonorTicker(donors = [], recentDonations = [], options = {}) {

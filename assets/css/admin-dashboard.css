@@ -2,6 +2,11 @@ body.admin-mode {
     background: #f7f5f7;
 }
 
+/* Dedicated admin routes must never reveal copied public sections while auth resolves. */
+body.admin-section-page main > section:not(#admin-panel) {
+    display: none !important;
+}
+
 body.admin-mode :is(.home-main, main.max-w-6xl) {
     width: min(100%, 80rem);
     max-width: 80rem;
@@ -197,11 +202,11 @@ body.admin-mode #admin-panel .admin-tabs {
     display: grid !important;
     grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
     align-items: stretch;
-    gap: 0.3rem !important;
-    padding: 0.4rem !important;
+    gap: 0.55rem !important;
+    padding: 0.6rem !important;
     overflow: visible;
     border: 1px solid var(--dashboard-border);
-    border-radius: 0.85rem;
+    border-radius: 1rem;
     background: #fff;
     box-shadow: none;
 }
@@ -209,18 +214,18 @@ body.admin-mode #admin-panel .admin-tabs {
 body.admin-mode #admin-panel .admin-tabs .admin-tab {
     display: flex !important;
     width: 100% !important;
-    min-height: 2.75rem;
+    min-height: 3.65rem;
     height: auto;
     align-items: center;
     justify-content: flex-start;
-    gap: 0.5rem;
-    padding: 0.5rem 0.65rem !important;
-    border: 0;
-    border-radius: 0.55rem;
+    gap: 0.7rem;
+    padding: 0.65rem 0.75rem !important;
+    border: 1px solid transparent;
+    border-radius: 0.8rem;
     background: transparent;
     box-shadow: none;
     color: var(--dashboard-muted);
-    font-size: 0.82rem;
+    font-size: 0.84rem;
     font-weight: 700;
     line-height: 1.25;
     text-align: start;
@@ -233,21 +238,36 @@ body.admin-mode #admin-panel .admin-tabs .admin-tab span {
 }
 
 body.admin-mode #admin-panel .admin-tab i {
-    flex: 0 0 1rem;
-    color: #92667e;
+    display: grid;
+    flex: 0 0 2.15rem;
+    width: 2.15rem;
+    height: 2.15rem;
+    place-items: center;
+    border-radius: 0.65rem;
+    background: #f8edf2;
+    color: #8e3858;
+    font-size: 0.9rem;
     text-align: center;
 }
 
 body.admin-mode #admin-panel .admin-tabs .admin-tab:hover {
-    background: #f9f3f7;
+    border-color: #ead5df;
+    background: #fff8fa;
     color: var(--dashboard-ink);
-    transform: none;
+    transform: translateY(-1px);
 }
 
 body.admin-mode #admin-panel .admin-tabs .admin-tab.active {
-    background: #f9e9f0;
-    box-shadow: inset 3px 0 #a52547;
+    border-color: #ecc9d5;
+    background: linear-gradient(135deg, #fff2f6 0%, #f9e7ee 100%);
+    box-shadow: inset 3px 0 #a52547, 0 6px 16px rgba(112, 27, 58, 0.08);
     color: #842039;
+}
+
+body.admin-mode #admin-panel .admin-tabs .admin-tab.active i {
+    background: #a52547;
+    color: #fff;
+    box-shadow: 0 5px 12px rgba(165, 37, 71, 0.2);
 }
 
 body.admin-mode #admin-panel .admin-tab:focus-visible,
@@ -258,6 +278,29 @@ body.admin-mode #admin-panel .admin-overview-card:focus-visible {
 
 body.admin-mode #admin-panel .admin-tabpanel {
     margin: 0;
+}
+
+body.admin-mode #admin-panel .admin-tabpanel > [data-panel] {
+    scroll-margin-top: calc(var(--header-height, 4rem) + 0.85rem);
+}
+
+/* The dashboard is a clean summary. Management tools live on dedicated routes. */
+body.admin-mode:not(.admin-section-page) #admin-panel .admin-workspace {
+    display: none !important;
+}
+
+body.admin-section-page.admin-mode #admin-panel .admin-dashboard-header,
+body.admin-section-page.admin-mode #admin-panel .admin-overview-grid,
+body.admin-section-page.admin-mode #admin-panel .admin-tabs {
+    display: none !important;
+}
+
+body.admin-section-page.admin-mode #admin-panel .admin-workspace {
+    display: block;
+}
+
+body.admin-section-page.admin-mode #admin-panel {
+    padding-top: 1rem;
 }
 
 body.admin-mode #admin-panel .admin-panel-card {
@@ -394,6 +437,27 @@ body.admin-mode #admin-panel #admin-members-list .admin-member-card__actions {
     body.admin-mode #admin-panel .admin-overview-grid,
     body.admin-mode #admin-panel .admin-tabs {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    body.admin-mode #admin-panel .admin-tabs {
+        display: none !important;
+    }
+
+    body.admin-mode #admin-panel .admin-tabs .admin-tab {
+        min-height: 3.25rem;
+        padding: 0.5rem 0.55rem !important;
+        font-size: 0.76rem;
+    }
+
+    body.admin-mode #admin-panel .admin-tabs .admin-tab:nth-child(5) {
+        grid-column: 1 / -1;
+    }
+
+    body.admin-mode #admin-panel .admin-tab i {
+        flex-basis: 1.9rem;
+        width: 1.9rem;
+        height: 1.9rem;
+        font-size: 0.8rem;
     }
 }
 

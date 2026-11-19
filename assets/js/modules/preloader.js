@@ -2,6 +2,7 @@ const PRELOADER_FILL_MS = 900;
 const DATA_PROGRESS_FADE_DELAY_MS = 850;
 const preloaderStartedAt = performance.now();
 let finishTimer = null;
+let progressTimer = null;
 
 export function setPreloaderProgress(progress) {
     const pageLoader = document.getElementById('page-loader');
@@ -24,6 +25,8 @@ function hidePreloader(pageLoader) {
     if (!pageLoader || pageLoader.dataset.finished === 'true') return;
 
     pageLoader.dataset.finished = 'true';
+    window.clearInterval(progressTimer);
+    progressTimer = null;
     pageLoader.classList.add('fade-out');
     document.body.classList.remove('loading');
     setTimeout(() => {
@@ -37,6 +40,8 @@ export function finishPreloader() {
     if (!pageLoader || pageLoader.dataset.finished === 'true') return;
 
     if (pageLoader.dataset.progressMode === 'true') {
+        window.clearInterval(progressTimer);
+        progressTimer = null;
         setPreloaderProgress(100);
         if (pageLoader.dataset.finishRequested === 'true') return;
         pageLoader.dataset.finishRequested = 'true';
@@ -62,7 +67,21 @@ export function finishPreloader() {
 }
 
 export function initPreloader({ waitForAuth = false, waitForData = false, maxWaitMs = 0 } = {}) {
-    if (waitForAuth || waitForData) return;
+    if (waitForAuth || waitForData) {
+        const pageLoader = document.getElementById('page-loader');
+        if (!pageLoader) return;
+        pageLoader.dataset.progressMode = 'true';
+        pageLoader.style.setProperty('--loader-fill-offset', '92%');
+        pageLoader.dataset.progress = '8';
+        window.clearInterval(progressTimer);
+        progressTimer = window.setInterval(() => {
+            const current = Number(pageLoader.dataset.progress || 8);
+            if (current >= 88 || pageLoader.dataset.finishRequested === 'true') return;
+            const step = Math.max(0.4, (88 - current) * 0.045);
+            setPreloaderProgress(Math.min(88, current + step));
+        }, 180);
+        return;
+    }
 
     let fallbackTimer;
     const finishAfterLoad = () => {

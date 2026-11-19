@@ -7188,6 +7188,116 @@ canvas {
     box-shadow: 0 12px 26px rgba(16, 24, 40, 0.09) !important;
 }
 
+/* Keep the full leaderboard visually consistent with the Home Top Donors cards. */
+.leaderboard-page #leaderboard-list .home-donor-card {
+    display: flex;
+    min-width: 0;
+    min-height: 15rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid #eadde3;
+    border-block-start: 3px solid var(--donor-tier-border, #eadde3);
+    border-radius: 1rem;
+    background: var(--donor-tier-bg, #fff);
+}
+
+.leaderboard-page #leaderboard-list .home-donor-card[data-badge-tier="gold"] {
+    --donor-tier-border: #cca044;
+    --donor-tier-bg: #fffcf4;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-card[data-badge-tier="silver"] {
+    --donor-tier-border: #93a1b4;
+    --donor-tier-bg: #fafbfe;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-card[data-badge-tier="bronze"] {
+    --donor-tier-border: #bf815e;
+    --donor-tier-bg: #fff8f3;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-card-heading {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.6rem;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-card-heading h3 {
+    margin: 0 0 0.25rem;
+    color: #291e24;
+    font-size: 1rem;
+    font-weight: 750;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-card-heading .donor-badge {
+    padding: 0.18rem 0.5rem;
+    font-size: 0.7rem;
+    line-height: 1.3;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-avatar {
+    width: 2.65rem;
+    height: 2.65rem;
+    overflow: hidden;
+    border: 1px solid #eadde3;
+    border-radius: 50%;
+    background: #fff5f7;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-rank {
+    color: #971d41;
+    font-size: 0.79rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-meta {
+    display: grid;
+    gap: 0.25rem;
+    color: #6d6067;
+    font-size: 0.79rem;
+    line-height: 1.55;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-meta i {
+    width: 1.15em;
+    margin-inline-end: 0.15rem;
+    color: #971d41;
+    text-align: center;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.85rem;
+    margin-block-start: auto;
+    padding-block-start: 0.6rem;
+    border-block-start: 1px solid #eadde3;
+    color: #6d6067;
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+.leaderboard-page #leaderboard-list .home-donor-metrics strong {
+    color: #291e24;
+}
+
+@media (max-width: 640px) {
+    .leaderboard-page #leaderboard-list .home-donor-card {
+        min-height: 0;
+    }
+}
+
 @media (min-width: 769px) {
     #donor-leaderboard.leaderboard-section > div:first-child {
         grid-template-columns: minmax(0, 1fr) auto;

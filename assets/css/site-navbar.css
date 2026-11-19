@@ -369,3 +369,71 @@ body > header.site-navbar #mobile-menu .navbar-panel .hidden {
         display: none !important;
     }
 }
+/* Mobile-only admin section navigation. */
+.admin-mobile-sections {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.45rem;
+    padding: 0.65rem 0;
+    border-top: 1px solid #eadde3;
+    border-bottom: 1px solid #eadde3;
+}
+
+.admin-mobile-sections.hidden {
+    display: none !important;
+}
+
+#mobile-menu .admin-mobile-sections a {
+    display: flex;
+    min-width: 0;
+    min-height: 3.25rem;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem;
+    border: 1px solid #eddde4;
+    border-radius: 0.75rem;
+    background: #fffafb;
+    color: #4a303c;
+    font-size: 0.78rem;
+    font-weight: 750;
+    line-height: 1.2;
+}
+
+#mobile-menu .admin-mobile-sections a i {
+    display: grid;
+    width: 1.25rem;
+    height: auto;
+    flex: 0 0 1.25rem;
+    place-items: center;
+    border-radius: 0;
+    background: transparent !important;
+    color: #952949;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+
+#mobile-menu .navbar-panel i {
+    outline: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+
+#mobile-menu .admin-mobile-sections a:hover,
+#mobile-menu .admin-mobile-sections a:focus-visible,
+#mobile-menu .admin-mobile-sections a[aria-current="page"] {
+    border-color: #dca9ba;
+    background: #fff1f5;
+    color: #7f1d3c;
+}
+
+#mobile-menu .admin-mobile-sections a[aria-current="page"] {
+    box-shadow: inset 3px 0 #9f2349;
+}
+
+@media (min-width: 1024px) {
+    .admin-mobile-sections {
+        display: none !important;
+    }
+}

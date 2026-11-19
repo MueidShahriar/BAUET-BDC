@@ -613,8 +613,7 @@ export function initAdminTabs() {
     if (!adminPanel) return;
     const tabs = adminPanel.querySelectorAll('.admin-tab');
     const panels = adminPanel.querySelectorAll('[data-panel]');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
+    const activateTab = (tab, scroll = true) => {
             const target = tab.getAttribute('data-tab');
             tabs.forEach(t => {
                 const active = t === tab;
@@ -624,6 +623,21 @@ export function initAdminTabs() {
             panels.forEach(p => {
                 p.classList.toggle('hidden', p.getAttribute('data-panel') !== target);
             });
-        });
+            const targetPanel = Array.from(panels).find(p => p.getAttribute('data-panel') === target);
+            if (targetPanel && scroll) {
+                window.requestAnimationFrame(() => {
+                    targetPanel.scrollIntoView({
+                        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+                        block: 'start'
+                    });
+                });
+            }
+    };
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => activateTab(tab));
     });
+    const requestedSection = document.body.dataset.adminSection
+        || new URLSearchParams(window.location.search).get('section');
+    const requestedTab = Array.from(tabs).find(tab => tab.getAttribute('data-tab') === requestedSection);
+    if (requestedTab) activateTab(requestedTab, false);
 }
