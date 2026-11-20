@@ -25,6 +25,8 @@ function hidePreloader(pageLoader) {
     if (!pageLoader || pageLoader.dataset.finished === 'true') return;
 
     pageLoader.dataset.finished = 'true';
+    window.clearTimeout(finishTimer);
+    finishTimer = null;
     window.clearInterval(progressTimer);
     progressTimer = null;
     pageLoader.classList.add('fade-out');
@@ -35,9 +37,15 @@ function hidePreloader(pageLoader) {
     }, 500);
 }
 
-export function finishPreloader() {
+export function finishPreloader({ immediately = false } = {}) {
     const pageLoader = document.getElementById('page-loader');
     if (!pageLoader || pageLoader.dataset.finished === 'true') return;
+
+    if (immediately) {
+        setPreloaderProgress(100);
+        hidePreloader(pageLoader);
+        return;
+    }
 
     if (pageLoader.dataset.progressMode === 'true') {
         window.clearInterval(progressTimer);
@@ -80,6 +88,13 @@ export function initPreloader({ waitForAuth = false, waitForData = false, maxWai
             const step = Math.max(0.4, (88 - current) * 0.045);
             setPreloaderProgress(Math.min(88, current + step));
         }, 180);
+        if (maxWaitMs > 0) {
+            window.clearTimeout(finishTimer);
+            finishTimer = window.setTimeout(() => {
+                finishTimer = null;
+                finishPreloader({ immediately: true });
+            }, maxWaitMs);
+        }
         return;
     }
 

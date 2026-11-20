@@ -71,7 +71,7 @@ function buildHistoryText(history) {
   return lines.length ? `\n\nConversation so far:\n${lines.join('\n')}` : '';
 }
 
-app.post('/chat', async (req, res) => {
+async function handleChat(req, res) {
   try {
     const message = String(req.body?.message || '').trim();
     const context = String(req.body?.context || '').trim();
@@ -135,9 +135,15 @@ app.post('/chat', async (req, res) => {
     res.write(`\n\n${error.message || 'Server error.'}`);
     res.end();
   }
-});
+}
+
+app.post(['/chat', '/api/chat'], handleChat);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = { app, handleChat };

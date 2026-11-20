@@ -1,4 +1,4 @@
-import { t } from './language-ui.js?v=2';
+import { t } from './language-ui.js?v=7';
 import {
     buildDonorLeaderboard,
     formatDateDisplay,

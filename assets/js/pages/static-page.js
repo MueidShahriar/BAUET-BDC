@@ -10,13 +10,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 import { firebaseConfig } from "../modules/firebase-config.js";
-import { initPreloader } from "../modules/preloader.js?v=3";
-import { initHeader, initMobileMenu } from "../modules/header.js?v=9";
+import { initPreloader } from "../modules/preloader.js?v=5";
+import { initHeader, initMobileMenu } from "../modules/header.js?v=12";
 import { initFloatObserver } from "../modules/float-observer.js";
 import { initBackToTop } from "../modules/back-to-top.js?v=11";
 import { openModal, closeModal, showModalMessage } from "../modules/modals.js";
-import { updateLoginButtonState, initAuth } from "../modules/auth.js?v=13";
-import { initLanguageSystem } from "../modules/language-ui.js?v=6";
+import { updateLoginButtonState, initAuth } from "../modules/auth.js?v=16";
+import { initLanguageSystem } from "../modules/language-ui.js?v=7";
 import { initVisitorTracker } from "../modules/visitor-tracker.js";
 import { initFeedback } from "../modules/feedback.js";
 import state from "../modules/state.js";
@@ -27,8 +27,7 @@ const database = getDatabase(app);
 const feedbackRef = ref(database, 'feedback');
 
 function callUpdateLogin() {
-    updateLoginButtonState(database, ref, onValue,
-        () => {}, () => {}, () => {}, () => {});
+    updateLoginButtonState(database, ref, onValue);
 }
 
 window.addEventListener('load', () => {
@@ -56,10 +55,6 @@ window.addEventListener('load', () => {
     initAuth({
         auth, database, ref, onValue,
         signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged,
-        renderAdminMembersFn: () => {},
-        renderAdminEventsFn: () => {},
-        deleteMemberFn: () => {},
-        deleteEventFn: () => {},
         updateLoginFn: callUpdateLogin
     });
 });

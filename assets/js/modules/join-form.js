@@ -1,8 +1,8 @@
 import state from './state.js';
 import { showModalMessage } from './modals.js';
 import { normalizeDonorId, getDonorIdNumber, getMaxDonorIdNumber, DONOR_ID_COUNTER_SEED } from './utils.js';
-import { t } from './language-ui.js?v=2';
-import { getFriendlyAuthError } from './auth-errors.js?v=1';
+import { t } from './language-ui.js?v=7';
+import { getFriendlyAuthError } from './auth-errors.js?v=2';
 
 function getLocalDateInputValue(date = new Date()) {
     const year = date.getFullYear();

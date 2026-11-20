@@ -1,10 +1,10 @@
 import state from './state.js';
 import { openModal, closeModal, showModalMessage } from './modals.js';
-import { t } from './language-ui.js?v=6';
+import { t } from './language-ui.js?v=7';
 import { getDefaultAvatarImageUrl } from './utils.js';
-import { updateBirthdayWish } from './birthday-wish.js?v=5';
-import { getFriendlyAuthError } from './auth-errors.js?v=1';
-import { syncAdminNavbar } from './header.js?v=9';
+import { updateBirthdayWish } from './birthday-wish.js?v=6';
+import { getFriendlyAuthError } from './auth-errors.js?v=2';
+import { syncAdminNavbar } from './header.js?v=12';
 
 function getAuthRedirectOverlay() {
     let overlay = document.getElementById('auth-redirect-overlay');
@@ -63,7 +63,7 @@ function restoreLoginButton(button) {
     button.lastElementChild.textContent = t('btnLogin');
 }
 
-export function updateLoginButtonState(database, ref, onValue, renderAdminMembersList, renderAdminEventsList, deleteMemberFn, deleteEventFn, afterRoleResolvedFn, promoteMemberFn, demoteMemberFn, toggleMemberStatusFn) {
+export function updateLoginButtonState(database, ref, onValue, afterRoleResolvedFn) {
     if (state.isAuthRedirecting) return;
     const assetPrefix = window.location.pathname.includes('/pages/') ? '../' : '';
     const isAdminPage = /\/(?:pages\/)?admin(?:-(?:events|recent|members|search|feedback))?\.html$/i.test(window.location.pathname || '');
@@ -83,10 +83,33 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
     mobileLogoutBtn?.classList.toggle('hidden', !user);
     if (user) {
         if (profileUserId) profileUserId.textContent = `User ID: ${user.uid}`;
-        const userRef = ref(database, `donors/${user.uid}`);
-        onValue(userRef, (snapshot) => {
+        let userData;
+        let isAdminFlag;
+        let roleApplied = false;
+
+        function applyUserRole() {
             if (state.currentUser?.uid !== user.uid) return;
-            const userData = snapshot.val() || {};
+            const isAdmin = isAdminFlag === true || userData?.role === 'admin';
+            if (roleApplied || (!isAdmin && (isAdminFlag === undefined || !userData))) return;
+            roleApplied = true;
+            state.currentUserRole = isAdmin ? 'admin' : (userData.role || 'member');
+            syncAdminNavbar(isAdmin);
+            if (adminPanel) {
+                adminPanel.hidden = !isAdmin;
+                adminPanel.classList.toggle('hidden', !isAdmin);
+            }
+            document.body.classList.toggle('admin-mode', isAdmin);
+            leaderboardSections.forEach(section => section.classList.toggle('hidden', isAdmin));
+            adminBadge?.classList.add('hidden');
+            adminBadge?.classList.remove('inline-flex');
+            hideAuthRedirectOverlay();
+            afterRoleResolvedFn?.(state.currentUserRole);
+            if (isAdminPage && !isAdmin) window.location.assign(getProfileHref());
+        }
+
+        function applyUserProfile(profile) {
+            if (state.currentUser?.uid !== user.uid) return;
+            userData = profile;
             const photoUrl = userData.profilePhoto || getDefaultAvatarImageUrl(userData.gender);
             const profileLabel = t('btnProfile');
             for (const button of [loginBtn, mobileProfileBtn]) {
@@ -106,31 +129,20 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
             }
             mobileProfileBtn?.classList.remove('hidden');
             mobileLoginBtn?.classList.add('hidden');
+            state.currentUserProfile = { ...userData, uid: user.uid };
+            updateBirthdayWish(state.currentUserProfile);
+            applyUserRole();
+        }
 
-            function applyUserRole(isAdminFlag) {
-                if (state.currentUser?.uid !== user.uid) return;
-                state.currentUserRole = isAdminFlag ? 'admin' : (userData.role || 'member');
-                state.currentUserProfile = { ...userData, uid: user.uid };
-                updateBirthdayWish(state.currentUserProfile);
-                const isAdmin = state.currentUserRole === 'admin';
-                syncAdminNavbar(isAdmin);
-                adminPanel?.classList.toggle('hidden', !isAdmin);
-                document.body.classList.toggle('admin-mode', isAdmin);
-                leaderboardSections.forEach(section => section.classList.toggle('hidden', isAdmin));
-                adminBadge?.classList.add('hidden');
-                adminBadge?.classList.remove('inline-flex');
-                if (isAdmin) {
-                    renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn, toggleMemberStatusFn);
-                    renderAdminEventsList(deleteEventFn);
-                }
-                hideAuthRedirectOverlay();
-                afterRoleResolvedFn?.(state.currentUserRole);
-                if (isAdminPage && !isAdmin) window.location.assign(getProfileHref());
-            }
+        function resolveAdminFlag(isAdmin) {
+            isAdminFlag = isAdmin;
+            applyUserRole();
+        }
 
-            const adminRef = ref(database, `admins/${user.uid}`);
-            onValue(adminRef, adminSnap => applyUserRole(Boolean(adminSnap.val())), () => applyUserRole(false), { onlyOnce: true });
-        }, { onlyOnce: true });
+        const adminRef = ref(database, `admins/${user.uid}`);
+        const userRef = ref(database, `donors/${user.uid}`);
+        onValue(adminRef, snapshot => resolveAdminFlag(Boolean(snapshot.val())), () => resolveAdminFlag(false), { onlyOnce: true });
+        onValue(userRef, snapshot => applyUserProfile(snapshot.val() || {}), () => applyUserProfile({}), { onlyOnce: true });
     } else {
         if (loginBtn) {
             restoreLoginButton(loginBtn);
@@ -147,8 +159,12 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
         }
         if (profileUserId) profileUserId.textContent = '';
         state.currentUserProfile = null;
+        state.currentUserRole = 'member';
         updateBirthdayWish(null);
-        adminPanel?.classList.add('hidden');
+        if (adminPanel) {
+            adminPanel.hidden = true;
+            adminPanel.classList.add('hidden');
+        }
         document.body.classList.remove('admin-mode');
         leaderboardSections.forEach(section => section.classList.remove('hidden'));
         adminBadge?.classList.add('hidden');
@@ -163,7 +179,7 @@ export function updateLoginButtonState(database, ref, onValue, renderAdminMember
 
 export function initAuth({
     auth, database, ref, onValue, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged,
-    renderAdminMembersFn, renderAdminEventsFn, deleteMemberFn, deleteEventFn, updateLoginFn
+    updateLoginFn
 }) {
     const loginModal = document.getElementById('login-modal');
     const loginBtn = document.getElementById('login-btn');

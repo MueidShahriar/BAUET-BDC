@@ -1,6 +1,6 @@
 import state from './state.js';
 import { getTextValue, normalizeDonorId, getDefaultAvatarImageMarkup } from './utils.js';
-import { t } from './language-ui.js?v=2';
+import { t } from './language-ui.js?v=7';
 
 let nativeDonations = [];
 let nativeActiveIndex = 0;

@@ -1,5 +1,5 @@
 
-import { t } from './language-ui.js?v=6';
+import { t } from './language-ui.js?v=7';
 import { formatPhoneForDisplay } from './utils.js';
 
 const logoUrl = new URL('../../../image/bauet-bdc-logo.webp', import.meta.url).href;

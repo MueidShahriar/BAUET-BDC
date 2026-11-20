@@ -11,15 +11,15 @@ import {
 
 import { firebaseConfig } from "../modules/firebase-config.js";
 import state from "../modules/state.js";
-import { initPreloader } from "../modules/preloader.js?v=3";
-import { initHeader, initMobileMenu } from "../modules/header.js?v=9";
+import { initPreloader } from "../modules/preloader.js?v=5";
+import { initHeader, initMobileMenu } from "../modules/header.js?v=12";
 import { initFloatObserver } from "../modules/float-observer.js";
 import { initBackToTop } from "../modules/back-to-top.js?v=11";
 import { openModal, closeModal, showModalMessage } from "../modules/modals.js";
-import { updateLoginButtonState, initAuth } from "../modules/auth.js?v=13";
-import { initLanguageSystem } from "../modules/language-ui.js?v=6";
+import { updateLoginButtonState, initAuth } from "../modules/auth.js?v=16";
+import { initLanguageSystem } from "../modules/language-ui.js?v=7";
 import { initVisitorTracker } from "../modules/visitor-tracker.js";
-import { initJoinForm } from "../modules/join-form.js?v=5";
+import { initJoinForm } from "../modules/join-form.js?v=6";
 import { initFeedback } from "../modules/feedback.js";
 
 const app = initializeApp(firebaseConfig);
@@ -29,8 +29,7 @@ const database = getDatabase(app);
 const feedbackRef = ref(database, 'feedback');
 
 function callUpdateLogin() {
-    updateLoginButtonState(database, ref, onValue,
-        () => {}, () => {}, () => {}, () => {});
+    updateLoginButtonState(database, ref, onValue);
 }
 
 window.onload = function () {
@@ -65,10 +64,6 @@ window.onload = function () {
     initAuth({
         auth, database, ref, onValue,
         signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged,
-        renderAdminMembersFn: () => {},
-        renderAdminEventsFn: () => {},
-        deleteMemberFn: () => {},
-        deleteEventFn: () => {},
         updateLoginFn: callUpdateLogin
     });
 };

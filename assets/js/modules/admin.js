@@ -1,5 +1,5 @@
 import state from './state.js';
-import { t } from './language-ui.js?v=2';
+import { t } from './language-ui.js?v=7';
 import {
     sortEventsByDate,
     normalizeDonorId,
@@ -14,6 +14,19 @@ import {
     getDefaultAvatarImageMarkup
 } from './utils.js';
 import { openModal, closeModal, showModalMessage, attachConfirmHandler } from './modals.js';
+
+export const adminListStatus = { members: 'loading', recent: 'loading', events: 'loading' };
+
+function canRenderAdminList(list, section) {
+    if (!list || state.currentUserRole !== 'admin') return false;
+    const status = adminListStatus[section];
+    if (status === 'loading') return false;
+    if (status === 'error') {
+        list.innerHTML = `<div class="loading-banner admin-list-message" role="status" data-i18n="adminListLoadError">${t('adminListLoadError')}</div>`;
+        return false;
+    }
+    return true;
+}
 
 function scrollToMemberEditForm() {
     const form = document.getElementById('admin-member-form');
@@ -124,7 +137,7 @@ function renderRecentDonationCardAdmin(d) {
 
 export function renderAdminRecentDonationsList(deleteRecentFn) {
     const listDiv = document.getElementById('admin-recent-donations-list');
-    if (!listDiv) return;
+    if (!canRenderAdminList(listDiv, 'recent')) return;
     if (!state.recentDonationsList || !state.recentDonationsList.length) {
         listDiv.innerHTML = `<div class="rounded-lg border border-dashed border-red-200 bg-red-50/40 p-6 text-center text-sm text-red-600">No recent donations recorded yet.</div>`;
         return;
@@ -310,7 +323,7 @@ function renderFeedbackCardAdmin(entry) {
 
 export function renderAdminFeedbackList(deleteFeedbackFn) {
     const listDiv = document.getElementById('admin-feedback-list');
-    if (!listDiv) return;
+    if (!listDiv || state.currentUserRole !== 'admin') return;
     if (!state.feedbackList || !state.feedbackList.length) {
         listDiv.innerHTML = `<div class="rounded-lg border border-dashed border-red-200 bg-red-50/40 p-6 text-center text-sm text-red-600">No feedback submitted yet.</div>`;
         return;
@@ -421,6 +434,8 @@ function hasActiveMemberSearchFilters() {
 function updateAdminMemberSearchStatus() {
     const statusEl = document.getElementById('admin-member-search-status');
     if (!statusEl) return;
+    statusEl.hidden = adminListStatus.members !== 'ready';
+    if (statusEl.hidden) return;
     const nameFilter = state.memberSearchName.trim();
     const phoneFilter = state.memberSearchPhone.trim();
     const bloodFilter = state.memberSearchBlood.trim();
@@ -437,8 +452,9 @@ function updateAdminMemberSearchStatus() {
 
 export function renderAdminMembersList(deleteMemberFn, promoteMemberFn, demoteMemberFn, toggleMemberStatusFn) {
     const membersListDiv = document.getElementById('admin-members-list');
-    if (!membersListDiv) return;
+    if (!membersListDiv || state.currentUserRole !== 'admin') return;
     updateAdminMemberSearchStatus();
+    if (!canRenderAdminList(membersListDiv, 'members')) return;
     if (!state.donorsList.length) {
         membersListDiv.innerHTML = `<div class="rounded-lg border border-dashed border-red-200 bg-red-50/40 p-6 text-center text-sm text-red-600">No member records found yet. Once donors register, they'll appear here automatically.</div>`;
         return;
@@ -533,7 +549,7 @@ export function resetAdminMemberSearchFilters(deleteMemberFn, promoteMemberFn, d
 
 export function renderAdminEventsList(deleteEventFn) {
     const eventsListDiv = document.getElementById('admin-events-list');
-    if (!eventsListDiv) return;
+    if (!canRenderAdminList(eventsListDiv, 'events')) return;
     if (!state.eventsList.length) {
         eventsListDiv.innerHTML = `<div class="rounded-lg border border-dashed border-red-200 bg-red-50/40 p-6 text-center text-sm text-red-600">No events scheduled yet. Add an event to get started.</div>`;
         return;
@@ -608,36 +624,55 @@ export function clearAdminMemberForm() {
     if (emailField) emailField.value = '';
 }
 
-export function initAdminTabs() {
+export function initAdminTabs(onTabChange) {
     const adminPanel = document.getElementById('admin-panel');
     if (!adminPanel) return;
     const tabs = adminPanel.querySelectorAll('.admin-tab');
-    const panels = adminPanel.querySelectorAll('[data-panel]');
-    const activateTab = (tab, scroll = true) => {
-            const target = tab.getAttribute('data-tab');
-            tabs.forEach(t => {
-                const active = t === tab;
-                t.classList.toggle('active', active);
-                t.setAttribute('aria-pressed', String(active));
-            });
-            panels.forEach(p => {
-                p.classList.toggle('hidden', p.getAttribute('data-panel') !== target);
-            });
-            const targetPanel = Array.from(panels).find(p => p.getAttribute('data-panel') === target);
-            if (targetPanel && scroll) {
-                window.requestAnimationFrame(() => {
-                    targetPanel.scrollIntoView({
-                        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-                        block: 'start'
-                    });
-                });
+    const panels = Array.from(adminPanel.querySelectorAll('[data-panel]'));
+    const standaloneSection = document.body.dataset.adminSection;
+    const isDashboard = document.body.classList.contains('admin-dashboard-page');
+    const selectSection = (section, { navigate = true } = {}) => {
+        const targetPanel = panels.find(panel => panel.dataset.panel === section);
+        const showAdminOnly = section === 'members' && state.memberSearchRole === 'admin';
+        if (!targetPanel || (navigate && !isDashboard && !standaloneSection)) {
+            if (navigate) {
+                const prefix = window.location.pathname.includes('/pages/') ? '' : 'pages/';
+                window.location.assign(`${prefix}admin-${section}.html${showAdminOnly ? '?role=admin' : ''}`);
             }
+            return;
+        }
+        tabs.forEach(tab => {
+            const active = tab.dataset.tab === section;
+            tab.classList.toggle('active', active);
+            tab.setAttribute('aria-pressed', String(active));
+        });
+        panels.forEach(panel => panel.classList.toggle('hidden', panel !== targetPanel));
+        if (navigate) {
+            if (isDashboard) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('section', section);
+                if (showAdminOnly) url.searchParams.set('role', 'admin');
+                else url.searchParams.delete('role');
+                window.history.replaceState(window.history.state, '', url);
+            }
+            targetPanel.scrollIntoView({ behavior: 'instant', block: 'start' });
+        }
+        onTabChange?.();
     };
     tabs.forEach(tab => {
-        tab.addEventListener('click', () => activateTab(tab));
+        tab.addEventListener('click', () => selectSection(tab.dataset.tab));
     });
-    const requestedSection = document.body.dataset.adminSection
-        || new URLSearchParams(window.location.search).get('section');
-    const requestedTab = Array.from(tabs).find(tab => tab.getAttribute('data-tab') === requestedSection);
-    if (requestedTab) activateTab(requestedTab, false);
+    if (isDashboard) {
+        document.querySelector('.site-navbar')?.addEventListener('click', event => {
+            if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+            const link = event.target.closest('.admin-mobile-sections a');
+            const section = link?.pathname.match(/\/admin-([a-z]+)\.html$/)?.[1];
+            if (!section || !panels.some(panel => panel.dataset.panel === section)) return;
+            event.preventDefault();
+            selectSection(section);
+        });
+    }
+    const requestedSection = standaloneSection || new URLSearchParams(window.location.search).get('section');
+    if (requestedSection) selectSection(requestedSection, { navigate: false });
+    return selectSection;
 }

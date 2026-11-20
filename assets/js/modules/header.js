@@ -1,6 +1,26 @@
-import { initLanguageSystem, t } from './language-ui.js?v=6';
+import { initLanguageSystem, t } from './language-ui.js?v=7';
 
 const wideViewport = window.matchMedia('(min-width: 1024px)');
+const pagesPrefix = window.location.pathname.includes('/pages/') ? '' : 'pages/';
+const dashboardHref = `${pagesPrefix}admin.html`;
+
+function initServiceWorker() {
+    if (!('serviceWorker' in navigator) || !/^https?:$/.test(window.location.protocol)) return;
+
+    const register = async () => {
+        try {
+            const registration = await navigator.serviceWorker.register('/service-worker.js', {
+                updateViaCache: 'none'
+            });
+            await registration.update();
+        } catch (error) {
+            console.warn('Service worker registration failed:', error);
+        }
+    };
+
+    if (document.readyState === 'complete') register();
+    else window.addEventListener('load', register, { once: true });
+}
 
 const adminSectionLinks = [
     ['events', 'fa-calendar-days', 'navEvents', 'Events'],
@@ -13,12 +33,11 @@ const adminSectionLinks = [
 function ensureAdminMobileSections(header) {
     const links = header.querySelector('.navbar-mobile-links');
     if (!links || links.querySelector('.admin-mobile-sections')) return;
-    const inPages = window.location.pathname.includes('/pages/');
     const group = document.createElement('div');
     group.className = 'admin-mobile-sections hidden';
     group.setAttribute('aria-label', 'Admin sections');
     group.innerHTML = adminSectionLinks.map(([page, icon, key, label]) => `
-        <a id="admin-mobile-${page}-link" href="${inPages ? '' : 'pages/'}admin-${page}.html">
+        <a id="admin-mobile-${page}-link" href="${pagesPrefix}admin-${page}.html">
             <i class="fa-solid ${icon}" aria-hidden="true"></i>
             <span data-i18n="${key}">${t(key) || label}</span>
         </a>`).join('');
@@ -37,15 +56,13 @@ export function syncAdminNavbar(isAdmin) {
     const brand = header.querySelector('.navbar-brand');
     if (brand) {
         brand.dataset.publicHref ||= brand.getAttribute('href') || '';
-        brand.setAttribute('href', isAdmin
-            ? (window.location.pathname.includes('/pages/') ? 'admin.html' : 'pages/admin.html')
-            : brand.dataset.publicHref);
+        brand.setAttribute('href', isAdmin ? dashboardHref : brand.dataset.publicHref);
     }
     const publicLinks = /^(?:nav|mobile)-(?:home|about|how|events|join|search|leaderboard|contact)-link$/;
     header.querySelectorAll('a[id]').forEach(link => {
         if (publicLinks.test(link.id)) link.classList.toggle('hidden', isAdmin);
     });
-    const isDashboard = Boolean(document.getElementById('admin-panel'));
+    const isDashboard = window.location.pathname.endsWith('/admin.html');
     header.querySelectorAll('#nav-dashboard-link, #admin-mobile-link').forEach(link => {
         link.classList.toggle('hidden', !isAdmin || isDashboard);
     });
@@ -54,6 +71,34 @@ export function syncAdminNavbar(isAdmin) {
         link.classList.toggle('hidden', !isAdmin || mobileProfile || link.getAttribute('aria-current') === 'page');
     });
     header.querySelector('.admin-mobile-sections')?.classList.toggle('hidden', !isAdmin);
+}
+
+async function initStandaloneAdminNavbar() {
+    const [appSdk, authSdk, databaseSdk, { firebaseConfig }] = await Promise.all([
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'),
+        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js'),
+        import('./firebase-config.js')
+    ]);
+    const app = appSdk.getApps().length ? appSdk.getApp() : appSdk.initializeApp(firebaseConfig);
+    const auth = authSdk.getAuth(app);
+    const database = databaseSdk.getDatabase(app);
+    const { get, ref } = databaseSdk;
+
+    authSdk.onAuthStateChanged(auth, (user) => {
+        syncAdminNavbar(false);
+        if (!user) return;
+
+        const revealDashboard = (isAdmin) => {
+            if (isAdmin && auth.currentUser === user) syncAdminNavbar(true);
+        };
+        get(ref(database, `admins/${user.uid}`)).then(
+            snapshot => revealDashboard(Boolean(snapshot.val())), () => {}
+        );
+        get(ref(database, `donors/${user.uid}/role`)).then(
+            snapshot => revealDashboard(snapshot.val() === 'admin'), () => {}
+        );
+    });
 }
 
 export function initHeader() {
@@ -117,4 +162,13 @@ export function initMobileMenu() {
 
 initHeader();
 initMobileMenu();
-if (document.querySelector('[data-standalone-navbar]')) initLanguageSystem();
+initServiceWorker();
+if (document.querySelector('#page-loader.admin-page-preloader')) {
+    import('./preloader.js?v=5')
+        .then(({ initPreloader }) => initPreloader({ waitForAuth: true, maxWaitMs: 15000 }))
+        .catch(error => console.warn('Could not initialize admin preloader:', error));
+}
+if (document.querySelector('[data-standalone-navbar]')) {
+    initLanguageSystem();
+    initStandaloneAdminNavbar().catch(error => console.warn('Could not load admin navigation:', error));
+}

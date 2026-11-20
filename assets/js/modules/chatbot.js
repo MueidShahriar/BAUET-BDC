@@ -777,7 +777,7 @@ function buildKBContext(question) {
         '\n--- END CONTEXT ---\n\nUse the above context to inform your answer if relevant. You may expand on it with your own knowledge.';
 }
 
-const CHAT_API_URL = '/chat';
+const CHAT_API_URL = '/api/chat';
 const CHATBOT_STORAGE_PREFIX = 'bdc-chatbot';
 
 let conversationHistory = [];

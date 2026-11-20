@@ -2,8 +2,42 @@ body.admin-mode {
     background: #f7f5f7;
 }
 
-/* Dedicated admin routes must never reveal copied public sections while auth resolves. */
-body.admin-section-page main > section:not(#admin-panel) {
+#page-loader.admin-page-preloader {
+    transition-duration: 160ms;
+}
+
+#page-loader.admin-page-preloader.fade-out {
+    pointer-events: none;
+}
+
+.admin-card-list > .admin-list-message {
+    grid-column: 1 / -1;
+    min-height: 3rem;
+    margin: 0;
+}
+
+.admin-list-message .loading-banner__spinner {
+    flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #page-loader.admin-page-preloader,
+    #page-loader.admin-page-preloader[data-progress-mode="true"] .logo-fill {
+        transition: none;
+    }
+
+    .admin-list-message .loading-banner__spinner {
+        animation: none;
+    }
+}
+
+/* Hide public sections while admin access is checked. */
+body:is(.admin-dashboard-page, .admin-section-page) main > section:not(#admin-panel) {
+    display: none !important;
+}
+
+#admin-panel[hidden],
+#admin-panel [data-panel].hidden {
     display: none !important;
 }
 
@@ -284,8 +318,7 @@ body.admin-mode #admin-panel .admin-tabpanel > [data-panel] {
     scroll-margin-top: calc(var(--header-height, 4rem) + 0.85rem);
 }
 
-/* The dashboard is a clean summary. Management tools live on dedicated routes. */
-body.admin-mode:not(.admin-section-page) #admin-panel .admin-workspace {
+body.admin-mode:not(.admin-section-page, .admin-dashboard-page) #admin-panel .admin-workspace {
     display: none !important;
 }
 

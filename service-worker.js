@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v201';
+const CACHE_VERSION = 'v205';
 const STATIC_CACHE_NAME = `bdc-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE_NAME = `bdc-runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
@@ -13,34 +13,33 @@ const PRECACHE_URLS = [
   '/assets/css/about.css?v=5',
   '/assets/js/pages/about-scroll-flow.js?v=1',
   '/assets/css/join.css?v=6',
-  '/assets/js/modules/join-form.js?v=5',
+  '/assets/js/modules/join-form.js?v=6',
   '/assets/css/index.css?v=125',
-  '/assets/css/admin-dashboard.css?v=19',
+  '/assets/css/admin-dashboard.css?v=21',
   '/assets/css/profile.css?v=5',
   '/assets/css/donor-documents.css?v=1',
-  '/assets/js/modules/certificate.js?v=3',
+  '/assets/js/modules/certificate.js?v=4',
   '/assets/css/home.css?v=4',
   '/assets/css/home-sections.css?v=2',
-  '/assets/js/app.js?v=53',
-  '/assets/js/pages/home-preloader.js?v=2',
-  '/assets/js/modules/preloader.js?v=3',
-  '/assets/js/modules/carousel.js?v=2',
+  '/assets/js/app.js?v=57',
+  '/assets/js/pages/home-preloader.js?v=3',
+  '/assets/js/modules/preloader.js?v=5',
+  '/assets/js/modules/carousel.js?v=3',
   '/assets/js/modules/dashboard.js?v=3',
-  '/assets/js/modules/leaderboard.js?v=4',
+  '/assets/js/modules/leaderboard.js?v=5',
   '/assets/js/modules/stats-counter.js?v=3',
-  '/assets/js/modules/admin.js?v=9',
-  '/assets/js/modules/auth.js?v=13',
-  '/assets/js/modules/header.js?v=9',
+  '/assets/js/modules/admin.js?v=10',
+  '/assets/js/modules/auth.js?v=16',
+  '/assets/js/modules/header.js?v=12',
   '/assets/js/modules/footer.js?v=2',
   '/assets/js/modules/back-to-top.js?v=11',
-  '/assets/js/profile.js?v=21',
-  '/assets/js/modules/auth-errors.js?v=1',
-  '/assets/js/modules/birthday-wish.js?v=5',
-  '/assets/js/modules/language-ui.js?v=4',
-  '/assets/js/modules/language-ui.js?v=6',
-  '/assets/js/modules/language-config.js?v=5',
+  '/assets/js/profile.js?v=23',
+  '/assets/js/modules/auth-errors.js?v=2',
+  '/assets/js/modules/birthday-wish.js?v=6',
+  '/assets/js/modules/language-ui.js?v=7',
+  '/assets/js/modules/language-config.js?v=6',
   '/assets/js/viewport.js',
-  '/assets/js/pages/search.js?v=22',
+  '/assets/js/pages/search.js?v=24',
   '/assets/js/modules/search.js?v=3',
   '/assets/js/modules/utils.js',
   '/assets/js/modules/state.js',
@@ -88,23 +87,6 @@ async function cacheFirst(request, cacheName) {
   return response;
 }
 
-function staleWhileRevalidate(event, request, cacheName) {
-  const cachePromise = caches.open(cacheName);
-  const updatePromise = fetch(request).then(async (response) => {
-    if (response && response.ok) {
-      const cache = await cachePromise;
-      await cache.put(request, response.clone());
-    }
-    return response;
-  });
-
-  event.waitUntil(updatePromise.then(() => undefined, () => undefined));
-  return cachePromise.then(async (cache) => {
-    const cached = await cache.match(request);
-    return cached || updatePromise;
-  });
-}
-
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE_NAME)
@@ -141,7 +123,7 @@ self.addEventListener('fetch', (event) => {
 
   if (isAssetRequest) {
     event.respondWith(
-      staleWhileRevalidate(event, event.request, STATIC_CACHE_NAME)
+      networkFirst(event.request, STATIC_CACHE_NAME)
         .catch(() => Response.error())
     );
     return;

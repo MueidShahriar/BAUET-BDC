@@ -18,17 +18,17 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { firebaseConfig } from "./modules/firebase-config.js";
 import state from "./modules/state.js";
-import { finishPreloader } from "./modules/preloader.js?v=3";
+import { finishPreloader } from "./modules/preloader.js?v=5";
 import {
   initLanguageSystem,
   updatePageLanguage,
-} from "./modules/language-ui.js?v=6";
+} from "./modules/language-ui.js?v=7";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";
 import { initFeedback } from "./modules/feedback.js";
-import { initHeader, initMobileMenu, syncAdminNavbar } from "./modules/header.js?v=9";
+import { initHeader, initMobileMenu, syncAdminNavbar } from "./modules/header.js?v=12";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
-import { initChatbot } from "./modules/chatbot.js?v=8";
-import { updateBirthdayWish } from "./modules/birthday-wish.js?v=5";
+import { initChatbot } from "./modules/chatbot.js?v=9";
+import { updateBirthdayWish } from "./modules/birthday-wish.js?v=6";
 import {
   getDonationCountForDonor,
   normalizeDonorId,
@@ -591,7 +591,7 @@ certBtn?.addEventListener("click", async () => {
     return;
   }
   try {
-    const { showCertificateModal } = await import("./modules/certificate.js?v=3");
+    const { showCertificateModal } = await import("./modules/certificate.js?v=4");
     const donorData = {
       ...currentDonorData,
       fullName: fFullName?.value || "",
@@ -614,7 +614,7 @@ donorCardBtn?.addEventListener("click", async () => {
     return;
   }
   try {
-    const { showDonorCardModal } = await import("./modules/certificate.js?v=3");
+    const { showDonorCardModal } = await import("./modules/certificate.js?v=4");
     const donorData = {
       ...currentDonorData,
       fullName: fFullName?.value || "",

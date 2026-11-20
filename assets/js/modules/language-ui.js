@@ -1,5 +1,5 @@
 
-import { t as translate, getCurrentLanguage, setLanguage } from './language-config.js?v=5';
+import { t as translate, getCurrentLanguage, setLanguage } from './language-config.js?v=6';
 
 export const t = translate;
 
