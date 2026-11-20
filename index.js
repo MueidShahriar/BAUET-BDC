@@ -1,8 +1,7 @@
+const { app } = require('./server.js');
 
-const { app } = require('./chat-handler.cjs');
-
-if (!app) {
-  throw new Error('Express app could not be loaded');
+if (typeof app !== 'function') {
+  throw new Error('Express app was not exported from server.js');
 }
 
 module.exports = app;
