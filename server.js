@@ -146,4 +146,10 @@ if (require.main === module) {
   });
 }
 
-module.exports = { app, handleChat };
+// Export Express app directly for Vercel
+module.exports = app;
+
+// Preserve named exports for existing imports
+module.exports.app = app;
+module.exports.handleChat = handleChat;
+
