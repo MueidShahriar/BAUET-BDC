@@ -11,12 +11,12 @@ import {
 
 import { firebaseConfig } from "./modules/firebase-config.js";
 import { chartLabels, chartColors, getPieChartOptions } from "./modules/chart-config.js";
-import { initLanguageSystem, t } from "./modules/language-ui.js?v=6";
+import { initLanguageSystem, t } from "./modules/language-ui.js?v=7";
 import { createMonthlyReportDownloader } from "./modules/pdf-report.js?v=1";
 
 import state from "./modules/state.js";
-import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js?v=2";
-import { initHeader, initMobileMenu } from "./modules/header.js?v=5";
+import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js?v=5";
+import { initHeader, initMobileMenu } from "./modules/header.js?v=12";
 import { initFloatObserver } from "./modules/float-observer.js";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";
 import {
@@ -36,21 +36,22 @@ import {
 import { renderPublicEvents, initEventControls } from "./modules/events-render.js";
 import {
     renderRecentDonorsCarousel, setRecentLoading, initCarousel
-} from "./modules/carousel.js?v=2";
+} from "./modules/carousel.js?v=3";
 import {
     renderSearchResults, setSearchLoading, runSearch, initSearch
 } from "./modules/search.js?v=3";
 import {
+    adminListStatus,
     renderAdminMembersList, renderAdminEventsList,
     clearAdminEventForm, clearAdminRecentDonorForm, clearAdminMemberForm,
     applyAdminMemberSearchFilters, resetAdminMemberSearchFilters, initAdminTabs,
     renderAdminRecentDonationsList, renderAdminFeedbackList
-} from "./modules/admin.js?v=6";
-import { updateLoginButtonState, initAuth } from "./modules/auth.js?v=8";
-import { initJoinForm } from "./modules/join-form.js?v=5";
+} from "./modules/admin.js?v=10";
+import { updateLoginButtonState, initAuth } from "./modules/auth.js?v=16";
+import { initJoinForm } from "./modules/join-form.js?v=6";
 import { initFeedback } from "./modules/feedback.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
-import { initLeaderboardFilters, renderDonorLeaderboard, renderDonorTicker } from "./modules/leaderboard.js?v=3";
+import { initLeaderboardFilters, renderDonorLeaderboard, renderDonorTicker } from "./modules/leaderboard.js?v=5";
 
 const app = initializeApp(firebaseConfig);
 try { analyticsIsSupported().then(ok => { if (ok) getAnalytics(app); }); } catch (_) {}
@@ -63,6 +64,7 @@ const statsRef         = ref(database, 'stats');
 const recentDonationsRef = ref(database, 'recentDonations');
 const feedbackRef      = ref(database, 'feedback');
 const DEFAULT_RECENT_DONATION_CENTER = 'Mojumdar Clinic, Bagatipara';
+const isAdminRoute = /\/(?:pages\/)?admin(?:-(?:events|recent|members|search|feedback))?\.html$/i.test(window.location.pathname || '');
 const isLeaderboardRoute = /\/pages\/leaderboard\.html$/i.test(window.location.pathname || '');
 const leaderboardInitialData = {
     donorsReady: false,
@@ -150,11 +152,56 @@ function findDonorForRecentDonationInput(rawId) {
     }) || null;
 }
 
-function switchAdminTab(tabName) {
-    const adminPanel = document.getElementById('admin-panel');
-    if (!adminPanel) return;
-    const tabBtn = adminPanel.querySelector(`.admin-tab[data-tab="${tabName}"]`);
-    tabBtn?.click();
+function fillRecentDonorFromId({ onlyEmpty = false } = {}) {
+    const idField = document.getElementById('donor-id');
+    const rawId = idField?.value.trim();
+    if (!rawId || (onlyEmpty && document.getElementById('admin-recent-donor-id')?.value)) return;
+    const normalizedId = normalizeDonorId(rawId);
+    if (normalizedId && rawId !== normalizedId) idField.value = normalizedId;
+
+    const match = findDonorForRecentDonationInput(rawId);
+    if (!match) return;
+    const lastInfo = match.lastDonationInfo || {};
+    const fieldValues = {
+        'donor-name': match.fullName || match.name || '',
+        'donor-blood-group': match.bloodGroup || '',
+        'donor-location': getRecentDonationCenterForDonor(match),
+        'donor-department': match.department || lastInfo.department || '',
+        'donor-batch': match.batch || lastInfo.batch || '',
+        'donor-age': match.age || lastInfo.age || '',
+        'donor-number': formatPhoneForDisplay(match.phone || ''),
+        'donor-weight': match.weight || lastInfo.weight || ''
+    };
+    for (const [id, value] of Object.entries(fieldValues)) {
+        const field = document.getElementById(id);
+        if (field && (!onlyEmpty || !field.value.trim())) field.value = value;
+    }
+}
+
+const adminListRenderers = {
+    members: () => renderAdminMembersList(deleteMember, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus),
+    recent: () => renderAdminRecentDonationsList(deleteRecentDonation),
+    events: () => renderAdminEventsList(deleteEvent),
+    feedback: () => renderAdminFeedbackList(deleteFeedback)
+};
+const dirtyAdminLists = new Set(Object.keys(adminListRenderers));
+let adminListRenderScheduled = false;
+
+function getActiveAdminSection() {
+    return document.querySelector('#admin-panel [data-panel]:not(.hidden)')?.dataset.panel;
+}
+
+function scheduleAdminListRender(section) {
+    if (section) dirtyAdminLists.add(section);
+    if (state.currentUserRole !== 'admin' || adminListRenderScheduled || !dirtyAdminLists.has(getActiveAdminSection())) return;
+    adminListRenderScheduled = true;
+    // Give the selected form a paint before building the cards below it.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        adminListRenderScheduled = false;
+        if (state.currentUserRole !== 'admin') return;
+        const activeSection = getActiveAdminSection();
+        if (dirtyAdminLists.delete(activeSection)) adminListRenderers[activeSection]();
+    }));
 }
 
 function resetAdminMemberSearchInputs() {
@@ -172,35 +219,26 @@ function applyAdminMemberRoleFilter(role) {
     state.memberSearchPhone = '';
     state.memberSearchBlood = '';
     resetAdminMemberSearchInputs();
-    renderAdminMembersList(deleteMember, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus);
+    scheduleAdminListRender('members');
 }
 
-function initAdminOverviewActions() {
+function initAdminOverviewActions(selectSection) {
     const adminPanel = document.getElementById('admin-panel');
-    if (!adminPanel) return;
+    if (!adminPanel || !selectSection) return;
+    const params = new URLSearchParams(location.search);
+    const section = document.body.dataset.adminSection || params.get('section');
+    if (section === 'members' && params.get('role') === 'admin') {
+        applyAdminMemberRoleFilter('admin');
+    }
     const cards = adminPanel.querySelectorAll('.admin-overview-card[data-admin-action]');
-    if (!cards.length) return;
-    const handleAction = (card) => {
-        const action = card.dataset.adminAction;
-        const role = card.dataset.adminRole || '';
-        if (action === 'members') {
-            switchAdminTab('members');
-            applyAdminMemberRoleFilter(role === 'admin' ? 'admin' : '');
-            document.getElementById('admin-members-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            return;
-        }
-        if (action === 'recent') {
-            switchAdminTab('recent');
-            document.getElementById('admin-recent-donations-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            return;
-        }
-        if (action === 'events') {
-            switchAdminTab('events');
-            document.getElementById('admin-events-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    };
     cards.forEach(card => {
-        const handler = () => handleAction(card);
+        const handler = () => {
+            const action = card.dataset.adminAction;
+            if (action === 'members') {
+                applyAdminMemberRoleFilter(card.dataset.adminRole === 'admin' ? 'admin' : '');
+            }
+            selectSection(action);
+        };
         card.addEventListener('click', handler);
         card.addEventListener('keydown', (ev) => {
             if (ev.key === 'Enter' || ev.key === ' ') {
@@ -450,13 +488,11 @@ function deleteFeedback(feedbackId) {
 }
 
 function callUpdateLogin() {
-    updateLoginButtonState(database, ref, onValue,
-    renderAdminMembersList, renderAdminEventsList, deleteMember, deleteEvent, (role) => {
-        ensureUniqueDonorIds();
-        if (/\/(pages\/)?admin\.html$/i.test(window.location.pathname || '') && role === 'admin') {
-            finishPreloader();
-        }
-    }, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus);
+    updateLoginButtonState(database, ref, onValue, (role) => {
+        if (isAdminRoute && role === 'admin') finishPreloader({ immediately: true });
+        scheduleAdminListRender();
+        requestAnimationFrame(() => ensureUniqueDonorIds());
+    });
 }
 
 function setSearchErrorState(message) {
@@ -477,7 +513,7 @@ function runInitStep(label, callback) {
 
 function scheduleChatbotInit() {
     const loadChatbot = () => {
-        import("./modules/chatbot.js?v=6")
+        import("./modules/chatbot.js?v=9")
             .then(({ initChatbot }) => initChatbot())
             .catch(error => console.error('Failed to load chatbot:', error));
     };
@@ -569,6 +605,7 @@ async function ensureUniqueDonorIds() {
 
 onValue(donorsRef, (snapshot) => {
     try {
+        const firstDonorLoad = adminListStatus.members === 'loading';
         const data = snapshot.val();
         state.donorsList = [];
         if (data && typeof data === 'object') {
@@ -599,7 +636,9 @@ onValue(donorsRef, (snapshot) => {
             if (eligibleOnly) filtered = filtered.filter(d => isDonorEligible(d.lastDonateDate));
             renderSearchResults(filtered);
         }
-        renderAdminMembersList(deleteMember, promoteMemberToAdmin, demoteAdminToMember, toggleMemberStatus);
+        adminListStatus.members = 'ready';
+        scheduleAdminListRender('members');
+        if (firstDonorLoad && state.currentUserRole === 'admin') fillRecentDonorFromId({ onlyEmpty: true });
         refreshDashboardCharts();
         setCountTarget('donor-count', state.donorsList.length);
         updateAdminOverviewCounts({ donors: memberCount, admins: adminCount });
@@ -607,12 +646,16 @@ onValue(donorsRef, (snapshot) => {
         ensureUniqueDonorIds();
     } catch (error) {
         console.error('Failed to process donors:', error);
+        adminListStatus.members = 'error';
+        scheduleAdminListRender('members');
         setSearchErrorState('Donor data could not be shown right now. Please refresh and try again.');
     } finally {
         markLeaderboardDataReady('donors');
     }
 }, err => {
     console.error("Failed to load donors:", err);
+    adminListStatus.members = 'error';
+    scheduleAdminListRender('members');
     try {
         setSearchErrorState('Donor data could not be loaded right now.');
         state.donorsList = [];
@@ -634,11 +677,16 @@ onValue(eventsRef, (snapshot) => {
             }
         }
     }
+    adminListStatus.events = 'ready';
+    scheduleAdminListRender('events');
     renderPublicEvents();
-    if (state.currentUserRole === 'admin') renderAdminEventsList(deleteEvent);
     setCountTarget('event-count', state.eventsList.length);
     updateAdminOverviewCounts({ events: state.eventsList.length });
-}, err => console.error("Failed to load events:", err));
+}, err => {
+    console.error("Failed to load events:", err);
+    adminListStatus.events = 'error';
+    scheduleAdminListRender('events');
+});
 
 onValue(statsRef, (snapshot) => {
     const d = snapshot.val();
@@ -671,9 +719,10 @@ onValue(recentDonationsRef, (snapshot) => {
             return bd - ad;
         });
         state.recentDonationsList = list;
+        adminListStatus.recent = 'ready';
+        scheduleAdminListRender('recent');
         renderRecentDonorsCarousel(list);
         refreshDashboardCharts();
-        renderAdminRecentDonationsList(deleteRecentDonation);
         if (state.livesHelped == null) {
             updateAdminOverviewCounts({ donations: list.length });
         }
@@ -682,14 +731,19 @@ onValue(recentDonationsRef, (snapshot) => {
     } catch (error) {
         console.error('Failed to process recent donations:', error);
         state.recentDonationsList = [];
+        adminListStatus.recent = 'error';
+        scheduleAdminListRender('recent');
         renderRecentDonorsCarousel([]);
         setRecentLoading(false);
         refreshLeaderboard();
     } finally {
+        scheduleAdminListRender('members');
         markLeaderboardDataReady('recentDonations');
     }
 }, err => {
     console.error("Failed to load recent donations:", err);
+    adminListStatus.recent = 'error';
+    scheduleAdminListRender('recent');
     try {
         state.recentDonationsList = [];
         renderRecentDonorsCarousel([]);
@@ -698,6 +752,7 @@ onValue(recentDonationsRef, (snapshot) => {
     } catch (error) {
         console.error('Failed to render leaderboard without donation data:', error);
     } finally {
+        scheduleAdminListRender('members');
         markLeaderboardDataReady('recentDonations');
     }
 });
@@ -719,16 +774,16 @@ onValue(feedbackRef, (snapshot) => {
             return bd - ad;
         });
         state.feedbackList = list;
-        renderAdminFeedbackList(deleteFeedback);
+        scheduleAdminListRender('feedback');
     } catch (error) {
         console.error('Failed to process feedback entries:', error);
         state.feedbackList = [];
-        renderAdminFeedbackList(deleteFeedback);
+        scheduleAdminListRender('feedback');
     }
 }, err => {
     console.error('Failed to load feedback entries:', err);
     state.feedbackList = [];
-    renderAdminFeedbackList(deleteFeedback);
+    scheduleAdminListRender('feedback');
 });
 
 function initContactScroll() {
@@ -767,9 +822,8 @@ function initContactScroll() {
 }
 
 function initPage() {
-    const isAdminPage = /\/(pages\/)?admin\.html$/i.test(window.location.pathname || '');
     if (!document.body.classList.contains('home-page')) {
-        runInitStep('preloader', () => initPreloader({ waitForAuth: isAdminPage, waitForData: isLeaderboardRoute }));
+        runInitStep('preloader', () => initPreloader({ waitForAuth: isAdminRoute, waitForData: isLeaderboardRoute }));
     }
     if (isLeaderboardRoute) {
         setPreloaderProgress(24);
@@ -801,8 +855,7 @@ function initPage() {
     runInitStep('public events controls', () => initEventControls());
     runInitStep('home search', () => initSearch());
     runInitStep('back to top', () => initBackToTop());
-    runInitStep('admin tabs', () => initAdminTabs());
-    runInitStep('admin overview actions', () => initAdminOverviewActions());
+    runInitStep('admin workspace', () => initAdminOverviewActions(initAdminTabs(scheduleAdminListRender)));
     runInitStep('contact scroll', () => initContactScroll());
     runInitStep('float observer', () => initFloatObserver());
     runInitStep('stats counter', () => initStatsCounter());
@@ -815,10 +868,6 @@ function initPage() {
     runInitStep('auth', () => initAuth({
         auth, database, ref, onValue,
         signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged,
-        renderAdminMembersFn: renderAdminMembersList,
-        renderAdminEventsFn: renderAdminEventsList,
-        deleteMemberFn: deleteMember,
-        deleteEventFn: deleteEvent,
         updateLoginFn: callUpdateLogin
     }));
 
@@ -836,9 +885,14 @@ function initPage() {
     const adminRecentDonorForm = document.getElementById('admin-recent-donor-form');
     adminRecentDonorForm?.addEventListener('submit', ev => {
         ev.preventDefault();
+        if (!state.currentUser || state.currentUserRole !== 'admin') return;
         const fd = new FormData(adminRecentDonorForm);
         const editId = fd.get('recent-donor-id')?.toString().trim();
         const donorIdRaw = fd.get('donor-id')?.toString().trim() || '';
+        if (donorIdRaw && adminListStatus.members === 'loading') {
+            showModalMessage('success-modal', t('adminDonorLookupPending'), t('adminMembers'));
+            return;
+        }
         const donorIdInput = normalizeDonorId(donorIdRaw);
         const matchedDonor = findDonorForRecentDonationInput(donorIdRaw);
         const donorData = {
@@ -921,40 +975,14 @@ function initPage() {
         }
     });
     const recentDonorIdField = document.getElementById('donor-id');
-    const fillRecentDonorFromId = () => {
-        const rawId = recentDonorIdField?.value.trim() || '';
-        if (!rawId) return;
-        const normalizedId = normalizeDonorId(rawId);
-        if (recentDonorIdField && normalizedId && recentDonorIdField.value.trim() !== normalizedId) {
-            recentDonorIdField.value = normalizedId;
-        }
-        const match = findDonorForRecentDonationInput(rawId);
-        if (!match) return;
-        const lastInfo = match.lastDonationInfo || {};
-        const nameF = document.getElementById('donor-name');
-        const bgF = document.getElementById('donor-blood-group');
-        const locF = document.getElementById('donor-location');
-        const deptF = document.getElementById('donor-department');
-        const batchF = document.getElementById('donor-batch');
-        const ageF = document.getElementById('donor-age');
-        const numberF = document.getElementById('donor-number');
-        const weightF = document.getElementById('donor-weight');
-        if (nameF) nameF.value = match.fullName || match.name || '';
-        if (bgF) bgF.value = match.bloodGroup || '';
-        if (locF) locF.value = getRecentDonationCenterForDonor(match);
-        if (deptF) deptF.value = match.department || lastInfo.department || '';
-        if (batchF) batchF.value = match.batch || lastInfo.batch || '';
-        if (ageF) ageF.value = match.age || lastInfo.age || '';
-        if (numberF) numberF.value = formatPhoneForDisplay(match.phone || '');
-        if (weightF) weightF.value = match.weight || lastInfo.weight || '';
-    };
-    recentDonorIdField?.addEventListener('input', fillRecentDonorFromId);
-    recentDonorIdField?.addEventListener('change', fillRecentDonorFromId);
+    recentDonorIdField?.addEventListener('input', () => fillRecentDonorFromId());
+    recentDonorIdField?.addEventListener('change', () => fillRecentDonorFromId());
     document.getElementById('clear-recent-donor-btn')?.addEventListener('click', clearAdminRecentDonorForm);
 
     const adminMemberForm = document.getElementById('admin-member-form');
     adminMemberForm?.addEventListener('submit', ev => {
         ev.preventDefault();
+        if (!state.currentUser || state.currentUserRole !== 'admin') return;
         const fd = new FormData(adminMemberForm);
         const memberId = fd.get('id');
         const updatedData = {
@@ -982,7 +1010,9 @@ function initPage() {
     );
 }
 
-if (document.body.classList.contains('home-page')) {
+if (isAdminRoute) {
+    initPage();
+} else if (document.body.classList.contains('home-page')) {
     document.addEventListener('DOMContentLoaded', initPage, { once: true });
 } else {
     window.addEventListener('load', initPage, { once: true });

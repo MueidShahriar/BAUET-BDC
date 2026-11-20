@@ -10,13 +10,13 @@ import {
 
 import { firebaseConfig } from "./modules/firebase-config.js";
 
-import { initPreloader } from "./modules/preloader.js";
-import { initHeader, initMobileMenu } from "./modules/header.js?v=5";
+import { initPreloader } from "./modules/preloader.js?v=5";
+import { initHeader, initMobileMenu } from "./modules/header.js?v=12";
 import { initFloatObserver } from "./modules/float-observer.js";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";
 import { openModal, closeModal, showModalMessage } from "./modules/modals.js";
-import { updateLoginButtonState, initAuth } from "./modules/auth.js?v=8";
-import { initLanguageSystem } from "./modules/language-ui.js?v=4";
+import { updateLoginButtonState, initAuth } from "./modules/auth.js?v=16";
+import { initLanguageSystem } from "./modules/language-ui.js?v=7";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
 import state from "./modules/state.js";
 
@@ -25,8 +25,7 @@ const auth = getAuth(app);
 const database = getDatabase(app);
 
 function callUpdateLogin() {
-    updateLoginButtonState(database, ref, onValue,
-        () => {}, () => {}, () => {}, () => {});
+    updateLoginButtonState(database, ref, onValue);
 }
 
 window.onload = function () {
@@ -53,10 +52,6 @@ window.onload = function () {
     initAuth({
         auth, database, ref, onValue,
         signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged,
-        renderAdminMembersFn: () => {},
-        renderAdminEventsFn: () => {},
-        deleteMemberFn: () => {},
-        deleteEventFn: () => {},
         updateLoginFn: callUpdateLogin
     });
 };
