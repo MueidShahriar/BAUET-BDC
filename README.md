@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="image/blood-drop.png" alt="BAUET Blood Donation Club logo" width="104" />
+  <img src="public/image/BAUET%20BDC_Official%20Logo.png" alt="BAUET Blood Donation Club logo" width="104" />
 
   <h1>BAUET Blood Donation Club</h1>
 
