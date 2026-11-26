@@ -433,6 +433,11 @@ body > header.site-navbar #mobile-menu .navbar-panel .hidden {
 }
 
 @media (min-width: 1024px) {
+    /* Desktop navigation uses text-only request action; keep the mobile menu icon. */
+    #nav-request-link > i {
+        display: none !important;
+    }
+
     .admin-mobile-sections {
         display: none !important;
     }

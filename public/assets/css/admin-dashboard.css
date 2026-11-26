@@ -716,6 +716,85 @@ body.admin-mode #admin-panel [data-panel="feedback"] .delete-feedback-btn:focus-
     }
 }
 
+/* Safari desktop can collapse native selects and ignore their icon padding. */
+@media (min-width: 769px) {
+    body:is(.admin-dashboard-page, .admin-section-page) :is(
+        #donor-blood-group,
+        #admin-member-search-blood,
+        #admin-member-bloodGroup,
+        #admin-member-gender,
+        #search-blood
+    ) {
+        box-sizing: border-box !important;
+        height: 3.5rem !important;
+        min-height: 3.5rem !important;
+        padding: 0.75rem 3rem 0.75rem 3.25rem !important;
+        border-width: 2px !important;
+        border-radius: 0.75rem !important;
+        background-color: #fff !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23344154' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 8 4 4 4-4'/%3E%3C/svg%3E") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 0.85rem center !important;
+        background-size: 1.15rem !important;
+        color: #1f2937 !important;
+        font-size: 0.9rem !important;
+        line-height: 1.25 !important;
+        text-indent: 0 !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+    }
+
+    body:is(.admin-dashboard-page, .admin-section-page) :is(
+        #donor-blood-group,
+        #admin-member-search-blood,
+        #admin-member-bloodGroup,
+        #admin-member-gender,
+        #search-blood
+    )::-ms-expand {
+        display: none;
+    }
+
+    body:is(.admin-dashboard-page, .admin-section-page) :is(
+        #donor-blood-group,
+        #admin-member-search-blood,
+        #admin-member-bloodGroup,
+        #admin-member-gender,
+        #search-blood
+    ) + .fi,
+    body:is(.admin-dashboard-page, .admin-section-page) .input-wrap:has(> :is(
+        #donor-blood-group,
+        #admin-member-search-blood,
+        #admin-member-bloodGroup,
+        #admin-member-gender
+    )) > .fi,
+    body:is(.admin-dashboard-page, .admin-section-page) .field-icon-left:has(> #search-blood) > .fi {
+        left: 1rem !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        pointer-events: none;
+    }
+
+    body:is(.admin-dashboard-page, .admin-section-page) .admin-request-filters select {
+        height: 2.75rem !important;
+        min-height: 2.75rem !important;
+        padding: 0.55rem 2rem 0.55rem 0.7rem !important;
+        background-color: #fff !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%23344154' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 8 4 4 4-4'/%3E%3C/svg%3E") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 0.55rem center !important;
+        background-size: 1rem !important;
+        line-height: 1.2 !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+    }
+
+    body:is(.admin-dashboard-page, .admin-section-page) .admin-request-filters input,
+    body:is(.admin-dashboard-page, .admin-section-page) .admin-request-filters .admin-btn {
+        height: 2.75rem !important;
+        min-height: 2.75rem !important;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     body.admin-mode #admin-panel [data-panel="feedback"] .admin-event-card,
     body.admin-mode #admin-panel [data-panel="feedback"] .delete-feedback-btn {
