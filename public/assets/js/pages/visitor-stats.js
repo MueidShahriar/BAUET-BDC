@@ -11,7 +11,7 @@ import {
 
 import { firebaseConfig } from "../modules/firebase-config.js";
 import { initPreloader } from "../modules/preloader.js?v=5";
-import { initHeader, initMobileMenu } from "../modules/header.js?v=12";
+import { initHeader, initMobileMenu } from "../modules/header.js?v=13";
 import { initBackToTop } from "../modules/back-to-top.js?v=11";
 import { initFloatObserver } from "../modules/float-observer.js";
 import { openModal, closeModal, showModalMessage } from "../modules/modals.js";

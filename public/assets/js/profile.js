@@ -25,7 +25,7 @@ import {
 } from "./modules/language-ui.js?v=7";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";
 import { initFeedback } from "./modules/feedback.js";
-import { initHeader, initMobileMenu, syncAdminNavbar } from "./modules/header.js?v=12";
+import { initHeader, initMobileMenu, syncAdminNavbar } from "./modules/header.js?v=13";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
 import { initChatbot } from "./modules/chatbot.js?v=9";
 import { updateBirthdayWish } from "./modules/birthday-wish.js?v=6";
@@ -323,6 +323,72 @@ let currentUser = null;
 let currentDonorData = {};
 let authStateResolved = false;
 let recentDonationsList = [];
+let stopDonorNotifications = null;
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function formatNotificationDate(timestamp) {
+  if (!timestamp) return "—";
+  return new Intl.DateTimeFormat("en-BD", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Dhaka",
+  }).format(new Date(timestamp));
+}
+
+function initDonorBloodRequestNotifications(uid) {
+  if (stopDonorNotifications) stopDonorNotifications();
+  const card = document.getElementById("profile-blood-request-notifications");
+  const list = document.getElementById("profile-blood-request-notification-list");
+  const badge = document.getElementById("profile-request-unread-count");
+  if (!card || !list || !badge) return;
+  stopDonorNotifications = onValue(
+    ref(database, `donorNotifications/${uid}`),
+    (snapshot) => {
+      const notifications = Object.entries(snapshot.val() || {})
+        .map(([id, item]) => ({ id, ...(item || {}) }))
+        .filter((item) => item.type === "verifiedBloodRequest")
+        .sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+      const unread = notifications.filter((item) => !item.read).length;
+      card.hidden = notifications.length === 0;
+      badge.hidden = unread === 0;
+      badge.textContent = `${unread} new`;
+      list.innerHTML = notifications.length
+        ? notifications.map((item) => `
+          <article class="profile-request-notification${item.read ? "" : " is-unread"}">
+            <div class="profile-request-notification__blood">${escapeHtml(item.bloodGroup || "—")}</div>
+            <div class="profile-request-notification__body">
+              <div><strong>${escapeHtml(item.requiredUnits)} RBC unit${Number(item.requiredUnits) === 1 ? "" : "s"} needed</strong><span>${escapeHtml(item.urgency || "")}</span></div>
+              <p><i class="fa-solid fa-hospital"></i> ${escapeHtml(item.hospitalName || "—")}, ${escapeHtml(item.district || "—")}</p>
+              <p><i class="fa-regular fa-calendar"></i> ${escapeHtml(item.requiredDate || "—")} at ${escapeHtml(item.requiredTime || "—")}</p>
+              <small>Verified ${escapeHtml(formatNotificationDate(item.createdAt))}</small>
+            </div>
+            <div class="profile-request-notification__actions">
+              <a href="request-blood.html?approved=${encodeURIComponent(item.requestId)}">View Request</a>
+              ${item.read ? "" : `<button type="button" data-donor-notification-id="${escapeHtml(item.id)}">Mark read</button>`}
+            </div>
+          </article>`).join("")
+        : "";
+    },
+    () => {
+      card.hidden = true;
+    },
+  );
+}
+
+document.getElementById("profile-blood-request-notification-list")?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-donor-notification-id]");
+  if (!button || !currentUser) return;
+  set(ref(database, `donorNotifications/${currentUser.uid}/${button.dataset.donorNotificationId}/read`), true)
+    .catch(() => showToast("Could not update the notification.", "error"));
+});
 
 setTimeout(() => {
   if (!authStateResolved) {
@@ -338,6 +404,8 @@ onAuthStateChanged(auth, (user) => {
   state.currentUser = user;
   const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
   if (!user) {
+    if (stopDonorNotifications) stopDonorNotifications();
+    stopDonorNotifications = null;
     state.currentUserProfile = null;
     updateBirthdayWish(null);
     updateProfileNavbar(false);
@@ -350,6 +418,7 @@ onAuthStateChanged(auth, (user) => {
   }
   logoutHeaderBtn?.classList.remove("hidden");
   if (mobileLogoutBtn) mobileLogoutBtn.classList.remove("hidden");
+  initDonorBloodRequestNotifications(user.uid);
 
   const userRef = ref(database, `donors/${user.uid}`);
   onValue(

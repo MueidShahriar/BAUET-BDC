@@ -4,7 +4,7 @@ import { t } from './language-ui.js?v=7';
 import { getDefaultAvatarImageUrl } from './utils.js';
 import { updateBirthdayWish } from './birthday-wish.js?v=6';
 import { getFriendlyAuthError } from './auth-errors.js?v=2';
-import { syncAdminNavbar } from './header.js?v=12';
+import { syncAdminNavbar } from './header.js?v=13';
 
 function getAuthRedirectOverlay() {
     let overlay = document.getElementById('auth-redirect-overlay');

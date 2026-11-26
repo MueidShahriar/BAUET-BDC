@@ -154,7 +154,8 @@ Blood-Donation-Community/
 │       └── ...                      # Page controllers and other scripts
 │
 ├── firebase-rules/
-│   └── realtime-database.rules.json # Firebase Realtime Database rules
+│   ├── realtime-database.rules.json # Firebase Realtime Database rules
+│   └── storage.rules                # Private requisition document rules
 │
 ├── image/                           # Logos, icons, and image assets
 │
@@ -217,7 +218,32 @@ firebase-rules/realtime-database.rules.json
 
 Apply rules that match your deployment and access-control requirements. Do not deploy permissive test rules to production.
 
-### 4. Configure the AI assistant (optional)
+### 4. Configure the blood request service
+
+The public RBC request form uses the existing Firebase project, but all submissions and status changes pass through the trusted Node.js backend. Copy `.env.example` to `.env` and configure one Firebase Admin credential method:
+
+```env
+FIREBASE_SERVICE_ACCOUNT={"type":"service_account",...}
+FIREBASE_DATABASE_URL=https://blood-donation-community-a1eb2-default-rtdb.firebaseio.com
+FIREBASE_STORAGE_BUCKET=blood-donation-community-a1eb2.appspot.com
+```
+
+Never add the service-account JSON to frontend code or commit it to Git. Enable Firebase Storage, then deploy both rule files:
+
+```bash
+firebase deploy --only database,storage
+```
+
+For App Check, register the deployed web domain with reCAPTCHA v3 and set:
+
+```env
+FIREBASE_APP_CHECK_SITE_KEY=your_public_recaptcha_v3_site_key
+FIREBASE_APP_CHECK_ENFORCED=true
+```
+
+For scheduled expiry, configure the hosting provider or Cloud Scheduler to call `POST /api/blood-requests/expire` with `Authorization: Bearer <CRON_SECRET>` and set the same `CRON_SECRET` on the server. The admin dashboard also checks for expired requests when an administrator opens it.
+
+### 5. Configure the AI assistant (optional)
 
 Create a `.env` file in the project root:
 
@@ -230,7 +256,7 @@ Keep this file private. Do not commit API keys or other secrets to Git.
 
 If the AI assistant is not needed, you can skip this step. The main website can run without the Gemini API key, but AI features will be unavailable.
 
-### 5. Start the application
+### 6. Start the application
 
 Development command:
 
@@ -244,7 +270,7 @@ Alternative start command:
 npm start
 ```
 
-### 6. Open the local application
+### 7. Open the local application
 
 Visit:
 
@@ -261,6 +287,10 @@ If the configured port is different, use the port set in your environment.
 | Firebase web configuration | Connects the frontend to Firebase services | Yes |
 | Firebase Authentication | Supports account registration and sign-in | Yes |
 | Firebase Realtime Database | Stores application data | Yes |
+| Firebase Storage | Stores private requisition slips | Yes for document uploads |
+| Firebase Admin service account or Application Default Credentials | Authorizes secure request APIs | Yes for blood requests |
+| `FIREBASE_APP_CHECK_SITE_KEY` | Enables reCAPTCHA-based App Check | Recommended |
+| `CRON_SECRET` and a scheduler | Runs automatic request expiry without an active admin session | Recommended |
 | `GEMINI_API_KEY` | Enables the optional AI assistant | No |
 | `PORT` | Sets the Node.js server port | No, defaults to the configured server value |
 

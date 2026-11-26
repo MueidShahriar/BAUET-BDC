@@ -16,7 +16,7 @@ import { createMonthlyReportDownloader } from "./modules/pdf-report.js?v=1";
 
 import state from "./modules/state.js";
 import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js?v=5";
-import { initHeader, initMobileMenu } from "./modules/header.js?v=12";
+import { initHeader, initMobileMenu } from "./modules/header.js?v=13";
 import { initFloatObserver } from "./modules/float-observer.js";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";
 import {
@@ -52,6 +52,7 @@ import { initJoinForm } from "./modules/join-form.js?v=6";
 import { initFeedback } from "./modules/feedback.js";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
 import { initLeaderboardFilters, renderDonorLeaderboard, renderDonorTicker } from "./modules/leaderboard.js?v=5";
+import { initBloodRequestAdmin } from "./modules/blood-request-admin.js?v=4";
 
 const app = initializeApp(firebaseConfig);
 try { analyticsIsSupported().then(ok => { if (ok) getAnalytics(app); }); } catch (_) {}
@@ -490,6 +491,7 @@ function deleteFeedback(feedbackId) {
 function callUpdateLogin() {
     updateLoginButtonState(database, ref, onValue, (role) => {
         if (isAdminRoute && role === 'admin') finishPreloader({ immediately: true });
+        if (role === 'admin') initBloodRequestAdmin({ database, auth, ref, onValue, update });
         scheduleAdminListRender();
         requestAnimationFrame(() => ensureUniqueDonorIds());
     });

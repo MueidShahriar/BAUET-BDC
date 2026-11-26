@@ -23,6 +23,66 @@
       ".write": "auth != null"
     },
 
+    "bloodRequests": {
+      ".read": "auth != null && (root.child('admins').child(auth.uid).val() === true || root.child('donors').child(auth.uid).child('role').val() === 'admin')",
+      ".write": false,
+      ".indexOn": ["status", "bloodGroup", "createdAt", "requiredAt"]
+    },
+
+    "adminNotifications": {
+      ".read": "auth != null && (root.child('admins').child(auth.uid).val() === true || root.child('donors').child(auth.uid).child('role').val() === 'admin')",
+      ".write": "auth != null && (root.child('admins').child(auth.uid).val() === true || root.child('donors').child(auth.uid).child('role').val() === 'admin')",
+      ".indexOn": ["createdAt", "read", "type"]
+    },
+
+    "bloodRequestTracking": {
+      ".read": false,
+      ".write": false,
+      "$trackingHash": {
+        ".read": "$trackingHash.matches(/^[a-f0-9]{64}$/)"
+      }
+    },
+
+    "approvedBloodRequests": {
+      ".read": false,
+      ".write": false,
+      "$requestId": {
+        ".read": "$requestId.matches(/^BR-[0-9]{8}-[A-F0-9]{10}$/)"
+      }
+    },
+
+    "donorNotifications": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true || root.child('donors').child(auth.uid).child('role').val() === 'admin')",
+        ".write": false,
+        "$notificationId": {
+          "read": {
+            ".write": "auth != null && auth.uid === $uid && newData.val() === true"
+          }
+        }
+      }
+    },
+
+    "bloodRequestIdempotency": {
+      ".read": false,
+      ".write": false
+    },
+
+    "bloodRequestLookup": {
+      ".read": false,
+      ".write": false
+    },
+
+    "bloodRequestDedup": {
+      ".read": false,
+      ".write": false
+    },
+
+    "bloodRequestRateLimits": {
+      ".read": false,
+      ".write": false
+    },
+
     "donors": {
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true)",

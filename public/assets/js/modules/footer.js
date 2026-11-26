@@ -54,6 +54,7 @@ const FOOTER_HTML = () => {
                                 data-i18n="navJoin">Join</span></a></li>
                     <li><a href="${pagesUrl}search.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> <span
                                 data-i18n="navSearch">Search</span></a></li>
+                    <li><a href="${pagesUrl}request-blood.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> <span>Request Blood</span></a></li>
                 </ul>
             </div>
             <div>

@@ -20,14 +20,14 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/common.css?v=145">
     <link rel="stylesheet" href="../assets/css/index.css?v=125">
-    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=21">
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=26">
 
     <meta name="description"
         content="Admin dashboard for managing donors, events, and recent donations.">
     <link rel="stylesheet" href="../assets/css/footer.css?v=2">
     <link rel="stylesheet" href="../assets/css/site-navbar.css?v=8">
     <link rel="stylesheet" href="../assets/css/login.css?v=4">
-    <script type="module" src="../assets/js/modules/header.js?v=12"></script>
+    <script type="module" src="../assets/js/modules/header.js?v=13"></script>
 </head>
 
 <body class="bg-white text-gray-900 loading admin-dashboard-page">
@@ -43,7 +43,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" async></script>
     <script src="../assets/js/viewport.js" defer></script>
-    <script type="module" src="../assets/js/app.js?v=57"></script>
+    <script type="module" src="../assets/js/app.js?v=61"></script>
 
     <header class="site-header site-navbar fixed">
         <nav class="navbar-row" aria-label="Main navigation">
@@ -306,6 +306,11 @@
                     <span id="admin-overview-events" class="admin-overview-value">0</span>
                     <span class="admin-overview-label" data-i18n="adminTotalEvents">Total Events</span>
                 </div>
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="requests">
+                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-hand-holding-medical"></i></span>
+                    <span id="admin-overview-pending-requests" class="admin-overview-value">0</span>
+                    <span class="admin-overview-label">Pending Blood Requests</span>
+                </div>
             </div>
 
             <div class="admin-workspace">
@@ -320,9 +325,43 @@
                         class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span data-i18n="searchTitle">Find Donors</span></button>
                     <button type="button" class="admin-tab" data-tab="feedback" aria-pressed="false" aria-controls="admin-section-feedback"><i
                         class="fa-solid fa-comment-dots" aria-hidden="true"></i><span data-i18n="adminFeedback">Feedback</span></button>
+                    <button type="button" class="admin-tab admin-request-tab" data-tab="requests" aria-pressed="false" aria-controls="admin-section-requests"><i
+                        class="fa-solid fa-hand-holding-medical" aria-hidden="true"></i><span>Blood Requests</span><span id="admin-request-unread-badge" class="admin-request-unread-badge" hidden>0</span></button>
                 </div>
 
                 <div class="admin-tabpanel">
+                    <div id="admin-section-requests" data-panel="requests" class="hidden">
+                        <div class="admin-panel-card admin-request-panel">
+                            <div class="admin-panel-card__header">
+                                <span class="admin-panel-card__icon"><i class="fa-solid fa-hand-holding-medical"></i></span>
+                                <div>
+                                    <h3 class="admin-panel-card__title">Blood Request Management</h3>
+                                    <p class="admin-panel-card__subtitle">Review, verify and manage RBC requests in real time</p>
+                                </div>
+                            </div>
+
+                            <div id="admin-request-notifications" class="admin-request-notifications" aria-live="polite"></div>
+
+                            <div class="admin-request-filters" aria-label="Blood request filters">
+                                <label>Request ID<input id="admin-request-search" type="search" placeholder="BAUET BDC-1234" /></label>
+                                <label>Blood Group<select id="admin-request-blood-filter"><option value="">All groups</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></label>
+                                <label>District<input id="admin-request-district-filter" type="search" placeholder="All districts" /></label>
+                                <label>Urgency<select id="admin-request-urgency-filter"><option value="">All urgency</option><option>Emergency</option><option>Within 24 Hours</option><option>Scheduled</option></select></label>
+                                <label>Status<select id="admin-request-status-filter"><option value="">All statuses</option><option>Pending</option><option>Verified</option><option>In Progress</option><option>Fulfilled</option><option>Cancelled</option><option>Expired</option></select></label>
+                                <label>Sort<select id="admin-request-sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label>
+                                <button id="admin-request-reset" type="button" class="admin-btn admin-btn--ghost">Reset</button>
+                            </div>
+
+                            <div class="admin-request-summary" aria-live="polite">
+                                <span><b id="admin-request-visible-count">0</b> shown</span>
+                                <span><b id="admin-request-total-count">0</b> total</span>
+                            </div>
+                            <div id="admin-blood-request-list" class="admin-blood-request-list">
+                                <div class="loading-banner admin-list-message" role="status"><span class="loading-banner__spinner" aria-hidden="true"></span><span class="loading-banner__text">Loading blood requests…</span></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="admin-section-events" data-panel="events">
                         <div class="admin-panel-card">
                             <div class="admin-panel-card__header">
@@ -861,7 +900,7 @@
     </div>
 
     <footer id="app-footer" class="site-footer"></footer>
-    <script type="module" src="../assets/js/modules/footer.js?v=2"></script>
+    <script type="module" src="../assets/js/modules/footer.js?v=3"></script>
 
     <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-[60]">
         <div class="absolute inset-0 bg-black opacity-40"></div>

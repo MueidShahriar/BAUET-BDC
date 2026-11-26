@@ -23,6 +23,7 @@ function initServiceWorker() {
 }
 
 const adminSectionLinks = [
+    ['requests', 'fa-hand-holding-medical', '', 'Blood Requests', `${dashboardHref}?section=requests`],
     ['events', 'fa-calendar-days', 'navEvents', 'Events'],
     ['recent', 'fa-hand-holding-droplet', 'adminRecentDonations', 'Recent Donations'],
     ['members', 'fa-users', 'adminMembers', 'Members'],
@@ -36,16 +37,36 @@ function ensureAdminMobileSections(header) {
     const group = document.createElement('div');
     group.className = 'admin-mobile-sections hidden';
     group.setAttribute('aria-label', 'Admin sections');
-    group.innerHTML = adminSectionLinks.map(([page, icon, key, label]) => `
-        <a id="admin-mobile-${page}-link" href="${pagesPrefix}admin-${page}.html">
+    group.innerHTML = adminSectionLinks.map(([page, icon, key, label, href]) => `
+        <a id="admin-mobile-${page}-link" href="${href || `${pagesPrefix}admin-${page}.html`}">
             <i class="fa-solid ${icon}" aria-hidden="true"></i>
-            <span data-i18n="${key}">${t(key) || label}</span>
+            <span${key ? ` data-i18n="${key}"` : ''}>${key ? (t(key) || label) : label}</span>
         </a>`).join('');
     const profileLink = links.querySelector('#admin-mobile-profile-link');
     links.insertBefore(group, profileLink || null);
     const currentSection = document.body.dataset.adminSection;
     if (currentSection) {
         group.querySelector(`#admin-mobile-${currentSection}-link`)?.setAttribute('aria-current', 'page');
+    }
+}
+
+function ensureBloodRequestLinks(header) {
+    const requestHref = `${pagesPrefix}request-blood.html`;
+    const desktopLinks = header.querySelector('.navbar-desktop-links');
+    if (desktopLinks && !desktopLinks.querySelector('#nav-request-link')) {
+        const link = document.createElement('a');
+        link.id = 'nav-request-link';
+        link.href = requestHref;
+        link.innerHTML = '<i class="fa-solid fa-droplet" aria-hidden="true"></i><span>Request Blood</span>';
+        desktopLinks.insertBefore(link, desktopLinks.querySelector('#nav-contact-link'));
+    }
+    const mobileLinks = header.querySelector('.navbar-mobile-links');
+    if (mobileLinks && !mobileLinks.querySelector('#mobile-request-link')) {
+        const link = document.createElement('a');
+        link.id = 'mobile-request-link';
+        link.href = requestHref;
+        link.innerHTML = '<i class="fa-solid fa-droplet" aria-hidden="true"></i><span>Request Blood</span>';
+        mobileLinks.insertBefore(link, mobileLinks.querySelector('#admin-mobile-link, #admin-mobile-profile-link'));
     }
 }
 
@@ -58,7 +79,7 @@ export function syncAdminNavbar(isAdmin) {
         brand.dataset.publicHref ||= brand.getAttribute('href') || '';
         brand.setAttribute('href', isAdmin ? dashboardHref : brand.dataset.publicHref);
     }
-    const publicLinks = /^(?:nav|mobile)-(?:home|about|how|events|join|search|leaderboard|contact)-link$/;
+    const publicLinks = /^(?:nav|mobile)-(?:home|about|how|events|join|search|leaderboard|request|contact)-link$/;
     header.querySelectorAll('a[id]').forEach(link => {
         if (publicLinks.test(link.id)) link.classList.toggle('hidden', isAdmin);
     });
@@ -105,6 +126,7 @@ export function initHeader() {
     const header = document.querySelector('.site-navbar');
     if (!header || header.dataset.navbarInitialized) return;
     header.dataset.navbarInitialized = 'true';
+    ensureBloodRequestLinks(header);
 
     const syncHeaderHeight = () => {
         if (header.offsetHeight) {

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased scroll-smooth">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#b91c1c" />
+    <title>Request Blood - BAUET BDC</title>
+    <meta name="description" content="Submit and securely track an RBC blood request with BAUET Blood Donation Club." />
+    <link rel="shortcut icon" href="../image/blood-drop.png" type="image/x-icon" />
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../assets/css/common.css?v=145" />
+    <link rel="stylesheet" href="../assets/css/index.css?v=125" />
+    <link rel="stylesheet" href="../assets/css/request-blood.css?v=7" />
+    <link rel="stylesheet" href="../assets/css/footer.css?v=2" />
+    <link rel="stylesheet" href="../assets/css/site-navbar.css?v=8" />
+    <link rel="stylesheet" href="../assets/css/login.css?v=4" />
+    <style>
+        #page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center}
+        #page-loader.fade-out{opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s}
+        body.loading>*:not(#page-loader):not(script){opacity:0!important;visibility:hidden!important}
+    </style>
+    <script type="module" src="../assets/js/modules/header.js?v=13"></script>
+</head>
+<body class="request-blood-page bg-slate-50 text-slate-900 loading" style="font-family:'Inter',sans-serif">
+    <div id="page-loader">
+        <div class="logo-wrapper">
+            <div class="logo-base"><img src="../image/blood-drop.png" alt="" /></div>
+            <div class="logo-fill"><img src="../image/blood-drop.png" alt="Loading" /></div>
+        </div>
+    </div>
+
+    <header class="site-header site-navbar fixed">
+        <nav class="navbar-row" aria-label="Main navigation">
+            <div class="navbar-brand-group">
+                <a class="navbar-brand" href="../index.html">
+                    <img src="../image/bauet-bdc-logo.webp" width="36" height="36" alt="" />
+                    <span>BAUET BDC</span>
+                </a>
+                <span id="admin-badge" class="navbar-badge hidden" data-i18n="adminBadge">Admin</span>
+            </div>
+            <div id="desktop-nav-menu" class="navbar-desktop-links">
+                <a id="nav-home-link" href="../index.html">Home</a>
+                <a id="nav-about-link" href="about.html">About</a>
+                <a id="nav-how-link" href="donationGuide.html">Donation Guide</a>
+                <a id="nav-events-link" href="events.html">Events</a>
+                <a id="nav-join-link" href="join.html">Join</a>
+                <a id="nav-search-link" href="search.html">Search</a>
+                <a id="nav-leaderboard-link" href="leaderboard.html">Leaderboard</a>
+                <a id="nav-request-link" href="request-blood.html" aria-current="page">Request Blood</a>
+                <a id="nav-contact-link" href="../index.html#contact">Contact</a>
+                <a id="nav-dashboard-link" href="admin.html" class="hidden"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i><span data-i18n="navDashboard">Dashboard</span></a>
+                <a id="nav-admin-profile-link" href="profile.html" class="hidden"><i class="fa-solid fa-user" aria-hidden="true"></i><span data-i18n="profileTitle">My Profile</span></a>
+            </div>
+            <div class="navbar-actions">
+                <button id="login-btn" class="navbar-account-button" type="button"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span data-i18n="btnLogin">Login</span></button>
+                <button id="navbar-logout-btn" class="navbar-account-button navbar-logout hidden" type="button"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span data-i18n="profileLogout">Logout</span></button>
+                <button id="mobile-profile-btn" class="mobile-profile-btn hidden" type="button" aria-label="Profile"><span class="mobile-profile-btn__initials">U</span></button>
+                <button id="menu-toggle" class="navbar-menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="Menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path class="navbar-menu-icon" stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+                        <path class="navbar-close-icon" stroke-linecap="round" d="m6 6 12 12M18 6 6 18" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="navbar-popover hidden" role="navigation" aria-label="Menu">
+            <div class="navbar-panel">
+                <div class="navbar-mobile-links">
+                    <a id="mobile-home-link" href="../index.html"><i class="fa-solid fa-house" aria-hidden="true"></i><span>Home</span></a>
+                    <a id="mobile-about-link" href="about.html"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span>About</span></a>
+                    <a id="mobile-how-link" href="donationGuide.html"><i class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i><span>Donation Guide</span></a>
+                    <a id="mobile-events-link" href="events.html"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i><span>Events</span></a>
+                    <a id="mobile-join-link" href="join.html"><i class="fa-solid fa-user-plus" aria-hidden="true"></i><span>Join</span></a>
+                    <a id="mobile-search-link" href="search.html"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>Search</span></a>
+                    <a id="mobile-leaderboard-link" href="leaderboard.html"><i class="fa-solid fa-trophy" aria-hidden="true"></i><span>Leaderboard</span></a>
+                    <a id="mobile-request-link" href="request-blood.html" aria-current="page"><i class="fa-solid fa-droplet" aria-hidden="true"></i><span>Request Blood</span></a>
+                    <a id="admin-mobile-link" href="admin.html" class="hidden"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i><span data-i18n="navDashboard">Dashboard</span></a>
+                    <a id="admin-mobile-profile-link" href="profile.html" class="hidden"><i class="fa-solid fa-user" aria-hidden="true"></i><span data-i18n="profileTitle">My Profile</span></a>
+                </div>
+                <div class="navbar-mobile-account">
+                    <button id="mobile-login-btn" type="button"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span data-i18n="btnLogin">Login</span></button>
+                    <button id="mobile-logout-btn" class="navbar-logout hidden" type="button"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span data-i18n="profileLogout">Logout</span></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="request-shell">
+        <div class="request-layout">
+            <section class="request-card" aria-labelledby="request-form-title">
+                <div class="request-card__heading">
+                    <h1 id="request-form-title">Request Blood</h1>
+                    <span class="rbc-only-badge"><i class="fa-solid fa-droplet" aria-hidden="true"></i> RBC only</span>
+                </div>
+
+                <div id="request-form-message" class="request-message" role="status" aria-live="polite" hidden></div>
+
+                <form id="blood-request-form" novalidate>
+                    <fieldset class="request-section request-section--full">
+                        <legend><span>1</span> Blood Requirement</legend>
+                        <div class="field field--full">
+                            <span class="field-label">Blood Group <b aria-label="required">*</b></span>
+                            <div class="blood-group-grid" role="radiogroup" aria-label="Blood group">
+                                <label><input type="radio" name="bloodGroup" value="A+" required /><span>A+</span></label>
+                                <label><input type="radio" name="bloodGroup" value="A-" /><span>A−</span></label>
+                                <label><input type="radio" name="bloodGroup" value="B+" /><span>B+</span></label>
+                                <label><input type="radio" name="bloodGroup" value="B-" /><span>B−</span></label>
+                                <label><input type="radio" name="bloodGroup" value="AB+" /><span>AB+</span></label>
+                                <label><input type="radio" name="bloodGroup" value="AB-" /><span>AB−</span></label>
+                                <label><input type="radio" name="bloodGroup" value="O+" /><span>O+</span></label>
+                                <label><input type="radio" name="bloodGroup" value="O-" /><span>O−</span></label>
+                            </div>
+                        </div>
+                        <div class="field-grid">
+                            <label class="field">Required RBC Units / Bags <b>*</b><span class="request-control"><i class="request-field-icon fa-solid fa-droplet" aria-hidden="true"></i><input name="requiredUnits" type="number" min="1" max="20" step="1" required inputmode="numeric" /></span></label>
+                            <label class="field">Urgency Level <b>*</b><span class="request-control"><i class="request-field-icon fa-solid fa-triangle-exclamation" aria-hidden="true"></i><select name="urgency" required><option value="">Select urgency</option><option>Emergency</option><option>Within 24 Hours</option><option>Scheduled</option></select></span></label>
+                            <label class="field">Required Date <b>*</b><span class="request-control"><i class="request-field-icon fa-solid fa-calendar-days" aria-hidden="true"></i><input id="required-date" name="requiredDate" type="date" required /></span></label>
+                            <label class="field">Required Time <b>*</b><span class="request-control"><i class="request-field-icon fa-solid fa-clock" aria-hidden="true"></i><input name="requiredTime" type="time" required /></span></label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="request-section">
+                        <legend><span>2</span> Patient Information</legend>
+                        <div class="field-grid">
+                            <label class="field">Patient Name <small>Optional</small><span class="request-control"><i class="request-field-icon fa-solid fa-user" aria-hidden="true"></i><input name="patientName" type="text" maxlength="100" autocomplete="name" /></span></label>
+                            <label class="field">Patient Age <small>Optional</small><span class="request-control"><i class="request-field-icon fa-solid fa-cake-candles" aria-hidden="true"></i><input name="patientAge" type="number" min="0" max="120" inputmode="numeric" /></span></label>
+                            <label class="field">Patient Gender <small>Optional</small><span class="request-control"><i class="request-field-icon fa-solid fa-venus-mars" aria-hidden="true"></i><select name="patientGender"><option value="">Select gender</option><option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option></select></span></label>
+                            <label class="field field--full">Reason for Blood Requirement <b>*</b><span class="request-control request-control--textarea"><i class="request-field-icon fa-solid fa-notes-medical" aria-hidden="true"></i><textarea name="reason" rows="3" maxlength="500" required></textarea></span></label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="request-section">
+                        <legend><span>3</span> Hospital Information</legend>
+                        <div class="field-grid">
+                            <label class="field">Hospital Name <b>*</b><span class="request-control"><i class="request-field-icon fa-solid fa-hospital" aria-hidden="true"></i><input name="hospitalName" type="text" maxlength="160" required autocomplete="organization" /></span></label>
+                            <label class="field">District <b>*</b><span class="request-control"><i class="request-field-icon fa-solid fa-map-location-dot" aria-hidden="true"></i><input name="district" type="text" maxlength="64" required autocomplete="address-level2" /></span></label>
+                            <label class="field field--full">Hospital Location / Address <b>*</b><span class="request-control request-control--textarea"><i class="request-field-icon fa-solid fa-location-dot" aria-hidden="true"></i><textarea name="hospitalAddress" rows="2" maxlength="300" required autocomplete="street-address"></textarea></span></label>
+                            <label class="field field--full">Ward / Cabin / Bed Number <small>Optional</small><span class="request-control"><i class="request-field-icon fa-solid fa-bed" aria-hidden="true"></i><input name="wardCabinBed" type="text" maxlength="80" /></span></label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="request-section">
+                        <legend><span>4</span> Contact Information</legend>
+                        <div class="field-grid">
+                            <label class="field">Requester Name <b>*</b><span class="request-control"><i class="request-field-icon fa-solid fa-user" aria-hidden="true"></i><input name="requesterName" type="text" maxlength="100" required autocomplete="name" /></span></label>
+                            <label class="field">Relationship with Patient <b>*</b><span class="request-control"><i class="request-field-icon fa-solid fa-people-arrows" aria-hidden="true"></i><input name="relationship" type="text" maxlength="80" required /></span></label>
+                            <label class="field">Primary Contact Number <b>*</b><span class="request-control"><i class="request-field-icon fa-solid fa-phone" aria-hidden="true"></i><input name="primaryContact" type="tel" required inputmode="tel" autocomplete="tel" placeholder="01XXXXXXXXX" /></span></label>
+                            <label class="field">Alternative Contact Number <small>Optional</small><span class="request-control"><i class="request-field-icon fa-solid fa-phone-volume" aria-hidden="true"></i><input name="alternativeContact" type="tel" inputmode="tel" placeholder="01XXXXXXXXX" /></span></label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="request-section request-section--full middleman-section">
+                        <legend><span>5</span> Middleman / Coordinator <small>Optional</small></legend>
+                        <label class="check-field middleman-toggle"><input id="middleman-toggle" name="hasMiddleman" type="checkbox" /><span>Add middleman or coordinator information</span></label>
+                        <div id="middleman-fields" class="field-grid" hidden>
+                            <label class="field">Middleman Name <b>*</b><span class="request-control"><i class="request-field-icon fa-solid fa-user-tie" aria-hidden="true"></i><input name="middlemanName" type="text" maxlength="100" autocomplete="name" disabled /></span></label>
+                            <label class="field">Contact Number <b>*</b><span class="request-control"><i class="request-field-icon fa-solid fa-phone" aria-hidden="true"></i><input name="middlemanContact" type="tel" inputmode="tel" placeholder="01XXXXXXXXX" disabled /></span></label>
+                            <label class="field">Role / Organization <small>Optional</small><span class="request-control"><i class="request-field-icon fa-solid fa-building" aria-hidden="true"></i><input name="middlemanRole" type="text" maxlength="120" disabled /></span></label>
+                            <label class="field">Relationship / Note <small>Optional</small><span class="request-control"><i class="request-field-icon fa-solid fa-note-sticky" aria-hidden="true"></i><input name="middlemanNote" type="text" maxlength="200" disabled /></span></label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="request-section request-section--full">
+                        <legend><span>6</span> Additional Information</legend>
+                        <div class="field-grid">
+                            <label class="field field--full file-field">Blood Requisition Slip <small>Optional · PDF, JPG or PNG · max 5 MB</small><span class="request-control request-control--file"><i class="request-field-icon fa-solid fa-file-medical" aria-hidden="true"></i><input id="requisition-slip" name="requisitionSlip" type="file" accept="application/pdf,image/jpeg,image/png" /></span><span id="requisition-file-name">Choose a secure document</span></label>
+                            <label class="field field--full">Additional Notes <small>Optional</small><span class="request-control request-control--textarea"><i class="request-field-icon fa-solid fa-note-sticky" aria-hidden="true"></i><textarea name="additionalNotes" rows="3" maxlength="1000"></textarea></span></label>
+                        </div>
+                        <label class="check-field"><input name="publicContactConsent" type="checkbox" /><span>I authorize the primary contact number to be included when an administrator shares this request publicly after verification. <small>Optional</small></span></label>
+                        <label class="check-field"><input name="consent" type="checkbox" required /><span>I confirm that the submitted information is accurate and consent to sharing necessary request details with potential donors. <b>*</b></span></label>
+                    </fieldset>
+
+                    <div class="request-submit-row">
+                        <p><i class="fa-solid fa-lock" aria-hidden="true"></i> Private details and medical documents are visible only to authorized administrators.</p>
+                        <button id="request-submit" type="submit"><span class="submit-spinner" aria-hidden="true"></span><i class="fa-solid fa-paper-plane" aria-hidden="true"></i><span class="submit-label">Submit Blood Request</span></button>
+                    </div>
+                </form>
+
+                <section id="request-success" class="request-success" aria-live="polite" hidden>
+                    <span class="request-success__icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
+                    <p class="request-step">Request submitted successfully</p>
+                    <h2>Your request is pending admin review</h2>
+                    <div class="success-detail"><span>Request ID</span><strong id="success-request-id"></strong><button type="button" data-copy-target="success-request-id" aria-label="Copy request ID"><i class="fa-regular fa-copy"></i></button></div>
+                    <p class="success-warning"><i class="fa-solid fa-circle-info"></i> Save this Request ID to check the request status later.</p>
+                    <button id="track-new-request" type="button" class="secondary-button">Track this request</button>
+                </section>
+            </section>
+
+            <aside class="request-sidebar">
+                <section class="track-card" aria-labelledby="track-title">
+                    <div class="track-card__heading">
+                        <span class="sidebar-icon"><i class="fa-solid fa-location-crosshairs" aria-hidden="true"></i></span>
+                        <div><p class="request-step">Secure status lookup</p><h2 id="track-title">Track Your Request</h2></div>
+                    </div>
+                    <p class="track-card__intro">Enter the Request ID you received after submission to see its latest review status.</p>
+                    <form id="request-tracking-form">
+                        <label class="field" for="tracking-request-id">Request ID</label>
+                        <div class="tracking-input">
+                            <i class="fa-solid fa-fingerprint" aria-hidden="true"></i>
+                            <input id="tracking-request-id" name="requestId" type="text" required autocomplete="off" spellcheck="false" placeholder="BAUET BDC-1234" />
+                        </div>
+                        <p class="tracking-privacy"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Only request progress is shown. Personal and medical details stay private.</p>
+                        <button id="tracking-submit" type="submit" class="secondary-button"><span class="tracking-button-spinner" aria-hidden="true"></span><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>Check Status</span></button>
+                    </form>
+                    <div id="tracking-result" class="tracking-result" aria-live="polite" hidden></div>
+                </section>
+
+                <section class="request-disclaimer">
+                    <h2><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Important</h2>
+                    <p>This service is completely free. Donor availability is not guaranteed. Blood compatibility and donor eligibility must be confirmed by the hospital or blood bank. In emergencies, contact your hospital directly.</p>
+                </section>
+            </aside>
+        </div>
+    </main>
+
+    <div id="request-copy-toast" class="request-copy-toast" role="status" aria-live="polite" hidden>
+        <i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>Request ID copied</span>
+    </div>
+
+    <div class="visitor-stats-bar" aria-live="polite">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-6 sm:gap-10 flex-wrap">
+            <div class="visitor-stats-item"><span class="visitor-stats-dot" style="background:#6366f1"></span><i class="fa-solid fa-eye text-xs" style="color:#6366f1"></i><span class="text-sm font-semibold text-gray-700">Total Views:</span><span id="total-views-count" class="text-sm font-extrabold text-gray-900">0</span></div>
+            <div class="visitor-stats-item"><span class="visitor-stats-dot visitor-stats-dot--live"></span><i class="fa-solid fa-users text-xs" style="color:#10b981"></i><span class="text-sm font-semibold text-gray-700">Online Now:</span><span id="online-users-count" class="text-sm font-extrabold text-gray-900 online-users-count">0</span></div>
+        </div>
+    </div>
+    <footer id="app-footer" class="site-footer"></footer>
+
+    <div id="login-modal" class="login-dialog hidden" role="dialog" aria-labelledby="login-dialog-club login-dialog-title">
+        <div class="login-dialog-backdrop absolute inset-0" aria-hidden="true"></div>
+        <div class="login-dialog-panel">
+            <div class="login-dialog-heading">
+                <img class="login-dialog-mark" src="../image/bauet-bdc-logo.webp" width="44" height="44" alt="" />
+                <div>
+                    <p id="login-dialog-club" class="login-dialog-club" data-i18n="siteTitle">BAUET BDC</p>
+                    <h2 id="login-dialog-title" data-i18n="loginTitle">Login</h2>
+                </div>
+            </div>
+            <form id="login-form" class="login-dialog-form">
+                <div class="login-dialog-field">
+                    <label for="login-email" data-i18n="loginEmail">Email</label>
+                    <div class="login-dialog-input"><i class="fa-solid fa-envelope" aria-hidden="true"></i><input id="login-email" name="email" type="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" required /></div>
+                </div>
+                <div class="login-dialog-field">
+                    <label for="login-password" data-i18n="loginPassword">Password</label>
+                    <div class="login-dialog-input login-dialog-input-password">
+                        <i class="fa-solid fa-lock" aria-hidden="true"></i><input id="login-password" name="password" type="password" autocomplete="current-password" required />
+                        <button id="toggle-password" class="login-dialog-toggle" type="button" aria-label="Show password" title="Show password" aria-pressed="false" data-i18n="loginShowPassword"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
+                    </div>
+                    <a id="forgot-password-link" class="login-dialog-recovery" href="#" data-i18n="loginForgotPassword">Forgot Password?</a>
+                </div>
+                <div class="login-dialog-actions">
+                    <button class="login-dialog-submit" type="submit"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i><span data-i18n="loginSignIn">Sign in</span></button>
+                    <button id="login-cancel" class="login-dialog-cancel" type="button" data-i18n="modalCancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="success-modal" class="fixed inset-0 hidden items-center justify-center z-[60]">
+        <div class="absolute inset-0 bg-black opacity-40"></div>
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4 z-10">
+            <h3 class="text-lg font-bold text-red-700">Success!</h3>
+            <p class="mt-2 text-gray-700"></p>
+            <div class="mt-4 text-right"><button id="success-close" class="px-4 py-2 bg-red-600 text-white rounded">Close</button></div>
+        </div>
+    </div>
+
+    <script src="../assets/js/viewport.js" defer></script>
+    <script type="module" src="../assets/js/modules/footer.js?v=3"></script>
+    <script type="module" src="../assets/js/pages/static-page.js?v=22"></script>
+    <script type="module" src="../assets/js/pages/blood-request.js?v=6"></script>
+</body>
+</html>

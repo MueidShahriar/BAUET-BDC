@@ -1,0 +1,14 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /blood-requests/{requestId}/{allPaths=**} {
+      // Documents are uploaded and served by the trusted backend only.
+      allow read, write: if false;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
