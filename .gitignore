@@ -6,3 +6,5 @@ node_modules/
 *serviceAccountKey*.json
 .DS_Store
 npm-debug.log*
+.vercel
+.env*
