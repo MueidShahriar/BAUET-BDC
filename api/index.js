@@ -2,13 +2,15 @@ const app = require('../backend.js');
 
 module.exports = function vercelHandler(req, res) {
   const requestUrl = new URL(req.url, 'http://localhost');
-  const routedPath = requestUrl.searchParams.get('__route');
+  const routedPath = requestUrl.pathname === '/api/index'
+    ? requestUrl.searchParams.get('path')
+    : '';
 
   if (routedPath) {
-    requestUrl.searchParams.delete('__route');
+    requestUrl.searchParams.delete('path');
     const query = requestUrl.searchParams.toString();
-    req.url = `${routedPath}${query ? `?${query}` : ''}`;
-    if (req.query && typeof req.query === 'object') delete req.query.__route;
+    req.url = `/api/${routedPath.replace(/^\/+/, '')}${query ? `?${query}` : ''}`;
+    if (req.query && typeof req.query === 'object') delete req.query.path;
     delete req.originalUrl;
   }
 

@@ -3,11 +3,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "/api/index?__route=/api/:path*"
-    },
-    {
-      "source": "/chat",
-      "destination": "/api/index?__route=/chat"
+      "destination": "/api/index"
     },
     {
       "source": "/",
