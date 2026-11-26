@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v218';
+const CACHE_VERSION = 'v219';
 const STATIC_CACHE_NAME = `bdc-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE_NAME = `bdc-runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
@@ -8,7 +8,7 @@ const PRECACHE_URLS = [
   '/pages/request-blood.html',
   '/manifest.webmanifest',
   '/assets/css/common.css?v=145',
-  '/assets/css/site-navbar.css?v=8',
+  '/assets/css/site-navbar.css?v=9',
   '/assets/css/login.css?v=4',
   '/assets/css/footer.css?v=2',
   '/assets/css/about.css?v=5',
@@ -16,7 +16,7 @@ const PRECACHE_URLS = [
   '/assets/css/join.css?v=7',
   '/assets/js/modules/join-form.js?v=6',
   '/assets/css/index.css?v=125',
-  '/assets/css/admin-dashboard.css?v=26',
+  '/assets/css/admin-dashboard.css?v=27',
   '/assets/css/request-blood.css?v=8',
   '/assets/css/profile.css?v=6',
   '/assets/css/donor-documents.css?v=1',
