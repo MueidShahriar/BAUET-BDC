@@ -146,6 +146,23 @@ section#join .join-form-card {
     left: 2.85rem !important;
 }
 
+/* Match the two desktop selects to the height and spacing of the form inputs.
+   Mobile keeps its existing native control sizing. */
+@media (min-width: 768px) {
+    #join-form :is(#gender, #bloodGroup) {
+        height: 3.15rem;
+        min-height: 3.15rem;
+        padding: .75rem 2.75rem .75rem 2.85rem !important;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m6 8 4 4 4-4' stroke='%23334155' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+        background-repeat: no-repeat !important;
+        background-position: right .9rem center !important;
+        background-size: 1.1rem !important;
+        line-height: 1.25rem;
+    }
+}
+
 @media (max-width: 767px) {
     #join-form .field-icon-left input,
     #join-form .field-icon-left select,

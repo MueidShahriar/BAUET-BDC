@@ -256,6 +256,25 @@ body.request-blood-page {
 .request-control--textarea:focus-within .request-field-icon { transform: scale(1.06); }
 .request-control:has(:disabled) .request-field-icon { color: #b8c0cc; }
 
+/* Keep desktop select controls aligned with the adjacent text/date inputs.
+   Native desktop select styling can otherwise collapse their box height. */
+@media (min-width: 801px) {
+    .request-control > select[name="urgency"],
+    .request-control > select[name="patientGender"] {
+        height: 2.85rem;
+        min-height: 2.85rem;
+        padding: .7rem 2.65rem .7rem 2.55rem !important;
+        appearance: none;
+        -webkit-appearance: none;
+        background-color: #fff;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m6 8 4 4 4-4' stroke='%23334155' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right .8rem center;
+        background-size: 1.1rem;
+        line-height: 1.25rem;
+    }
+}
+
 .blood-group-grid {
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));
