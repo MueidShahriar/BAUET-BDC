@@ -13,6 +13,9 @@ app.use(express.json({ limit: '8mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 registerBloodRequestRoutes(app);
+app.get('/api/health', (_req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 
 const apiKey = process.env.GEMINI_API_KEY;
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
@@ -150,10 +153,8 @@ if (require.main === module) {
   });
 }
 
-// Export Express app directly for Vercel
+// Export the Express app for the Vercel function and local integration tests.
 module.exports = app;
 
-// Preserve named exports for existing imports
-module.exports.app = app;
 module.exports.handleChat = handleChat;
 
