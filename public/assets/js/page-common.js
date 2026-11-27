@@ -10,7 +10,7 @@ import {
 
 import { firebaseConfig } from "./modules/firebase-config.js";
 
-import { initPreloader } from "./modules/preloader.js?v=7";
+import { initPreloader } from "./modules/preloader.js?v=8";
 import { initHeader, initMobileMenu } from "./modules/header.js?v=17";
 import { initFloatObserver } from "./modules/float-observer.js";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";

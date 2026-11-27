@@ -17,7 +17,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/common.css?v=147">
     <link rel="stylesheet" href="../assets/css/index.css?v=125">
-    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=39">
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=44">
 
     <meta name="description"
         content="Admin dashboard for managing donors, events, and recent donations.">
@@ -28,18 +28,18 @@
 </head>
 
 <body class="bg-white text-gray-900 loading admin-section-page" data-admin-section="events">
-    <div id="page-loader" class="admin-page-preloader" data-progress-mode="true" data-min-visible-ms="1500" role="status" aria-label="Loading">
+    <div id="page-loader" class="admin-smooth-preloader" role="status" aria-label="Loading">
         <div class="logo-wrapper">
             <div class="logo-base">
                 <img src="../image/blood-drop.png" width="512" height="512" alt="" decoding="async" />
             </div>
             <div class="logo-fill">
-                <img src="../image/blood-drop.png" width="512" height="512" alt="" decoding="async" />
+                <img src="../image/blood-drop.png" width="512" height="512" alt="Loading" decoding="async" />
             </div>
         </div>
     </div>
     <script src="../assets/js/viewport.js" defer></script>
-    <script type="module" src="../assets/js/app.js?v=70"></script>
+    <script type="module" src="../assets/js/app.js?v=72"></script>
 
     <header class="site-header site-navbar fixed">
         <nav class="navbar-row" aria-label="Main navigation">
@@ -153,9 +153,11 @@
                 </div>
 
                 <div class="admin-tabpanel">
-                    <header class="admin-page-heading">
-                        <span class="admin-page-heading__icon" aria-hidden="true"><i class="fa-solid fa-calendar-days"></i></span>
+                    <header class="admin-dashboard-header admin-section-header">
+                        <div class="admin-dashboard-heading">
+                        <span class="admin-dashboard-icon" aria-hidden="true"><i class="fa-solid fa-calendar-days"></i></span>
                         <div><h1>Events</h1><p>Create and manage blood donation events.</p></div>
+                        </div>
                     </header>
                     <div id="admin-section-events" data-panel="events">
                         <div class="admin-panel-card">

@@ -4,16 +4,20 @@ const preloaderStartedAt = performance.now();
 let finishTimer = null;
 let progressTimer = null;
 
-function getMinimumVisibleMs(pageLoader) {
-    const configuredDuration = Number(pageLoader?.dataset.minVisibleMs || 0);
-    const isBloodRequestAdminPage =
+function isFastAdminPage() {
+    const isStandaloneAdminPage = document.body.classList.contains('admin-section-page');
+    const isBloodRequestPage =
         document.body.classList.contains('admin-dashboard-page') &&
         new URLSearchParams(window.location.search).get('section') === 'requests';
-    const requestedDuration = isBloodRequestAdminPage ? 1500 : 0;
-    return Math.max(
-        Number.isFinite(configuredDuration) ? configuredDuration : 0,
-        requestedDuration
-    );
+    return isStandaloneAdminPage || isBloodRequestPage;
+}
+
+const initialPageLoader = document.getElementById('page-loader');
+if (initialPageLoader && isFastAdminPage()) initialPageLoader.dataset.fastMode = 'true';
+
+function getMinimumVisibleMs(pageLoader) {
+    const configuredDuration = Number(pageLoader?.dataset.minVisibleMs || 0);
+    return Number.isFinite(configuredDuration) ? configuredDuration : 0;
 }
 
 export function setPreloaderProgress(progress) {
@@ -57,7 +61,7 @@ function hidePreloader(pageLoader) {
     progressTimer = null;
     pageLoader.classList.add('fade-out');
     document.body.classList.remove('loading');
-    const cleanupDelay = minimumVisibleMs > 0 ? 100 : 500;
+    const cleanupDelay = isFastAdminPage() ? 280 : (minimumVisibleMs > 0 ? 100 : 500);
     setTimeout(() => {
         pageLoader.style.display = 'none';
         document.dispatchEvent(new Event('preloader:done'));

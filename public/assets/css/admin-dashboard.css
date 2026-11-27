@@ -2,22 +2,6 @@ body.admin-mode {
     background: #f7f5f7;
 }
 
-#page-loader.admin-page-preloader {
-    transition-duration: 160ms;
-}
-
-#page-loader.admin-page-preloader.fade-out {
-    pointer-events: none;
-}
-
-body.admin-section-page #page-loader.admin-page-preloader {
-    transition-duration: 90ms;
-}
-
-body.admin-section-page #page-loader.admin-page-preloader[data-progress-mode="true"] .logo-fill {
-    transition-duration: 110ms;
-}
-
 .admin-card-list > .admin-list-message {
     grid-column: 1 / -1;
     min-height: 3rem;
@@ -29,11 +13,6 @@ body.admin-section-page #page-loader.admin-page-preloader[data-progress-mode="tr
 }
 
 @media (prefers-reduced-motion: reduce) {
-    #page-loader.admin-page-preloader,
-    #page-loader.admin-page-preloader[data-progress-mode="true"] .logo-fill {
-        transition: none;
-    }
-
     .admin-list-message .loading-banner__spinner {
         animation: none;
     }
@@ -83,6 +62,42 @@ body.admin-mode #admin-panel {
     color: #fff;
 }
 
+/* Keep section titles visually identical to the dashboard banner on every route. */
+body.admin-mode #admin-panel .admin-section-header {
+    background:
+        radial-gradient(ellipse at 100% 0%, #85314f 0%, transparent 58%),
+        linear-gradient(115deg, #2d1b29, #512339);
+}
+
+@media (min-width: 691px) {
+    body.admin-mode #admin-panel .admin-section-header .admin-dashboard-heading h1 {
+        font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+        letter-spacing: -0.025em;
+    }
+}
+
+/* The same blood-drop loader as Profile, with a softer arrival and exit. */
+#page-loader.admin-smooth-preloader {
+    transition: opacity 620ms cubic-bezier(0.22, 1, 0.36, 1), visibility 620ms linear;
+}
+
+#page-loader.admin-smooth-preloader .logo-fill {
+    animation-duration: 1.05s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#page-loader.admin-smooth-preloader[data-fast-mode="true"] {
+    transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1), visibility 260ms linear;
+}
+
+#page-loader.admin-smooth-preloader[data-fast-mode="true"] .logo-fill {
+    animation-duration: 560ms;
+}
+
+#page-loader.admin-smooth-preloader[data-fast-mode="true"][data-progress-mode="true"] .logo-fill {
+    transition-duration: 140ms;
+}
+
 .admin-dashboard-heading {
     display: flex;
     min-width: 0;
@@ -104,6 +119,15 @@ body.admin-mode #admin-panel {
 }
 
 body.admin-mode #admin-panel .admin-dashboard-heading h2 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(1.4rem, 3vw, 2.15rem);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+}
+
+body.admin-mode #admin-panel .admin-dashboard-heading h1 {
     margin: 0;
     color: #fff;
     font-size: clamp(1.4rem, 3vw, 2.15rem);
@@ -331,7 +355,7 @@ body.admin-mode:not(.admin-section-page, .admin-dashboard-page) #admin-panel .ad
     display: none !important;
 }
 
-body.admin-section-page.admin-mode #admin-panel .admin-dashboard-header,
+body.admin-section-page.admin-mode #admin-panel .admin-dashboard-header:not(.admin-section-header),
 body.admin-section-page.admin-mode #admin-panel .admin-overview-grid {
     display: none !important;
 }
@@ -386,6 +410,14 @@ body.admin-section-page.admin-mode #admin-panel .admin-page-heading p {
     color: #f2dbe5 !important;
     font-size: 0.78rem;
     line-height: 1.4;
+}
+
+body.admin-section-page.admin-mode #admin-panel .admin-section-header {
+    margin: 0 0 0.9rem;
+}
+
+body.admin-dashboard-page.admin-mode #admin-panel .admin-section-header {
+    margin: 0 0 0.9rem;
 }
 
 @media (max-width: 690px) {
@@ -529,6 +561,11 @@ body.admin-mode #admin-panel #admin-members-list .admin-member-card__actions {
     }
 
     body.admin-mode #admin-panel .admin-dashboard-heading h2 {
+        font-size: clamp(1.05rem, 4.6vw, 1.3rem);
+        letter-spacing: -0.02em;
+    }
+
+    body.admin-mode #admin-panel .admin-dashboard-heading h1 {
         font-size: clamp(1.05rem, 4.6vw, 1.3rem);
         letter-spacing: -0.02em;
     }
@@ -1133,9 +1170,9 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-dashboard-report #admin
     min-width: min(100%, 16rem);
 }
 
-body.admin-dashboard-page.admin-section-view #admin-panel .admin-dashboard-header,
-body.admin-dashboard-page.admin-section-view #admin-panel .admin-overview-grid,
-body.admin-dashboard-page.admin-section-view #admin-panel .admin-dashboard-report {
+body.admin-dashboard-page.admin-section-view #admin-panel > .admin-dashboard-header,
+body.admin-dashboard-page.admin-section-view #admin-panel > .admin-overview-grid,
+body.admin-dashboard-page.admin-section-view #admin-panel > .admin-dashboard-report {
     display: none !important;
 }
 

@@ -15,7 +15,7 @@ import { initLanguageSystem, t } from "./modules/language-ui.js?v=7";
 import { createMonthlyReportDownloader } from "./modules/pdf-report.js?v=1";
 
 import state from "./modules/state.js";
-import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js?v=7";
+import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js?v=8";
 import { initHeader, initMobileMenu } from "./modules/header.js?v=17";
 import { initFloatObserver } from "./modules/float-observer.js";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";
@@ -46,7 +46,7 @@ import {
     clearAdminEventForm, clearAdminRecentDonorForm, clearAdminMemberForm,
     applyAdminMemberSearchFilters, resetAdminMemberSearchFilters, initAdminTabs,
     renderAdminRecentDonationsList, renderAdminFeedbackList
-} from "./modules/admin.js?v=15";
+} from "./modules/admin.js?v=16";
 import { updateLoginButtonState, initAuth } from "./modules/auth.js?v=20";
 import { initJoinForm } from "./modules/join-form.js?v=6";
 import { initFeedback } from "./modules/feedback.js";

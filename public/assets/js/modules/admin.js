@@ -635,14 +635,15 @@ export function initAdminTabs(onTabChange) {
     const selectSection = (section, { navigate = true } = {}) => {
         const targetPanel = panels.find(panel => panel.dataset.panel === section);
         const showAdminOnly = section === 'members' && state.memberSearchRole === 'admin';
-        if (!targetPanel || (navigate && !isDashboard && !standaloneSection)) {
-            if (navigate) {
-                const prefix = window.location.pathname.includes('/pages/') ? '' : 'pages/';
-                const destination = section === 'requests'
-                    ? `${prefix}admin.html?section=requests`
-                    : `${prefix}admin-${section}.html${showAdminOnly ? '?role=admin' : ''}`;
-                window.location.assign(destination);
-            }
+        if (navigate) {
+            const prefix = window.location.pathname.includes('/pages/') ? '' : 'pages/';
+            const destination = section === 'requests'
+                ? `${prefix}admin.html?section=requests`
+                : `${prefix}admin-${section}.html${showAdminOnly ? '?role=admin' : ''}`;
+            window.location.assign(destination);
+            return;
+        }
+        if (!targetPanel) {
             return;
         }
         if (isDashboard) {
@@ -657,16 +658,6 @@ export function initAdminTabs(onTabChange) {
             tab.setAttribute('aria-pressed', String(active));
         });
         panels.forEach(panel => panel.classList.toggle('hidden', panel !== targetPanel));
-        if (navigate) {
-            if (isDashboard) {
-                const url = new URL(window.location.href);
-                url.searchParams.set('section', section);
-                if (showAdminOnly) url.searchParams.set('role', 'admin');
-                else url.searchParams.delete('role');
-                window.history.replaceState(window.history.state, '', url);
-            }
-            targetPanel.scrollIntoView({ behavior: 'instant', block: 'start' });
-        }
         onTabChange?.();
     };
     tabs.forEach(tab => {

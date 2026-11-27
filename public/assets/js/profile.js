@@ -18,7 +18,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { firebaseConfig } from "./modules/firebase-config.js";
 import state from "./modules/state.js";
-import { finishPreloader } from "./modules/preloader.js?v=7";
+import { finishPreloader } from "./modules/preloader.js?v=8";
 import {
   initLanguageSystem,
   updatePageLanguage,

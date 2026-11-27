@@ -193,7 +193,7 @@ initHeader();
 initMobileMenu();
 initServiceWorker();
 if (document.querySelector('#page-loader.admin-page-preloader')) {
-    import('./preloader.js?v=7')
+    import('./preloader.js?v=8')
         .then(({ initPreloader }) => initPreloader({ waitForAuth: true, maxWaitMs: 15000 }))
         .catch(error => console.warn('Could not initialize admin preloader:', error));
 }
