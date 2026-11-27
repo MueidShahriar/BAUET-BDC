@@ -4,17 +4,6 @@ const preloaderStartedAt = performance.now();
 let finishTimer = null;
 let progressTimer = null;
 
-function isFastAdminPage() {
-    const isStandaloneAdminPage = document.body.classList.contains('admin-section-page');
-    const isBloodRequestPage =
-        document.body.classList.contains('admin-dashboard-page') &&
-        new URLSearchParams(window.location.search).get('section') === 'requests';
-    return isStandaloneAdminPage || isBloodRequestPage;
-}
-
-const initialPageLoader = document.getElementById('page-loader');
-if (initialPageLoader && isFastAdminPage()) initialPageLoader.dataset.fastMode = 'true';
-
 function getMinimumVisibleMs(pageLoader) {
     const configuredDuration = Number(pageLoader?.dataset.minVisibleMs || 0);
     return Number.isFinite(configuredDuration) ? configuredDuration : 0;
@@ -61,7 +50,7 @@ function hidePreloader(pageLoader) {
     progressTimer = null;
     pageLoader.classList.add('fade-out');
     document.body.classList.remove('loading');
-    const cleanupDelay = isFastAdminPage() ? 280 : (minimumVisibleMs > 0 ? 100 : 500);
+    const cleanupDelay = minimumVisibleMs > 0 ? 100 : 500;
     setTimeout(() => {
         pageLoader.style.display = 'none';
         document.dispatchEvent(new Event('preloader:done'));
@@ -87,7 +76,7 @@ export function finishPreloader({ immediately = false } = {}) {
         finishTimer = setTimeout(() => {
             finishTimer = null;
             hidePreloader(pageLoader);
-        }, isFastAdminPage() ? 180 : DATA_PROGRESS_FADE_DELAY_MS);
+        }, DATA_PROGRESS_FADE_DELAY_MS);
         return;
     }
 

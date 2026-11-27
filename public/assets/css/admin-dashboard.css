@@ -77,28 +77,6 @@ body.admin-mode #admin-panel {
     }
 }
 
-/* The same blood-drop loader as Profile, with a softer arrival and exit. */
-#page-loader.admin-smooth-preloader {
-    transition: opacity 620ms cubic-bezier(0.22, 1, 0.36, 1), visibility 620ms linear;
-}
-
-#page-loader.admin-smooth-preloader .logo-fill {
-    animation-duration: 1.05s;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-#page-loader.admin-smooth-preloader[data-fast-mode="true"] {
-    transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1), visibility 260ms linear;
-}
-
-#page-loader.admin-smooth-preloader[data-fast-mode="true"] .logo-fill {
-    animation-duration: 560ms;
-}
-
-#page-loader.admin-smooth-preloader[data-fast-mode="true"][data-progress-mode="true"] .logo-fill {
-    transition-duration: 140ms;
-}
-
 .admin-dashboard-heading {
     display: flex;
     min-width: 0;

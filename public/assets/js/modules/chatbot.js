@@ -1182,9 +1182,9 @@ export function initChatbot() {
     chatWindow.id = 'chatbot-window';
     chatWindow.setAttribute('role', 'dialog');
     chatWindow.setAttribute('aria-label', 'Blood Donation Assistant');
-    chatWindow.style.cssText = 'position:fixed;bottom:140px;right:24px;width:370px;max-width:calc(100vw - 32px);height:500px;max-height:calc(100vh - 180px);background:rgba(255,255,255,0.96);border-radius:1.4rem;box-shadow:0 28px 70px rgba(15,23,42,0.18),0 0 0 1px rgba(255,255,255,0.4);z-index:46;display:none;flex-direction:column;overflow:hidden;font-family:Inter,sans-serif;backdrop-filter:blur(18px);';
+    chatWindow.style.cssText = 'position:fixed;bottom:140px;right:24px;width:370px;max-width:calc(100vw - 32px);height:500px;max-height:calc(100vh - 180px);background:rgba(255,255,255,0.96);border-radius:1.4rem;box-shadow:0 28px 70px rgba(15,23,42,0.18),0 0 0 1px rgba(255,255,255,0.4);z-index:60;display:none;flex-direction:column;overflow:hidden;font-family:Inter,sans-serif;backdrop-filter:blur(18px);';
     chatWindow.innerHTML = `
-        <div style="background:linear-gradient(135deg,#991b1b,#dc2626 58%,#fb7185);padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;flex-shrink:0">
+        <div class="chatbot-banner" style="background:linear-gradient(135deg,#991b1b,#dc2626 58%,#fb7185);padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;flex-shrink:0">
             <div class="chatbot-header-robot" aria-hidden="true">
                 <span class="chatbot-robot chatbot-robot--small"><span class="chatbot-robot__antenna"></span><span class="chatbot-robot__ear chatbot-robot__ear--left"></span><span class="chatbot-robot__face"><span class="chatbot-robot__eyes"><span></span><span></span></span><span class="chatbot-robot__mouth"></span></span><span class="chatbot-robot__ear chatbot-robot__ear--right"></span></span>
             </div>
@@ -1192,8 +1192,8 @@ export function initChatbot() {
                 <div style="font-size:0.95rem;font-weight:800;color:#fff;letter-spacing:-0.02em">Blood Donation Assistant</div>
                 <div style="font-size:0.72rem;color:rgba(255,255,255,0.8);display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;background:#4ade80;border-radius:50%;display:inline-block"></span> Blood donation, website help, and general questions</div>
             </div>
-            <button id="chatbot-close" aria-label="Close chat" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
-                <i class="fa-solid fa-xmark" style="font-size:0.85rem"></i>
+            <button id="chatbot-close" type="button" aria-label="Close chat">
+                <span aria-hidden="true">×</span>
             </button>
         </div>
         <div id="chatbot-messages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.75rem;background:linear-gradient(180deg,#fff7f7 0%,#f8fafc 100%);scroll-behavior:smooth">
@@ -1208,7 +1208,7 @@ export function initChatbot() {
                 </div>
             </div>
         </div>
-        <div style="padding:0.85rem;background:rgba(255,255,255,0.96);border-top:1px solid rgba(241,245,249,0.95);flex-shrink:0">
+        <div class="chatbot-composer" style="padding:0.85rem;background:rgba(255,255,255,0.96);border-top:1px solid rgba(241,245,249,0.95);flex-shrink:0">
             <form id="chatbot-form" style="display:flex;gap:0.5rem;align-items:center">
                 <input id="chatbot-input" type="text" placeholder="Ask me anything..." autocomplete="off" style="flex:1;padding:0.75rem 0.95rem;border:1.5px solid #e5e7eb;border-radius:0.95rem;font-size:0.82rem;outline:none;transition:border-color 0.2s;font-family:Inter,sans-serif;background:#f9fafb" onfocus="this.style.borderColor='#fca5a5';this.style.background='#fff'" onblur="this.style.borderColor='#e5e7eb';this.style.background='#f9fafb'" />
                 <button type="submit" style="width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;box-shadow:0 14px 28px rgba(220,38,38,0.22)" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
@@ -1229,6 +1229,7 @@ export function initChatbot() {
     const chatForm = document.getElementById('chatbot-form');
     const chatInput = document.getElementById('chatbot-input');
     const messagesDiv = document.getElementById('chatbot-messages');
+    const mobileChat = window.matchMedia('(max-width: 640px)');
 
     let isOpen = false;
     function setChatOpen(open) {
@@ -1236,7 +1237,8 @@ export function initChatbot() {
         chatWindow.style.display = isOpen ? 'flex' : 'none';
         toggleBtn?.setAttribute('aria-expanded', String(isOpen));
         if (isOpen) {
-            chatInput.focus();
+            // The mobile keyboard should only open when the user taps the input.
+            (mobileChat.matches ? closeBtn : chatInput).focus({ preventScroll: true });
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
     }
@@ -1244,7 +1246,17 @@ export function initChatbot() {
         setChatOpen(!isOpen);
     }
     toggleBtn?.addEventListener('click', toggleChat);
-    closeBtn?.addEventListener('click', toggleChat);
+    const closeChat = () => {
+        setChatOpen(false);
+        toggleBtn.focus({ preventScroll: true });
+    };
+    closeBtn.addEventListener('click', closeChat);
+    chatWindow.addEventListener('keydown', (event) => {
+        if (isOpen && event.key === 'Escape') {
+            event.preventDefault();
+            closeChat();
+        }
+    });
     document.addEventListener('pointerdown', (event) => {
         const target = event.target;
         if (isOpen && target instanceof Node && !chatWindow.contains(target) && !fab.contains(target)) {
@@ -1436,6 +1448,13 @@ export function initChatbot() {
         @keyframes chatbot-cursor-blink { 50% { opacity: 0; } }
         #chatbot-toggle:hover { transform: translateY(-2px); box-shadow:none !important; }
         #chatbot-toggle { overflow: visible !important; }
+        #chatbot-close {
+            display:grid;place-items:center;flex:0 0 auto;width:30px;height:30px;
+            border:0;border-radius:50%;background:rgba(255,255,255,0.15);
+            color:#fff;font-size:1.25rem;line-height:1;cursor:pointer;
+        }
+        #chatbot-close:hover { background:rgba(255,255,255,0.25); }
+        #chatbot-close:focus-visible { outline:2px solid #fff;outline-offset:2px; }
         .chatbot-header-robot { width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,0.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2); }
         .chatbot-robot { position:relative;display:inline-flex;width:44px;height:38px;align-items:center;justify-content:center;border:3px solid #b3132e;border-radius:13px;background:linear-gradient(145deg,#ff667b 0%,#e11d3d 46%,#a20f2b 100%);box-shadow:inset 0 2px 2px rgba(255,255,255,0.22),0 7px 15px rgba(153,17,45,0.28); }
         .chatbot-robot__face { width:29px;height:23px;border:2px solid #7f1023;border-radius:8px;background:#25101a;box-shadow:inset 0 1px 4px rgba(0,0,0,0.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px; }
@@ -1463,12 +1482,16 @@ export function initChatbot() {
         #chatbot-messages::-webkit-scrollbar-track { background: transparent; }
         #chatbot-messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
         @media (max-width: 640px) {
-            #chatbot-window { width: calc(100vw - 16px) !important; right: 8px !important; bottom: 90px !important; height: calc(100vh - 140px) !important; max-height: calc(100vh - 140px) !important; border-radius: 1rem !important; }
+            /* The full-screen chat also covers floating page controls. */
+            #chatbot-window { z-index:90 !important; }
+            #chatbot-window .chatbot-banner { padding-top:max(1rem, calc(env(safe-area-inset-top, 0px) + 0.5rem)) !important; }
+            #chatbot-window .chatbot-composer { padding-bottom:max(0.85rem, env(safe-area-inset-bottom, 0px)) !important; }
+            #chatbot-close { width:44px;height:44px;font-size:1.5rem; }
+            #chatbot-input { min-width:0; }
             #chatbot-fab { right: 16px !important; bottom: 76px !important; }
             #chatbot-fab button { width: 52px !important; height: 52px !important; font-size: 1.2rem !important; }
         }
         @media (max-width: 400px) {
-            #chatbot-window { height: calc(100vh - 130px) !important; max-height: calc(100vh - 130px) !important; }
             #chatbot-fab { right: 12px !important; bottom: 72px !important; }
             #chatbot-fab button { width: 48px !important; height: 48px !important; font-size: 1.1rem !important; }
         }

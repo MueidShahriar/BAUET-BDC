@@ -27,7 +27,7 @@ import { initBackToTop } from "./modules/back-to-top.js?v=11";
 import { initFeedback } from "./modules/feedback.js";
 import { initHeader, initMobileMenu, syncAdminNavbar } from "./modules/header.js?v=17";
 import { initVisitorTracker } from "./modules/visitor-tracker.js";
-import { initChatbot } from "./modules/chatbot.js?v=9";
+import { initChatbot } from "./modules/chatbot.js?v=10";
 import { updateBirthdayWish } from "./modules/birthday-wish.js?v=6";
 import {
   getDonationCountForDonor,

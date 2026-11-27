@@ -14,7 +14,7 @@ import { initLanguageSystem, t } from "./modules/language-ui.js?v=7";
 import { createMonthlyReportDownloader } from "./modules/pdf-report.js?v=1";
 
 import state from "./modules/state.js";
-import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js?v=9";
+import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js?v=10";
 import { initHeader, initMobileMenu } from "./modules/header.js?v=17";
 import { initFloatObserver } from "./modules/float-observer.js";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";
@@ -497,7 +497,7 @@ function deleteFeedback(feedbackId) {
 
 function callUpdateLogin() {
     updateLoginButtonState(database, ref, onValue, (role) => {
-        if (isAdminRoute && role === 'admin') finishPreloader({ immediately: true });
+        if (isAdminRoute && role === 'admin') finishPreloader();
         if (role === 'admin') initBloodRequestAdmin({ database, auth, ref, onValue, update });
         scheduleAdminListRender();
         requestAnimationFrame(() => ensureUniqueDonorIds());
@@ -522,7 +522,7 @@ function runInitStep(label, callback) {
 
 function scheduleChatbotInit() {
     const loadChatbot = () => {
-        import("./modules/chatbot.js?v=9")
+        import("./modules/chatbot.js?v=10")
             .then(({ initChatbot }) => initChatbot())
             .catch(error => console.error('Failed to load chatbot:', error));
     };
@@ -831,8 +831,9 @@ function initContactScroll() {
 }
 
 function initPage() {
-    if (!document.body.classList.contains('home-page')) {
-        runInitStep('preloader', () => initPreloader({ waitForAuth: isAdminRoute, waitForData: isLeaderboardRoute }));
+    // Admin uses the normal fill and fade, but only finishes after auth resolves.
+    if (!isAdminRoute && !document.body.classList.contains('home-page')) {
+        runInitStep('preloader', () => initPreloader({ waitForData: isLeaderboardRoute }));
     }
     if (isLeaderboardRoute) {
         setPreloaderProgress(24);
