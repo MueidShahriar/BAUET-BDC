@@ -208,7 +208,7 @@ function renderDonorCardAdmin(d) {
             ? '<span class="admin-member-badge admin-member-badge--eligible"><i class="fa-solid fa-circle-check"></i> Eligible</span>'
             : `<span class="admin-member-badge admin-member-badge--waiting"><i class="fa-solid fa-hourglass-half"></i> Eligible on ${formatDateDisplay(eligibility.eligibleDate)}</span>`;
     const avatarContent = d.profilePhoto
-        ? `<img src="${d.profilePhoto}" alt="${initials}" class="admin-member-card__avatar-image">`
+        ? `<img src="${d.profilePhoto}" alt="${initials}" class="admin-member-card__avatar-image" loading="lazy" decoding="async">`
         : getDefaultAvatarImageMarkup(d.gender, 'admin-member-card__avatar-image');
     const donorId = normalizeDonorId(d.donorId) || d.donorId || '—';
     const isAdminMember = (d.role || 'member') === 'admin';
@@ -629,6 +629,7 @@ export function initAdminTabs(onTabChange) {
     if (!adminPanel) return;
     const tabs = adminPanel.querySelectorAll('.admin-tab');
     const panels = Array.from(adminPanel.querySelectorAll('[data-panel]'));
+    const dashboardLink = adminPanel.querySelector('.admin-sidebar-link--dashboard');
     const standaloneSection = document.body.dataset.adminSection;
     const isDashboard = document.body.classList.contains('admin-dashboard-page');
     const selectSection = (section, { navigate = true } = {}) => {
@@ -637,9 +638,18 @@ export function initAdminTabs(onTabChange) {
         if (!targetPanel || (navigate && !isDashboard && !standaloneSection)) {
             if (navigate) {
                 const prefix = window.location.pathname.includes('/pages/') ? '' : 'pages/';
-                window.location.assign(`${prefix}admin-${section}.html${showAdminOnly ? '?role=admin' : ''}`);
+                const destination = section === 'requests'
+                    ? `${prefix}admin.html?section=requests`
+                    : `${prefix}admin-${section}.html${showAdminOnly ? '?role=admin' : ''}`;
+                window.location.assign(destination);
             }
             return;
+        }
+        if (isDashboard) {
+            document.body.classList.toggle('admin-section-view', Boolean(section));
+            dashboardLink?.classList.toggle('active', !section);
+            if (section) dashboardLink?.removeAttribute('aria-current');
+            else dashboardLink?.setAttribute('aria-current', 'page');
         }
         tabs.forEach(tab => {
             const active = tab.dataset.tab === section;

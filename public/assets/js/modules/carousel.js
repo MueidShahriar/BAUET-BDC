@@ -139,7 +139,7 @@ function getRecentDonationSlide(entry, index) {
             : 'carousel-item';
 
     const avatarMarkup = d.profilePhoto
-        ? `<img src="${d.profilePhoto}" alt="${donorName}" class="recent-card__avatar-image" loading="lazy" />`
+        ? `<img src="${d.profilePhoto}" alt="${donorName}" class="recent-card__avatar-image" loading="lazy" decoding="async" />`
         : getDefaultAvatarImageMarkup(d.gender, 'recent-card__avatar-image');
 
     return `

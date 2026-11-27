@@ -2851,3 +2851,21 @@ main button * {
     }
 }
 
+/* The mobile assistant occupies the complete visual viewport. */
+@media (max-width: 640px) {
+    html:has(#chatbot-window[style*="display: flex"]),
+    body:has(#chatbot-window[style*="display: flex"]) {
+        overflow: hidden !important;
+    }
+
+    html body #chatbot-window {
+        inset: 0 !important;
+        width: 100vw !important;
+        max-width: none !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        max-height: none !important;
+        border-radius: 0 !important;
+    }
+}
+

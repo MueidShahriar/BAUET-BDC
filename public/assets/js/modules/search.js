@@ -66,7 +66,7 @@ function renderDonorCardPublic(d) {
             tabindex="0">
         </span>`;
     const avatarHtml = d.profilePhoto
-        ? `<img src="${d.profilePhoto}" alt="" class="donor-card__avatar-image w-10 h-10 rounded-full object-cover border border-slate-200 flex-shrink-0 bg-white" />`
+        ? `<img src="${d.profilePhoto}" alt="" class="donor-card__avatar-image w-10 h-10 rounded-full object-cover border border-slate-200 flex-shrink-0 bg-white" loading="lazy" decoding="async" />`
         : getDefaultAvatarImageMarkup(d.gender, 'w-10 h-10 rounded-full object-cover border border-slate-200 flex-shrink-0 bg-white donor-card__avatar-image');
     const contactHref = getContactHref();
     const isPhoneHidden = Boolean(d.isPhoneHidden) || String(d.gender || '').trim().toLowerCase() === 'female';

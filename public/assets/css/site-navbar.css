@@ -372,6 +372,7 @@ body > header.site-navbar #mobile-menu .navbar-panel .hidden {
 /* Mobile-only admin section navigation. */
 .admin-mobile-sections {
     display: grid;
+    grid-column: 1 / -1;
     grid-template-columns: minmax(0, 1fr);
     gap: 0.45rem;
     padding: 0.65rem 0;

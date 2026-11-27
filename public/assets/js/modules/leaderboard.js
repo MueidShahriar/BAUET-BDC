@@ -43,7 +43,7 @@ function renderLeaderboardCard(entry, rank) {
     const lastDonation = lastDonationDate ? formatDateDisplay(lastDonationDate) : '—';
     const badgeLabel = getLeaderboardBadgeLabel(badge);
     const avatar = donor.profilePhoto
-        ? `<img src="${donor.profilePhoto}" alt="${initials}" class="leaderboard-avatar__img" />`
+        ? `<img src="${donor.profilePhoto}" alt="${initials}" class="leaderboard-avatar__img" loading="lazy" decoding="async" />`
         : getDefaultAvatarImageMarkup(donor.gender, 'leaderboard-avatar__img');
     const medalClass = rank === 1 ? 'leaderboard-medal--gold'
         : rank === 2 ? 'leaderboard-medal--silver'

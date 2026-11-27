@@ -4,7 +4,7 @@ import { t } from './language-ui.js?v=7';
 import { getDefaultAvatarImageUrl } from './utils.js';
 import { updateBirthdayWish } from './birthday-wish.js?v=6';
 import { getFriendlyAuthError } from './auth-errors.js?v=2';
-import { syncAdminNavbar } from './header.js?v=13';
+import { syncAdminNavbar } from './header.js?v=17';
 
 function getAuthRedirectOverlay() {
     let overlay = document.getElementById('auth-redirect-overlay');
@@ -116,6 +116,7 @@ export function updateLoginButtonState(database, ref, onValue, afterRoleResolved
                 if (!button) continue;
                 const avatar = document.createElement('img');
                 avatar.src = photoUrl;
+                avatar.decoding = 'async';
                 avatar.alt = '';
                 if (button === loginBtn) avatar.className = 'nav-avatar';
                 button.replaceChildren(avatar);

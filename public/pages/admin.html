@@ -13,37 +13,35 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <script src="https://cdn.tailwindcss.com" defer></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="../assets/css/common.css?v=145">
+    <link rel="stylesheet" href="../assets/css/common.css?v=147">
     <link rel="stylesheet" href="../assets/css/index.css?v=125">
-    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=27">
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=39">
 
     <meta name="description"
         content="Admin dashboard for managing donors, events, and recent donations.">
     <link rel="stylesheet" href="../assets/css/footer.css?v=2">
-    <link rel="stylesheet" href="../assets/css/site-navbar.css?v=9">
+    <link rel="stylesheet" href="../assets/css/site-navbar.css?v=11">
     <link rel="stylesheet" href="../assets/css/login.css?v=4">
-    <script type="module" src="../assets/js/modules/header.js?v=13"></script>
+    <script type="module" src="../assets/js/modules/header.js?v=17"></script>
 </head>
 
 <body class="bg-white text-gray-900 loading admin-dashboard-page">
     <div id="page-loader" class="admin-page-preloader" data-progress-mode="true" role="status" aria-label="Loading">
         <div class="logo-wrapper">
             <div class="logo-base">
-                <img src="../image/blood-drop.png" alt="" />
+                <img src="../image/blood-drop.png" width="512" height="512" alt="" decoding="async" />
             </div>
             <div class="logo-fill">
-                <img src="../image/blood-drop.png" alt="" />
+                <img src="../image/blood-drop.png" width="512" height="512" alt="" decoding="async" />
             </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" async></script>
     <script src="../assets/js/viewport.js" defer></script>
-    <script type="module" src="../assets/js/app.js?v=61"></script>
+    <script type="module" src="../assets/js/app.js?v=70"></script>
 
     <header class="site-header site-navbar fixed">
         <nav class="navbar-row" aria-label="Main navigation">
@@ -279,43 +277,53 @@
                         <p data-i18n="adminDashboardDesc">Manage donors, donations, events and feedback.</p>
                     </div>
                 </div>
-                <button id="admin-monthly-report-btn" type="button">
-                    <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
-                    <span data-i18n="adminMonthlyReport">Monthly Report (PDF)</span>
-                </button>
             </div>
 
-            <div class="admin-overview-grid" aria-label="Admin overview">
-                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="members" data-admin-role="member">
-                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-users"></i></span>
-                    <span id="admin-overview-donors" class="admin-overview-value">0</span>
-                    <span class="admin-overview-label" data-i18n="adminTotalMembers">Total Members</span>
-                </div>
-                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="members" data-admin-role="admin">
-                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-user-shield"></i></span>
-                    <span id="admin-overview-admins" class="admin-overview-value">0</span>
-                    <span class="admin-overview-label" data-i18n="adminTotalAdmins">Total Admins</span>
+            <div class="admin-overview-grid" aria-label="Admin dashboard sections">
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="events">
+                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-calendar-days"></i></span>
+                    <span class="admin-overview-copy"><strong>Events</strong><small>Create and manage donation events</small></span>
+                    <span id="admin-overview-events" class="admin-overview-value" aria-label="Total events">0</span>
                 </div>
                 <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="recent">
                     <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-hand-holding-droplet"></i></span>
-                    <span id="admin-overview-donations" class="admin-overview-value">0</span>
-                    <span class="admin-overview-label" data-i18n="adminTotalDonations">Total Donations</span>
+                    <span class="admin-overview-copy"><strong>Recent Donations</strong><small>Record and review recent donors</small></span>
+                    <span id="admin-overview-donations" class="admin-overview-value" aria-label="Total donations">0</span>
                 </div>
-                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="events">
-                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-calendar-check"></i></span>
-                    <span id="admin-overview-events" class="admin-overview-value">0</span>
-                    <span class="admin-overview-label" data-i18n="adminTotalEvents">Total Events</span>
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="members" data-admin-role="member">
+                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-users"></i></span>
+                    <span class="admin-overview-copy"><strong>Members</strong><small>View and manage registered donors</small></span>
+                    <span id="admin-overview-donors" class="admin-overview-value" aria-label="Total members">0</span>
+                </div>
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="search">
+                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="admin-overview-copy"><strong>Find Donors</strong><small>Search the donor directory quickly</small></span>
+                </div>
+                <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="feedback">
+                    <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-comment-dots"></i></span>
+                    <span class="admin-overview-copy"><strong>Feedback</strong><small>Review messages from the community</small></span>
                 </div>
                 <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="requests">
                     <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-hand-holding-medical"></i></span>
-                    <span id="admin-overview-pending-requests" class="admin-overview-value">0</span>
-                    <span class="admin-overview-label">Pending Blood Requests</span>
+                    <span class="admin-overview-copy"><strong>Blood Requests</strong><small>Verify and manage RBC requests</small></span>
+                    <span id="admin-overview-pending-requests" class="admin-overview-value" aria-label="Pending blood requests">0</span>
                 </div>
+            </div>
+
+            <div class="admin-dashboard-report">
+                <button id="admin-monthly-report-btn" type="button">
+                    <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+                    <span data-i18n="adminMonthlyReport">Download Monthly Report (PDF)</span>
+                </button>
             </div>
 
             <div class="admin-workspace">
                 <div class="admin-tabs" role="group" aria-label="Dashboard sections">
-                    <button type="button" class="admin-tab active" data-tab="events" aria-pressed="true" aria-controls="admin-section-events"><i
+                    <a class="admin-sidebar-link admin-sidebar-link--dashboard active" href="admin.html" aria-current="page"><i
+                            class="fa-solid fa-gauge-high" aria-hidden="true"></i><span data-i18n="navDashboard">Dashboard</span></a>
+                    <a class="admin-sidebar-link" href="profile.html"><i class="fa-solid fa-user" aria-hidden="true"></i><span
+                            data-i18n="profileTitle">My Profile</span></a>
+                    <button type="button" class="admin-tab" data-tab="events" aria-pressed="false" aria-controls="admin-section-events"><i
                             class="fa-solid fa-calendar-days" aria-hidden="true"></i><span data-i18n="navEvents">Events</span></button>
                     <button type="button" class="admin-tab" data-tab="recent" aria-pressed="false" aria-controls="admin-section-recent"><i
                             class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i><span data-i18n="adminRecentDonations">Recent Donations</span></button>
@@ -362,7 +370,7 @@
                         </div>
                     </div>
 
-                    <div id="admin-section-events" data-panel="events">
+                    <div id="admin-section-events" data-panel="events" class="hidden">
                         <div class="admin-panel-card">
                             <div class="admin-panel-card__header">
                                 <span class="admin-panel-card__icon"><i class="fa-solid fa-calendar-days"></i></span>
@@ -917,7 +925,7 @@
         <div class="login-dialog-backdrop absolute inset-0" aria-hidden="true"></div>
         <div class="login-dialog-panel">
             <div class="login-dialog-heading">
-                <img class="login-dialog-mark" src="../image/bauet-bdc-logo.webp" width="44" height="44" alt="" />
+                <img class="login-dialog-mark" src="../image/bauet-bdc-logo.webp" width="44" height="44" alt="" loading="lazy" decoding="async">
                 <div>
                     <p id="login-dialog-club" class="login-dialog-club" data-i18n="siteTitle">BAUET BDC</p>
                     <h2 id="login-dialog-title" data-i18n="loginTitle">Login</h2>

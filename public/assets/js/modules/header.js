@@ -23,12 +23,14 @@ function initServiceWorker() {
 }
 
 const adminSectionLinks = [
-    ['requests', 'fa-hand-holding-medical', '', 'Blood Requests', `${dashboardHref}?section=requests`],
+    ['dashboard', 'fa-gauge-high', 'navDashboard', 'Dashboard', dashboardHref],
+    ['profile', 'fa-user', 'profileTitle', 'My Profile', `${pagesPrefix}profile.html`],
     ['events', 'fa-calendar-days', 'navEvents', 'Events'],
     ['recent', 'fa-hand-holding-droplet', 'adminRecentDonations', 'Recent Donations'],
     ['members', 'fa-users', 'adminMembers', 'Members'],
     ['search', 'fa-magnifying-glass', 'searchTitle', 'Find Donors'],
-    ['feedback', 'fa-comment-dots', 'adminFeedback', 'Feedback']
+    ['feedback', 'fa-comment-dots', 'adminFeedback', 'Feedback'],
+    ['requests', 'fa-hand-holding-medical', '', 'Blood Requests', `${dashboardHref}?section=requests`]
 ];
 
 function ensureAdminMobileSections(header) {
@@ -38,15 +40,19 @@ function ensureAdminMobileSections(header) {
     group.className = 'admin-mobile-sections hidden';
     group.setAttribute('aria-label', 'Admin sections');
     group.innerHTML = adminSectionLinks.map(([page, icon, key, label, href]) => `
-        <a id="admin-mobile-${page}-link" href="${href || `${pagesPrefix}admin-${page}.html`}">
+        <a id="admin-section-mobile-${page}-link" href="${href || `${pagesPrefix}admin-${page}.html`}">
             <i class="fa-solid ${icon}" aria-hidden="true"></i>
             <span${key ? ` data-i18n="${key}"` : ''}>${key ? (t(key) || label) : label}</span>
         </a>`).join('');
     const profileLink = links.querySelector('#admin-mobile-profile-link');
     links.insertBefore(group, profileLink || null);
-    const currentSection = document.body.dataset.adminSection;
+    const requestedSection = new URLSearchParams(window.location.search).get('section');
+    const currentSection = document.body.dataset.adminSection
+        || requestedSection
+        || (window.location.pathname.endsWith('/profile.html') ? 'profile' : '')
+        || (window.location.pathname.endsWith('/admin.html') ? 'dashboard' : '');
     if (currentSection) {
-        group.querySelector(`#admin-mobile-${currentSection}-link`)?.setAttribute('aria-current', 'page');
+        group.querySelector(`#admin-section-mobile-${currentSection}-link`)?.setAttribute('aria-current', 'page');
     }
 }
 
@@ -84,13 +90,14 @@ export function syncAdminNavbar(isAdmin) {
         if (publicLinks.test(link.id)) link.classList.toggle('hidden', isAdmin);
     });
     const isDashboard = window.location.pathname.endsWith('/admin.html');
-    header.querySelectorAll('#nav-dashboard-link, #admin-mobile-link').forEach(link => {
+    header.querySelectorAll('#nav-dashboard-link').forEach(link => {
         link.classList.toggle('hidden', !isAdmin || isDashboard);
     });
-    header.querySelectorAll('#nav-admin-profile-link, #admin-mobile-profile-link').forEach(link => {
-        const mobileProfile = link.id === 'admin-mobile-profile-link';
-        link.classList.toggle('hidden', !isAdmin || mobileProfile || link.getAttribute('aria-current') === 'page');
+    header.querySelector('#admin-mobile-link')?.classList.add('hidden');
+    header.querySelectorAll('#nav-admin-profile-link').forEach(link => {
+        link.classList.toggle('hidden', !isAdmin || link.getAttribute('aria-current') === 'page');
     });
+    header.querySelector('#admin-mobile-profile-link')?.classList.add('hidden');
     header.querySelector('.admin-mobile-sections')?.classList.toggle('hidden', !isAdmin);
 }
 
@@ -186,7 +193,7 @@ initHeader();
 initMobileMenu();
 initServiceWorker();
 if (document.querySelector('#page-loader.admin-page-preloader')) {
-    import('./preloader.js?v=5')
+    import('./preloader.js?v=7')
         .then(({ initPreloader }) => initPreloader({ waitForAuth: true, maxWaitMs: 15000 }))
         .catch(error => console.warn('Could not initialize admin preloader:', error));
 }

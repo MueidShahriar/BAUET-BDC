@@ -4,6 +4,18 @@ const preloaderStartedAt = performance.now();
 let finishTimer = null;
 let progressTimer = null;
 
+function getMinimumVisibleMs(pageLoader) {
+    const configuredDuration = Number(pageLoader?.dataset.minVisibleMs || 0);
+    const isBloodRequestAdminPage =
+        document.body.classList.contains('admin-dashboard-page') &&
+        new URLSearchParams(window.location.search).get('section') === 'requests';
+    const requestedDuration = isBloodRequestAdminPage ? 1500 : 0;
+    return Math.max(
+        Number.isFinite(configuredDuration) ? configuredDuration : 0,
+        requestedDuration
+    );
+}
+
 export function setPreloaderProgress(progress) {
     const pageLoader = document.getElementById('page-loader');
     const value = Number(progress);
@@ -24,6 +36,20 @@ export function setPreloaderProgress(progress) {
 function hidePreloader(pageLoader) {
     if (!pageLoader || pageLoader.dataset.finished === 'true') return;
 
+    const minimumVisibleMs = getMinimumVisibleMs(pageLoader);
+    const remainingVisibleTime = minimumVisibleMs - (performance.now() - preloaderStartedAt);
+    if (remainingVisibleTime > 16) {
+        if (pageLoader.dataset.hideScheduled === 'true') return;
+        pageLoader.dataset.hideScheduled = 'true';
+        window.clearTimeout(finishTimer);
+        finishTimer = window.setTimeout(() => {
+            finishTimer = null;
+            delete pageLoader.dataset.hideScheduled;
+            hidePreloader(pageLoader);
+        }, remainingVisibleTime);
+        return;
+    }
+
     pageLoader.dataset.finished = 'true';
     window.clearTimeout(finishTimer);
     finishTimer = null;
@@ -31,10 +57,11 @@ function hidePreloader(pageLoader) {
     progressTimer = null;
     pageLoader.classList.add('fade-out');
     document.body.classList.remove('loading');
+    const cleanupDelay = minimumVisibleMs > 0 ? 100 : 500;
     setTimeout(() => {
         pageLoader.style.display = 'none';
         document.dispatchEvent(new Event('preloader:done'));
-    }, 500);
+    }, cleanupDelay);
 }
 
 export function finishPreloader({ immediately = false } = {}) {

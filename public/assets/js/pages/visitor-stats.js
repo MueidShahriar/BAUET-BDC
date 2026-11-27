@@ -10,12 +10,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 import { firebaseConfig } from "../modules/firebase-config.js";
-import { initPreloader } from "../modules/preloader.js?v=5";
-import { initHeader, initMobileMenu } from "../modules/header.js?v=13";
+import { initPreloader } from "../modules/preloader.js?v=7";
+import { initHeader, initMobileMenu } from "../modules/header.js?v=17";
 import { initBackToTop } from "../modules/back-to-top.js?v=11";
 import { initFloatObserver } from "../modules/float-observer.js";
 import { openModal, closeModal, showModalMessage } from "../modules/modals.js";
-import { updateLoginButtonState, initAuth } from "../modules/auth.js?v=16";
+import { updateLoginButtonState, initAuth } from "../modules/auth.js?v=20";
 import { initLanguageSystem } from "../modules/language-ui.js?v=7";
 import { initVisitorTracker } from "../modules/visitor-tracker.js";
 import { initFeedback } from "../modules/feedback.js";

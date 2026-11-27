@@ -10,7 +10,42 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '8mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+
+const publicDirectory = path.join(__dirname, 'public');
+
+// Never expose Firebase Admin service-account files, even if one is copied into public by mistake.
+app.use((req, res, next) => {
+  let requestPath = req.path;
+  try {
+    requestPath = decodeURIComponent(requestPath);
+  } catch (_error) {
+    res.sendStatus(400);
+    return;
+  }
+  if (/firebase-adminsdk.*\.json$/i.test(requestPath)) {
+    res.setHeader('Cache-Control', 'no-store');
+    res.sendStatus(404);
+    return;
+  }
+  next();
+});
+
+app.use(express.static(publicDirectory, {
+  etag: true,
+  lastModified: true,
+  setHeaders(res, filePath) {
+    const extension = path.extname(filePath).toLowerCase();
+    const isDocument = extension === '.html';
+    const isServiceWorker = path.basename(filePath) === 'service-worker.js';
+    if (isDocument || isServiceWorker) {
+      res.setHeader('Cache-Control', 'no-cache');
+      return;
+    }
+    if (['.css', '.js', '.webp', '.png', '.jpg', '.jpeg', '.svg', '.woff', '.woff2'].includes(extension)) {
+      res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+    }
+  }
+}));
 
 registerBloodRequestRoutes(app);
 app.get('/api/health', (_req, res) => {

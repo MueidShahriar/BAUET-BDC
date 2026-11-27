@@ -1,4 +1,4 @@
-import { initPreloader } from '../modules/preloader.js?v=5';
+import { initPreloader } from '../modules/preloader.js?v=7';
 
 const loader = document.getElementById('page-loader');
 
