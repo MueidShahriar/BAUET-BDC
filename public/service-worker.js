@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v239';
+const CACHE_VERSION = 'v241';
 const STATIC_CACHE_NAME = `bdc-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE_NAME = `bdc-runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
@@ -7,6 +7,7 @@ const PRECACHE_URLS = [
   '/pages/search.html',
   '/pages/request-blood.html',
   '/manifest.webmanifest',
+  '/assets/css/tailwind.css?v=1',
   '/assets/css/common.css?v=147',
   '/assets/css/site-navbar.css?v=11',
   '/assets/css/login.css?v=4',
@@ -16,14 +17,14 @@ const PRECACHE_URLS = [
   '/assets/css/join.css?v=7',
   '/assets/js/modules/join-form.js?v=6',
   '/assets/css/index.css?v=125',
-  '/assets/css/admin-dashboard.css?v=46',
+  '/assets/css/admin-dashboard.css?v=47',
   '/assets/css/request-blood.css?v=8',
   '/assets/css/profile.css?v=6',
   '/assets/css/donor-documents.css?v=1',
   '/assets/js/modules/certificate.js?v=4',
   '/assets/css/home.css?v=4',
   '/assets/css/home-sections.css?v=2',
-  '/assets/js/app.js?v=73',
+  '/assets/js/app.js?v=74',
   '/assets/js/pages/blood-request.js?v=6',
   '/assets/js/modules/blood-request-api.js?v=1',
   '/assets/js/pages/static-page.js?v=26',
@@ -59,10 +60,9 @@ async function cleanupOldCaches() {
   const cacheNames = await caches.keys();
   const validNames = new Set([STATIC_CACHE_NAME, RUNTIME_CACHE_NAME]);
   return Promise.all(
-    cacheNames.map((cacheName) => {
-      if (validNames.has(cacheName)) return Promise.resolve(false);
-      return caches.delete(cacheName);
-    })
+    cacheNames
+      .filter((name) => /^(bdc-static-|bdc-runtime-)/.test(name) && !validNames.has(name))
+      .map((name) => caches.delete(name))
   );
 }
 
@@ -127,34 +127,38 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+  const request = event.request;
+  if (request.method !== 'GET' || request.headers.has('Authorization')) return;
 
-  const url = new URL(event.request.url);
-  if (url.origin !== self.location.origin) return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin || url.pathname === '/api' || url.pathname.startsWith('/api/')) return;
 
   const isHtmlRequest =
-    event.request.mode === 'navigate' ||
-    event.request.destination === 'document';
+    request.mode === 'navigate' ||
+    request.destination === 'document';
   const isAssetRequest =
-    event.request.destination === 'script' ||
-    event.request.destination === 'style';
+    request.destination === 'script' ||
+    request.destination === 'style';
 
   if (isHtmlRequest) {
     event.respondWith(
-      networkFirst(event.request, STATIC_CACHE_NAME).catch(() => caches.match('/index.html'))
+      networkFirst(request, STATIC_CACHE_NAME).catch(() => caches.match('/index.html'))
     );
     return;
   }
 
   if (isAssetRequest) {
     event.respondWith(
-      staleWhileRevalidate(event.request, STATIC_CACHE_NAME, event)
+      staleWhileRevalidate(request, STATIC_CACHE_NAME, event)
         .catch(() => Response.error())
     );
     return;
   }
 
-  event.respondWith(
-    cacheFirst(event.request, RUNTIME_CACHE_NAME).catch(() => Response.error())
-  );
+  // Only media files are cache-first. Fetch/XHR responses use the network.
+  if (['image', 'font', 'manifest'].includes(request.destination)) {
+    event.respondWith(
+      cacheFirst(request, RUNTIME_CACHE_NAME).catch(() => Response.error())
+    );
+  }
 });

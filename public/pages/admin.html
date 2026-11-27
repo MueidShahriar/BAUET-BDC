@@ -8,17 +8,15 @@
     <title>Admin Dashboard - BAUET BDC</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="../image/blood-drop.png" type="image/x-icon">
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <script src="https://cdn.tailwindcss.com" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../assets/css/common.css?v=147">
     <link rel="stylesheet" href="../assets/css/index.css?v=125">
-    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=46">
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=47">
 
     <meta name="description"
         content="Admin dashboard for managing donors, events, and recent donations.">
@@ -26,6 +24,7 @@
     <link rel="stylesheet" href="../assets/css/site-navbar.css?v=11">
     <link rel="stylesheet" href="../assets/css/login.css?v=4">
     <script type="module" src="../assets/js/modules/header.js?v=17"></script>
+    <link rel="stylesheet" href="../assets/css/tailwind.css?v=1">
 </head>
 
 <body class="bg-white text-gray-900 loading admin-dashboard-page">
@@ -41,7 +40,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" async></script>
     <script src="../assets/js/viewport.js" defer></script>
-    <script type="module" src="../assets/js/app.js?v=73"></script>
+    <script type="module" src="../assets/js/app.js?v=74"></script>
 
     <header class="site-header site-navbar fixed">
         <nav class="navbar-row" aria-label="Main navigation">
@@ -279,6 +278,13 @@
                 </div>
             </div>
 
+            <div class="admin-dashboard-report">
+                <button id="admin-monthly-report-btn" type="button">
+                    <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+                    <span data-i18n="adminMonthlyReport">Download Monthly Report (PDF)</span>
+                </button>
+            </div>
+
             <div class="admin-overview-grid" aria-label="Admin dashboard sections">
                 <div class="admin-overview-card admin-overview-card--clickable" role="button" tabindex="0" data-admin-action="events">
                     <span class="admin-overview-icon" aria-hidden="true"><i class="fa-solid fa-calendar-days"></i></span>
@@ -308,13 +314,6 @@
                     <span class="admin-overview-copy"><strong>Blood Requests</strong><small>Verify and manage RBC requests</small></span>
                     <span id="admin-overview-pending-requests" class="admin-overview-value" aria-label="Pending blood requests">0</span>
                 </div>
-            </div>
-
-            <div class="admin-dashboard-report">
-                <button id="admin-monthly-report-btn" type="button">
-                    <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
-                    <span data-i18n="adminMonthlyReport">Download Monthly Report (PDF)</span>
-                </button>
             </div>
 
             <div class="admin-workspace">

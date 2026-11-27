@@ -1,6 +1,5 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
     signOut, onAuthStateChanged, sendPasswordResetEmail, deleteUser
@@ -55,7 +54,15 @@ import { initLeaderboardFilters, renderDonorLeaderboard, renderDonorTicker } fro
 import { initBloodRequestAdmin } from "./modules/blood-request-admin.js?v=4";
 
 const app = initializeApp(firebaseConfig);
-try { analyticsIsSupported().then(ok => { if (ok) getAnalytics(app); }); } catch (_) {}
+const loadAnalytics = () => {
+    import("https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js")
+        .then(async ({ getAnalytics, isSupported }) => {
+            if (await isSupported()) getAnalytics(app);
+        })
+        .catch(() => {}); // Analytics must not block the site or sign-in.
+};
+if (document.readyState === 'complete') loadAnalytics();
+else window.addEventListener('load', loadAnalytics, { once: true });
 const auth = getAuth(app);
 const database = getDatabase(app);
 
@@ -1012,10 +1019,5 @@ function initPage() {
     );
 }
 
-if (isAdminRoute) {
-    initPage();
-} else if (document.body.classList.contains('home-page')) {
-    document.addEventListener('DOMContentLoaded', initPage, { once: true });
-} else {
-    window.addEventListener('load', initPage, { once: true });
-}
+// The module is deferred and all the page controls are already parsed.
+initPage();

@@ -4,6 +4,7 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
+    "build:css": "tailwindcss -i ./styles/tailwind.css -o ./public/assets/css/tailwind.css --minify",
     "start": "node backend.js",
     "dev": "node backend.js"
   },
@@ -22,5 +23,8 @@
     "jwks-rsa": {
       "jose": "4.15.9"
     }
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17"
   }
 }

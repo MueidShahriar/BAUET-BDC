@@ -10,6 +10,10 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '8mb' }));
+app.use('/api', (_req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+});
 
 const publicDirectory = path.join(__dirname, 'public');
 

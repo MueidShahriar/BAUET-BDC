@@ -1188,8 +1188,8 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
         grid-template-columns: clamp(12.5rem, 16vw, 15rem) minmax(0, 1fr);
         grid-template-areas:
             "sidebar header"
-            "sidebar overview"
             "sidebar report"
+            "sidebar overview"
             "sidebar content";
         column-gap: clamp(0.9rem, 2vw, 1.4rem);
         row-gap: clamp(0.9rem, 1.5vw, 1.2rem);
@@ -1248,8 +1248,8 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
         grid-template-areas:
             "sidebar"
             "header"
-            "overview"
             "report"
+            "overview"
             "content";
         gap: var(--dashboard-gap);
     }
@@ -1304,8 +1304,8 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
         display: grid !important;
         grid-template-areas:
             "header"
-            "overview"
             "report"
+            "overview"
             "content";
         gap: var(--dashboard-gap);
     }

@@ -302,6 +302,7 @@ If the configured port is different, use the port set in your environment.
 |:---|:---|
 | `npm install` | Install project dependencies |
 | `npm run dev` | Start the development server |
+| `npm run build:css` | Rebuild the checked-in Tailwind stylesheet after changing utility classes |
 | `npm start` | Start the Node.js server |
 
 ## Deployment
