@@ -56,17 +56,18 @@ body.admin-mode #admin-panel {
     gap: 1rem;
     padding: clamp(1.1rem, 3vw, 2rem);
     border-radius: 1.15rem;
-    background:
-        radial-gradient(ellipse at 100% 0%, #85314f 0%, transparent 58%),
-        linear-gradient(115deg, #2d1b29, #512339);
     color: #fff;
 }
 
-/* Keep section titles visually identical to the dashboard banner on every route. */
-body.admin-mode #admin-panel .admin-section-header {
+/* Section banners are headers, but shouldn't inherit the legacy navbar gradient. */
+#admin-panel .admin-dashboard-header {
     background:
         radial-gradient(ellipse at 100% 0%, #85314f 0%, transparent 58%),
-        linear-gradient(115deg, #2d1b29, #512339);
+        linear-gradient(115deg, #2d1b29, #512339) !important;
+}
+
+#admin-panel .admin-section-header {
+    margin: 0 0 0.9rem;
 }
 
 @media (min-width: 691px) {
@@ -360,96 +361,23 @@ body.admin-section-page.admin-mode #admin-panel .admin-overview-grid {
     display: none !important;
 }
 
-body.admin-section-page.admin-mode #admin-panel .admin-workspace {
+body.admin-mode:is(.admin-section-page, .admin-section-view) #admin-panel .admin-workspace {
     display: block;
+    margin-top: 0;
 }
 
-body.admin-section-page.admin-mode #admin-panel {
+body.admin-mode:is(.admin-section-page, .admin-section-view) #admin-panel {
     margin-top: 0;
     padding-top: 0 !important;
 }
 
-body.admin-section-page.admin-mode :is(.home-main, main.max-w-6xl) {
+body.admin-mode:is(.admin-section-page, .admin-section-view) :is(.home-main, main.max-w-6xl) {
     padding-top: var(--header-height, 4rem) !important;
 }
 
-body.admin-section-page.admin-mode #admin-panel .admin-page-heading {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    margin: 0 0 0.75rem;
-    padding: 0.85rem 1rem;
-    border: 1px solid rgba(130, 28, 62, 0.34);
-    border-radius: 0.9rem;
-    background: linear-gradient(135deg, #3b172b 0%, #7f2448 100%) !important;
-    box-shadow: 0 8px 20px rgba(77, 24, 50, 0.14);
-}
-
-body.admin-section-page.admin-mode #admin-panel .admin-page-heading__icon {
-    display: grid;
-    width: 2.7rem;
-    height: 2.7rem;
-    flex: 0 0 2.7rem;
-    place-items: center;
-    border-radius: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.13);
-    color: #fff;
-}
-
-body.admin-section-page.admin-mode #admin-panel .admin-page-heading h1 {
-    margin: 0;
-    color: #fff !important;
-    font-size: clamp(1.15rem, 2vw, 1.45rem);
-    font-weight: 800;
-    line-height: 1.2;
-}
-
-body.admin-section-page.admin-mode #admin-panel .admin-page-heading p {
-    margin: 0.18rem 0 0;
-    color: #f2dbe5 !important;
-    font-size: 0.78rem;
-    line-height: 1.4;
-}
-
-body.admin-section-page.admin-mode #admin-panel .admin-section-header {
-    margin: 0 0 0.9rem;
-}
-
-body.admin-dashboard-page.admin-mode #admin-panel .admin-section-header {
-    margin: 0 0 0.9rem;
-}
-
-/* Blood Requests is nested in the dashboard section view; match the standalone
-   admin pages' breathing room above its title banner. */
-body.admin-dashboard-page.admin-section-view #admin-section-requests > .admin-section-header {
-    margin-top: 0;
-}
-
-/* Remove the public-page top offset only after a dashboard section is selected. */
-body.admin-dashboard-page.admin-mode.admin-section-view :is(.home-main, main.max-w-6xl) {
-    padding-top: calc(var(--header-height, 4rem) + 0.75rem) !important;
-}
-
-body.admin-dashboard-page.admin-mode.admin-section-view #admin-section-requests > .admin-section-header {
-    margin-top: clamp(0.45rem, 1.2vw, 0.8rem);
-}
-
-@media (max-width: 690px) {
-    body.admin-section-page.admin-mode #admin-panel .admin-page-heading {
-        gap: 0.65rem;
-        margin-bottom: 0.6rem;
-        padding: 0.7rem 0.75rem;
-    }
-
-    body.admin-section-page.admin-mode #admin-panel .admin-page-heading__icon {
-        width: 2.35rem;
-        height: 2.35rem;
-        flex-basis: 2.35rem;
-    }
-
-    body.admin-section-page.admin-mode #admin-panel .admin-page-heading p {
-        font-size: 0.72rem;
+@media (max-width: 768px) {
+    body.admin-mode:is(.admin-section-page, .admin-section-view) #admin-panel .admin-workspace {
+        margin-top: 0.35rem;
     }
 }
 
@@ -1250,12 +1178,12 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
 }
 
 @media (min-width: 1024px) {
-    body.admin-dashboard-page.admin-mode :is(.home-main, main.max-w-6xl) {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) :is(.home-main, main.max-w-6xl) {
         width: min(100%, 96rem);
         max-width: 96rem;
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel {
         display: grid !important;
         grid-template-columns: clamp(12.5rem, 16vw, 15rem) minmax(0, 1fr);
         grid-template-areas:
@@ -1267,7 +1195,7 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
         row-gap: clamp(0.9rem, 1.5vw, 1.2rem);
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-dashboard-header {
+    body.admin-dashboard-page.admin-mode #admin-panel > .admin-dashboard-header {
         grid-area: header;
     }
 
@@ -1279,54 +1207,33 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
         grid-area: report;
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-workspace {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel .admin-workspace {
         display: contents;
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-tabs {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel .admin-tabs {
         grid-area: sidebar;
         top: calc(var(--header-height, 4rem) + 0.8rem);
         align-self: start;
         padding: 0.7rem !important;
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-tabpanel {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel .admin-tabpanel {
         grid-area: content;
         min-width: 0;
     }
 
-    body.admin-section-page.admin-mode #admin-panel .admin-workspace {
+    body.admin-mode:is(.admin-section-page, .admin-section-view) #admin-panel .admin-workspace {
         display: grid;
         grid-template-columns: clamp(12.5rem, 16vw, 15rem) minmax(0, 1fr);
         gap: clamp(0.9rem, 2vw, 1.4rem);
     }
 
-    body.admin-section-page.admin-mode #admin-panel .admin-tabs {
+    body.admin-mode:is(.admin-section-page, .admin-section-view) #admin-panel .admin-tabs {
         top: calc(var(--header-height, 4rem) + 0.8rem);
         align-self: start;
     }
 
-    body.admin-dashboard-page.admin-mode.admin-section-view #admin-panel {
-        display: block !important;
-    }
-
-    body.admin-dashboard-page.admin-mode.admin-section-view #admin-panel .admin-workspace {
-        display: grid;
-        grid-template-columns: clamp(12.5rem, 16vw, 15rem) minmax(0, 1fr);
-        gap: clamp(0.9rem, 2vw, 1.4rem);
-    }
-
-    body.admin-dashboard-page.admin-mode.admin-section-view #admin-panel .admin-tabs {
-        position: sticky;
-        top: calc(var(--header-height, 4rem) + 0.8rem);
-        align-self: start;
-        grid-area: auto;
-    }
-
-    body.admin-dashboard-page.admin-mode.admin-section-view #admin-panel .admin-tabpanel {
-        grid-area: auto;
-        min-width: 0;
-    }
 }
 
 @media (min-width: 1024px) and (max-width: 1279px) {
@@ -1336,7 +1243,7 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
 }
 
 @media (min-width: 691px) and (max-width: 1023px) {
-    body.admin-dashboard-page.admin-mode #admin-panel {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel {
         display: grid !important;
         grid-template-areas:
             "sidebar"
@@ -1347,7 +1254,7 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
         gap: var(--dashboard-gap);
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-dashboard-header {
+    body.admin-dashboard-page.admin-mode #admin-panel > .admin-dashboard-header {
         grid-area: header;
     }
 
@@ -1364,28 +1271,28 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
         margin: 0;
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-workspace {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel .admin-workspace {
         display: contents;
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-tabs {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel .admin-tabs {
         position: static;
         display: grid !important;
         grid-area: sidebar;
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-tabpanel {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel .admin-tabpanel {
         grid-area: content;
         min-width: 0;
     }
 
-    body.admin-section-page.admin-mode #admin-panel .admin-workspace {
+    body.admin-mode:is(.admin-section-page, .admin-section-view) #admin-panel .admin-workspace {
         display: grid;
         grid-template-columns: minmax(0, 1fr);
     }
 
-    body.admin-section-page.admin-mode #admin-panel .admin-tabs {
+    body.admin-mode:is(.admin-section-page, .admin-section-view) #admin-panel .admin-tabs {
         position: static;
         display: grid !important;
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
@@ -1393,7 +1300,7 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
 }
 
 @media (max-width: 690px) {
-    body.admin-dashboard-page.admin-mode #admin-panel {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel {
         display: grid !important;
         grid-template-areas:
             "header"
@@ -1403,7 +1310,7 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
         gap: var(--dashboard-gap);
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-dashboard-header {
+    body.admin-dashboard-page.admin-mode #admin-panel > .admin-dashboard-header {
         grid-area: header;
     }
 
@@ -1417,15 +1324,15 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-overview-value {
         grid-area: report;
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-workspace {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel .admin-workspace {
         display: contents;
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-tabs {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel .admin-tabs {
         grid-area: sidebar;
     }
 
-    body.admin-dashboard-page.admin-mode #admin-panel .admin-tabpanel {
+    body.admin-dashboard-page.admin-mode:not(.admin-section-view) #admin-panel .admin-tabpanel {
         grid-area: content;
         min-width: 0;
     }
