@@ -1,120 +1,23 @@
-const PRELOADER_FILL_MS = 900;
-const DATA_PROGRESS_FADE_DELAY_MS = 850;
-const preloaderStartedAt = performance.now();
-let finishTimer = null;
-let progressTimer = null;
+export async function finishPreloader() {
+    const loader = document.getElementById('page-loader');
+    if (!loader || loader.dataset.finishing === 'true') return;
 
-function getMinimumVisibleMs(pageLoader) {
-    const configuredDuration = Number(pageLoader?.dataset.minVisibleMs || 0);
-    return Number.isFinite(configuredDuration) ? configuredDuration : 0;
-}
+    loader.dataset.finishing = 'true';
+    // Wait for the fill that's already running. A slow page or auth check
+    // can finish after the animation without starting another timer.
+    const fill = loader.querySelector('.logo-fill')?.getAnimations?.().find(
+        animation => animation.animationName === 'loadUp'
+    );
+    if (fill) await fill.finished.catch(() => {});
 
-export function setPreloaderProgress(progress) {
-    const pageLoader = document.getElementById('page-loader');
-    const value = Number(progress);
-    if (
-        !pageLoader ||
-        pageLoader.dataset.progressMode !== 'true' ||
-        pageLoader.dataset.finished === 'true' ||
-        pageLoader.dataset.finishRequested === 'true' ||
-        !Number.isFinite(value)
-    ) return;
-
-    const current = Number(pageLoader.dataset.progress || 0);
-    const next = Math.max(current, Math.min(100, Math.max(0, value)));
-    pageLoader.dataset.progress = String(next);
-    pageLoader.style.setProperty('--loader-fill-offset', `${100 - next}%`);
-}
-
-function hidePreloader(pageLoader) {
-    if (!pageLoader || pageLoader.dataset.finished === 'true') return;
-
-    const minimumVisibleMs = getMinimumVisibleMs(pageLoader);
-    const remainingVisibleTime = minimumVisibleMs - (performance.now() - preloaderStartedAt);
-    if (remainingVisibleTime > 16) {
-        if (pageLoader.dataset.hideScheduled === 'true') return;
-        pageLoader.dataset.hideScheduled = 'true';
-        window.clearTimeout(finishTimer);
-        finishTimer = window.setTimeout(() => {
-            finishTimer = null;
-            delete pageLoader.dataset.hideScheduled;
-            hidePreloader(pageLoader);
-        }, remainingVisibleTime);
-        return;
-    }
-
-    pageLoader.dataset.finished = 'true';
-    window.clearTimeout(finishTimer);
-    finishTimer = null;
-    window.clearInterval(progressTimer);
-    progressTimer = null;
-    pageLoader.classList.add('fade-out');
+    loader.style.display = 'none';
     document.body.classList.remove('loading');
-    const cleanupDelay = minimumVisibleMs > 0 ? 100 : 500;
-    setTimeout(() => {
-        pageLoader.style.display = 'none';
-        document.dispatchEvent(new Event('preloader:done'));
-    }, cleanupDelay);
+    document.dispatchEvent(new Event('preloader:done'));
 }
 
-export function finishPreloader({ immediately = false } = {}) {
-    const pageLoader = document.getElementById('page-loader');
-    if (!pageLoader || pageLoader.dataset.finished === 'true') return;
-
-    if (immediately) {
-        setPreloaderProgress(100);
-        hidePreloader(pageLoader);
-        return;
-    }
-
-    if (pageLoader.dataset.progressMode === 'true') {
-        window.clearInterval(progressTimer);
-        progressTimer = null;
-        setPreloaderProgress(100);
-        if (pageLoader.dataset.finishRequested === 'true') return;
-        pageLoader.dataset.finishRequested = 'true';
-        finishTimer = setTimeout(() => {
-            finishTimer = null;
-            hidePreloader(pageLoader);
-        }, DATA_PROGRESS_FADE_DELAY_MS);
-        return;
-    }
-
-    const remainingTime = Math.max(0, PRELOADER_FILL_MS - (performance.now() - preloaderStartedAt));
-    if (remainingTime > 0) {
-        if (!finishTimer) {
-            finishTimer = setTimeout(() => {
-                finishTimer = null;
-                finishPreloader();
-            }, remainingTime);
-        }
-        return;
-    }
-
-    hidePreloader(pageLoader);
-}
-
-export function initPreloader({ waitForAuth = false, waitForData = false, maxWaitMs = 0 } = {}) {
-    if (waitForAuth || waitForData) {
-        const pageLoader = document.getElementById('page-loader');
-        if (!pageLoader) return;
-        pageLoader.dataset.progressMode = 'true';
-        pageLoader.style.setProperty('--loader-fill-offset', '92%');
-        pageLoader.dataset.progress = '8';
-        window.clearInterval(progressTimer);
-        progressTimer = window.setInterval(() => {
-            const current = Number(pageLoader.dataset.progress || 8);
-            if (current >= 88 || pageLoader.dataset.finishRequested === 'true') return;
-            const step = Math.max(0.4, (88 - current) * 0.045);
-            setPreloaderProgress(Math.min(88, current + step));
-        }, 180);
-        if (maxWaitMs > 0) {
-            window.clearTimeout(finishTimer);
-            finishTimer = window.setTimeout(() => {
-                finishTimer = null;
-                finishPreloader({ immediately: true });
-            }, maxWaitMs);
-        }
+export function initPreloader({ waitForAuth = false, maxWaitMs = 0 } = {}) {
+    if (waitForAuth) {
+        if (maxWaitMs > 0) window.setTimeout(finishPreloader, maxWaitMs);
         return;
     }
 

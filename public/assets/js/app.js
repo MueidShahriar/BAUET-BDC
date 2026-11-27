@@ -14,7 +14,7 @@ import { initLanguageSystem, t } from "./modules/language-ui.js?v=7";
 import { createMonthlyReportDownloader } from "./modules/pdf-report.js?v=1";
 
 import state from "./modules/state.js";
-import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js?v=10";
+import { finishPreloader } from "./modules/preloader.js?v=11";
 import { initHeader, initMobileMenu } from "./modules/header.js?v=17";
 import { initFloatObserver } from "./modules/float-observer.js";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";
@@ -80,14 +80,10 @@ const leaderboardInitialData = {
     initialized: false,
     finishScheduled: false
 };
-if (isLeaderboardRoute) setPreloaderProgress(10);
-
 function markLeaderboardDataReady(source) {
     if (!isLeaderboardRoute) return;
     if (source === 'donors') leaderboardInitialData.donorsReady = true;
     if (source === 'recentDonations') leaderboardInitialData.recentDonationsReady = true;
-    const readySourceCount = Number(leaderboardInitialData.donorsReady) + Number(leaderboardInitialData.recentDonationsReady);
-    if (readySourceCount) setPreloaderProgress(readySourceCount === 1 ? 56 : 88);
     if (
         !leaderboardInitialData.initialized ||
         !leaderboardInitialData.donorsReady ||
@@ -831,12 +827,7 @@ function initContactScroll() {
 }
 
 function initPage() {
-    // Admin uses the normal fill and fade, but only finishes after auth resolves.
-    if (!isAdminRoute && !document.body.classList.contains('home-page')) {
-        runInitStep('preloader', () => initPreloader({ waitForData: isLeaderboardRoute }));
-    }
     if (isLeaderboardRoute) {
-        setPreloaderProgress(24);
         leaderboardInitialData.initialized = true;
         markLeaderboardDataReady();
         window.setTimeout(finishPreloader, 12000);

@@ -44,12 +44,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.5s ease, visibility 0.5s;
-}
-
-#page-loader.fade-out {
-    opacity: 0;
-    visibility: hidden;
+    transition: none;
 }
 
 body.loading > *:not(#page-loader):not(script) {
@@ -124,10 +119,12 @@ body.auth-redirecting {
     animation: loadUp 0.9s ease-in-out forwards;
 }
 
-#page-loader[data-progress-mode="true"] .logo-fill {
-    clip-path: inset(var(--loader-fill-offset, 92%) 0 0 0);
-    animation: none;
-    transition: clip-path 260ms linear;
+#page-loader .logo-fill {
+    animation-duration: 1000ms;
+}
+
+.admin-dashboard-landing #page-loader .logo-fill {
+    animation-duration: 2500ms;
 }
 
 @keyframes loadUp {

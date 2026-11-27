@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v242';
+const CACHE_VERSION = 'v243';
 const STATIC_CACHE_NAME = `bdc-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE_NAME = `bdc-runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
@@ -8,7 +8,7 @@ const PRECACHE_URLS = [
   '/pages/request-blood.html',
   '/manifest.webmanifest',
   '/assets/css/tailwind.css?v=1',
-  '/assets/css/common.css?v=147',
+  '/assets/css/common.css?v=148',
   '/assets/css/site-navbar.css?v=11',
   '/assets/css/login.css?v=4',
   '/assets/css/footer.css?v=2',
@@ -24,12 +24,12 @@ const PRECACHE_URLS = [
   '/assets/js/modules/certificate.js?v=4',
   '/assets/css/home.css?v=4',
   '/assets/css/home-sections.css?v=2',
-  '/assets/js/app.js?v=75',
+  '/assets/js/app.js?v=76',
   '/assets/js/pages/blood-request.js?v=6',
   '/assets/js/modules/blood-request-api.js?v=1',
-  '/assets/js/pages/static-page.js?v=26',
-  '/assets/js/pages/home-preloader.js?v=5',
-  '/assets/js/modules/preloader.js?v=10',
+  '/assets/js/pages/static-page.js?v=27',
+  '/assets/js/pages/home-preloader.js?v=6',
+  '/assets/js/modules/preloader.js?v=11',
   '/assets/js/modules/carousel.js?v=4',
   '/assets/js/modules/dashboard.js?v=3',
   '/assets/js/modules/leaderboard.js?v=6',
@@ -40,13 +40,13 @@ const PRECACHE_URLS = [
   '/assets/js/modules/blood-request-admin.js?v=4',
   '/assets/js/modules/footer.js?v=3',
   '/assets/js/modules/back-to-top.js?v=11',
-  '/assets/js/profile.js?v=29',
+  '/assets/js/profile.js?v=30',
   '/assets/js/modules/auth-errors.js?v=2',
   '/assets/js/modules/birthday-wish.js?v=6',
   '/assets/js/modules/language-ui.js?v=7',
   '/assets/js/modules/language-config.js?v=6',
   '/assets/js/viewport.js',
-  '/assets/js/pages/search.js?v=29',
+  '/assets/js/pages/search.js?v=30',
   '/assets/js/modules/search.js?v=4',
   '/assets/js/modules/utils.js',
   '/assets/js/modules/state.js',

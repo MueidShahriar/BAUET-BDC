@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="../assets/css/common.css?v=147">
+    <link rel="stylesheet" href="../assets/css/common.css?v=148">
     <meta name="description" content="View and download your digital donor card - BAUET BDC.">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,7 +21,6 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center;
         }
-        #page-loader.fade-out { opacity: 0; visibility: hidden; transition: opacity .5s, visibility .5s; }
         body.loading > *:not(#page-loader):not(script) { opacity: 0 !important; visibility: hidden !important; }
 
         body {
@@ -541,20 +540,12 @@
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
         import { firebaseConfig } from "../assets/js/modules/firebase-config.js";
         import { initVisitorTracker } from "../assets/js/modules/visitor-tracker.js";
+        import { finishPreloader as hideLoader } from "../assets/js/modules/preloader.js?v=11";
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const database = getDatabase(app);
         initVisitorTracker(database);
-        const loader = document.getElementById('page-loader');
-
-        function hideLoader() {
-            if (loader) {
-                loader.classList.add('fade-out');
-                document.body.classList.remove('loading');
-                setTimeout(() => { loader.style.display = 'none'; }, 500);
-            }
-        }
 
         function esc(v) {
             const t = v == null || v === '' ? '—' : String(v);

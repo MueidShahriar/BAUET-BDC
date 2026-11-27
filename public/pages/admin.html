@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#e11d48" />
     <title>Admin Dashboard - BAUET BDC</title>
+    <script>
+        // Choose the fill duration before the loader paints, even on slow connections.
+        {
+            const section = new URLSearchParams(window.location.search).get('section');
+            const sectionPages = ['events', 'recent', 'members', 'search', 'feedback', 'requests'];
+            document.documentElement.classList.toggle('admin-dashboard-landing', !sectionPages.includes(section));
+        }
+    </script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="shortcut icon" href="../image/blood-drop.png" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +22,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="../assets/css/common.css?v=147">
+    <link rel="stylesheet" href="../assets/css/common.css?v=148">
     <link rel="stylesheet" href="../assets/css/index.css?v=125">
     <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=48">
 
@@ -40,7 +48,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" async></script>
     <script src="../assets/js/viewport.js" defer></script>
-    <script type="module" src="../assets/js/app.js?v=75"></script>
+    <script type="module" src="../assets/js/app.js?v=76"></script>
 
     <header class="site-header site-navbar fixed">
         <nav class="navbar-row" aria-label="Main navigation">
