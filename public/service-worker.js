@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v243';
+const CACHE_VERSION = 'v248';
 const STATIC_CACHE_NAME = `bdc-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE_NAME = `bdc-runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
@@ -8,10 +8,11 @@ const PRECACHE_URLS = [
   '/pages/request-blood.html',
   '/manifest.webmanifest',
   '/assets/css/tailwind.css?v=1',
-  '/assets/css/common.css?v=148',
+  '/assets/css/common.css?v=149',
+  '/assets/css/card-textures.css?v=3',
   '/assets/css/site-navbar.css?v=11',
   '/assets/css/login.css?v=4',
-  '/assets/css/footer.css?v=2',
+  '/assets/css/footer.css?v=3',
   '/assets/css/about.css?v=5',
   '/assets/js/pages/about-scroll-flow.js?v=1',
   '/assets/css/join.css?v=7',
@@ -22,8 +23,9 @@ const PRECACHE_URLS = [
   '/assets/css/profile.css?v=6',
   '/assets/css/donor-documents.css?v=1',
   '/assets/js/modules/certificate.js?v=4',
-  '/assets/css/home.css?v=4',
-  '/assets/css/home-sections.css?v=2',
+  '/assets/css/home.css?v=5',
+  '/assets/css/home-sections.css?v=3',
+  '/assets/css/events.css?v=2',
   '/assets/js/app.js?v=76',
   '/assets/js/pages/blood-request.js?v=6',
   '/assets/js/modules/blood-request-api.js?v=1',

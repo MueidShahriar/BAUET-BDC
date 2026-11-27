@@ -6,8 +6,68 @@
     --home-border: #efdfe2;
     --home-gutter: clamp(1.25rem, 4vw, 3rem);
     --home-width: 75rem;
-    background: #fff9f7;
+    background:
+        radial-gradient(circle at 8% 7%, rgba(190, 24, 70, 0.08), transparent 23rem),
+        radial-gradient(circle at 92% 28%, rgba(244, 63, 94, 0.065), transparent 28rem),
+        linear-gradient(180deg, #fffaf9 0%, #ffffff 42%, #fff8f7 100%);
     color: var(--home-ink);
+}
+
+/* Premium medical texture layer for the public homepage. */
+body.home-page main#home-content > section#hero {
+    position: relative;
+    isolation: isolate;
+    margin-top: clamp(0.75rem, 2vw, 1.5rem);
+    padding-inline: clamp(1rem, 4vw, 3.25rem);
+    border: 1px solid rgba(190, 24, 70, 0.11);
+    border-radius: clamp(1.25rem, 3vw, 2.15rem);
+    background:
+        radial-gradient(circle at 12% 18%, rgba(225, 29, 72, 0.13), transparent 30%),
+        radial-gradient(circle at 80% 26%, rgba(251, 113, 133, 0.16), transparent 28%),
+        radial-gradient(circle at 70% 86%, rgba(190, 24, 70, 0.075), transparent 31%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 242, 244, 0.91)) !important;
+    box-shadow: 0 1.4rem 3.8rem rgba(92, 18, 42, 0.09);
+    overflow: hidden !important;
+}
+
+body.home-page main#home-content > section#hero::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    display: block;
+    pointer-events: none;
+    opacity: 0.42;
+    background-image:
+        radial-gradient(circle, rgba(159, 18, 57, 0.18) 0 1.4px, transparent 1.6px),
+        linear-gradient(115deg, transparent 28%, rgba(255, 255, 255, 0.58) 48%, transparent 67%);
+    background-size: 18px 18px, 180% 100%;
+    background-position: right -7rem top -3rem, 100% 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent 26%, #000 72%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 26%, #000 72%, transparent 100%);
+    animation: home-mesh-sheen 16s ease-in-out infinite alternate;
+}
+
+body.home-page main#home-content > section#hero::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    right: clamp(-3.5rem, -4vw, -1rem);
+    bottom: clamp(-5rem, -6vw, -2rem);
+    display: block;
+    width: clamp(12rem, 27vw, 22rem);
+    aspect-ratio: 1;
+    border: 1px solid rgba(190, 24, 70, 0.1);
+    border-radius: 43% 57% 60% 40% / 48% 37% 63% 52%;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.18), rgba(225, 29, 72, 0.07));
+    transform: rotate(-12deg);
+    pointer-events: none;
+    animation: home-shape-drift 12s ease-in-out infinite alternate;
+}
+
+.home-page #hero :is(.home-hero-copy, .home-hero-art) {
+    position: relative;
+    z-index: 1;
 }
 
 .home-page::before,
@@ -159,7 +219,38 @@ body.home-page main#home-content > section#hero {
     display: grid;
     min-height: clamp(18rem, 28vw, 25rem);
     place-items: center;
-    background: radial-gradient(ellipse closest-side, #f5c9d3 0, #fae6e8 58%, transparent 100%);
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid rgba(190, 24, 70, 0.09);
+    border-radius: 45% 55% 48% 52% / 55% 43% 57% 45%;
+    background:
+        radial-gradient(ellipse closest-side, rgba(244, 143, 164, 0.31) 0, rgba(252, 225, 230, 0.72) 58%, transparent 100%),
+        rgba(255, 255, 255, 0.36);
+}
+
+.home-hero-art::before,
+.home-hero-art::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+}
+
+.home-hero-art::before {
+    background-image:
+        radial-gradient(ellipse at center, transparent 0 31%, rgba(190, 24, 70, 0.12) 33% 37%, transparent 39%),
+        radial-gradient(ellipse at center, transparent 0 28%, rgba(244, 63, 94, 0.09) 30% 35%, transparent 37%);
+    background-position: 7% 12%, 83% 72%;
+    background-size: 5.2rem 3.7rem, 4.2rem 3rem;
+    background-repeat: no-repeat;
+    animation: home-cell-drift 10s ease-in-out infinite alternate;
+}
+
+.home-hero-art::after {
+    opacity: 0.38;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cpath d='M36 25v22M25 36h22' fill='none' stroke='%23be123c' stroke-opacity='.26' stroke-width='1.25' stroke-linecap='round'/%3E%3Cpath d='M8 58l13-9 11 5 15-13 17 8' fill='none' stroke='%23be123c' stroke-opacity='.13' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 72px 72px;
 }
 
 .home-hero-art img {
@@ -170,6 +261,7 @@ body.home-page main#home-content > section#hero {
 }
 
 body.home-page .home-main > section#community-stats {
+    margin-block-start: clamp(0.85rem, 2vw, 1.35rem) !important;
     padding-block: 0 !important;
 }
 
@@ -180,7 +272,18 @@ body.home-page .home-main > section#community-stats {
     margin: 0;
     border: 1px solid var(--home-border);
     border-radius: 1rem;
-    background: #fff;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 6% 25%, rgba(225, 29, 72, 0.085), transparent 25%),
+        radial-gradient(circle, rgba(190, 24, 70, 0.095) 0 1px, transparent 1.2px),
+        rgba(255, 255, 255, 0.88);
+    background-size: auto, 14px 14px, auto;
+    background-position: 0 0, right -1rem top -1rem, 0 0;
+    box-shadow: 0 1.1rem 2.9rem rgba(92, 18, 42, 0.075);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
 .home-page #community-stats .home-metric {
@@ -209,6 +312,38 @@ body.home-page .home-main > section#community-stats {
     font-size: 1rem;
 }
 
+.home-page #community-stats .home-metric {
+    position: relative;
+}
+
+.home-page #community-stats .home-metric::after {
+    content: "+";
+    position: absolute;
+    right: clamp(0.6rem, 2vw, 1.35rem);
+    top: 50%;
+    color: rgba(159, 18, 57, 0.07);
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-weight: 300;
+    line-height: 1;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+@keyframes home-mesh-sheen {
+    from { background-position: right -7rem top -3rem, 100% 0; }
+    to { background-position: right -4rem top -1rem, 0 0; }
+}
+
+@keyframes home-shape-drift {
+    from { transform: translate3d(0, 0, 0) rotate(-12deg); }
+    to { transform: translate3d(-1rem, -0.75rem, 0) rotate(-6deg); }
+}
+
+@keyframes home-cell-drift {
+    from { transform: translate3d(0, 0, 0) rotate(0); }
+    to { transform: translate3d(0.8rem, -0.5rem, 0) rotate(4deg); }
+}
+
 .home-metric dt {
     grid-area: label;
     margin-top: 0.2rem;
@@ -232,6 +367,8 @@ body.home-page .home-main > section#community-stats {
         grid-template-columns: minmax(0, 1fr);
         gap: 1.4rem;
         padding-block: 1.8rem 1rem !important;
+        padding-inline: 1rem;
+        border-radius: 1.25rem;
     }
 
     #home-title {
@@ -289,5 +426,11 @@ body.home-page .home-main > section#community-stats {
 
     .home-page .home-action {
         transition: none;
+    }
+
+    body.home-page main#home-content > section#hero::before,
+    body.home-page main#home-content > section#hero::after,
+    .home-hero-art::before {
+        animation: none;
     }
 }

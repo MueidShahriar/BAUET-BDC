@@ -1,0 +1,209 @@
+/* Shared card texture system. Loaded after page styles so every route stays consistent. */
+:root {
+    --card-texture-dots: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='72' viewBox='0 0 88 72'%3E%3Cg fill='%23be123c' fill-opacity='.045'%3E%3Ccircle cx='11' cy='12' r='1'/%3E%3Ccircle cx='35' cy='20' r='.9'/%3E%3Ccircle cx='74' cy='10' r='1'/%3E%3Ccircle cx='61' cy='56' r='.9'/%3E%3C/g%3E%3Cpath d='M20 43v12M14 49h12M72 31v9M67.5 35.5h9' stroke='%23be123c' stroke-opacity='.05' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
+    --card-texture-lines: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='76' viewBox='0 0 96 76'%3E%3Cpath d='M3 61l18-13 14 7 16-17 19 9 22-16' fill='none' stroke='%23be123c' stroke-opacity='.045' stroke-width='1'/%3E%3Cpath d='M22 17v12M16 23h12M75 58v10M70 63h10' stroke='%23be123c' stroke-opacity='.045' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
+    --card-texture-cells: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='92' height='74' viewBox='0 0 92 74'%3E%3Cellipse cx='23' cy='23' rx='13' ry='8' fill='none' stroke='%23be123c' stroke-opacity='.045' stroke-width='1'/%3E%3Cellipse cx='70' cy='54' rx='11' ry='7' fill='none' stroke='%23be123c' stroke-opacity='.04' stroke-width='1'/%3E%3Cpath d='M67 13v11M61.5 18.5h11' stroke='%23be123c' stroke-opacity='.045' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+:where(
+    .stat-card,
+    .recent-card,
+    .home-insight-card,
+    .home-donor-card,
+    .how-card,
+    .static-card,
+    .search-card,
+    .donor-card,
+    .leaderboard-card,
+    .admin-overview-card,
+    .admin-panel-card,
+    .admin-member-card,
+    .admin-event-card,
+    .admin-request-card,
+    .profile-hero-card,
+    .profile-form-card,
+    .profile-account-card,
+    .request-card,
+    .request-section,
+    .track-card,
+    .request-disclaimer,
+    .tracking-result,
+    .about-cta-card,
+    .vs-card,
+    .vs-info-card,
+    .donor-page-card,
+    .donor-document__card,
+    .pdf-card,
+    .pdf-info-item,
+    .dc-card-inner
+) {
+    --card-texture-pattern: var(--card-texture-dots);
+    --card-texture-mesh: radial-gradient(circle at 100% 0%, rgba(225, 29, 72, 0.055), transparent 42%);
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.985), rgba(255, 248, 249, 0.96));
+    background-color: #fff;
+    background-image:
+        var(--card-texture-pattern),
+        var(--card-texture-mesh),
+        var(--card-texture-surface) !important;
+    background-position: right top, center, center !important;
+    background-repeat: repeat, no-repeat, no-repeat !important;
+    background-size: 104px 84px, 100% 100%, 100% 100% !important;
+}
+
+/* Match legacy high-specificity card rules that use important backgrounds. */
+body.home-page #recent-donor .recent-card,
+body.home-page #dashboard-insights .home-insight-card,
+body.home-page #donor-leaderboard .home-donor-card,
+body.admin-mode #admin-panel .admin-overview-card {
+    background-image:
+        var(--card-texture-pattern),
+        var(--card-texture-mesh),
+        var(--card-texture-surface) !important;
+    background-position: right top, center, center !important;
+    background-repeat: repeat, no-repeat, no-repeat !important;
+    background-size: 104px 84px, 100% 100%, 100% 100% !important;
+}
+
+/* Rotate restrained patterns through repeated card collections. */
+:where(
+    .stat-card,
+    .home-insight-card,
+    .home-donor-card,
+    .how-card,
+    .donor-card,
+    .leaderboard-card,
+    .admin-overview-card,
+    .admin-member-card,
+    .admin-event-card,
+    .vs-card
+):nth-child(3n + 2) {
+    --card-texture-pattern: var(--card-texture-lines);
+    --card-texture-mesh: radial-gradient(circle at 0% 100%, rgba(244, 63, 94, 0.065), transparent 46%);
+}
+
+:where(
+    .stat-card,
+    .home-insight-card,
+    .home-donor-card,
+    .how-card,
+    .donor-card,
+    .leaderboard-card,
+    .admin-overview-card,
+    .admin-member-card,
+    .admin-event-card,
+    .vs-card
+):nth-child(3n + 3) {
+    --card-texture-pattern: var(--card-texture-cells);
+    --card-texture-mesh: radial-gradient(circle at 86% 86%, rgba(190, 24, 70, 0.065), transparent 44%);
+}
+
+/* Preserve the established tinted card families. */
+:where(.tint-rose, .profile-recent-card, .profile-account-card--danger) {
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(255, 237, 241, 0.93));
+}
+
+:where(.tint-amber, .request-disclaimer) {
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(255, 249, 226, 0.94));
+    --card-texture-mesh: radial-gradient(circle at 100% 0%, rgba(217, 119, 6, 0.075), transparent 44%);
+}
+
+.tint-emerald {
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(235, 253, 245, 0.93));
+    --card-texture-mesh: radial-gradient(circle at 100% 0%, rgba(5, 150, 105, 0.07), transparent 44%);
+}
+
+.tint-indigo {
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(239, 241, 255, 0.93));
+    --card-texture-mesh: radial-gradient(circle at 100% 0%, rgba(79, 70, 229, 0.065), transparent 44%);
+}
+
+.tint-sky {
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(239, 249, 255, 0.93));
+    --card-texture-mesh: radial-gradient(circle at 100% 0%, rgba(2, 132, 199, 0.06), transparent 44%);
+}
+
+/* Donor tiers keep their semantic gold, silver, and bronze surfaces. */
+:where(.leaderboard-card--gold, .home-donor-card[data-badge-tier="gold"]) {
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 247, 214, 0.95));
+    --card-texture-mesh: radial-gradient(circle at 100% 0%, rgba(202, 138, 4, 0.1), transparent 44%);
+}
+
+:where(.leaderboard-card--silver, .home-donor-card[data-badge-tier="silver"]) {
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(235, 239, 244, 0.95));
+    --card-texture-mesh: radial-gradient(circle at 100% 0%, rgba(100, 116, 139, 0.085), transparent 44%);
+}
+
+:where(.leaderboard-card--bronze, .home-donor-card[data-badge-tier="bronze"]) {
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 231, 216, 0.94));
+    --card-texture-mesh: radial-gradient(circle at 100% 0%, rgba(180, 83, 9, 0.085), transparent 44%);
+}
+
+:where(.admin-event-card--past, .donor-card--inactive) {
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.97), rgba(241, 245, 249, 0.95));
+    --card-texture-mesh: radial-gradient(circle at 100% 0%, rgba(100, 116, 139, 0.06), transparent 44%);
+}
+
+/* Rich red cards use a light clinical pattern for contrast. */
+:where(.about-hero-card, .home-contact-card) {
+    background-color: #65152d;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='76' viewBox='0 0 96 76'%3E%3Cpath d='M22 17v14M15 24h14M74 51v12M68 57h12' stroke='%23ffffff' stroke-opacity='.12' stroke-width='1' stroke-linecap='round'/%3E%3Cellipse cx='69' cy='19' rx='11' ry='7' fill='none' stroke='%23ffffff' stroke-opacity='.08'/%3E%3Cpath d='M3 67l18-13 14 7 16-17 19 9 22-16' fill='none' stroke='%23ffffff' stroke-opacity='.07' stroke-width='1'/%3E%3C/svg%3E"),
+        radial-gradient(circle at 12% 12%, rgba(251, 113, 133, 0.2), transparent 34%),
+        linear-gradient(135deg, #7f1734, #4b1328 76%) !important;
+    background-position: center, center, center !important;
+    background-repeat: repeat, no-repeat, no-repeat !important;
+    background-size: 96px 76px, 100% 100%, 100% 100% !important;
+}
+
+.profile-hero-card .profile-hero-inner,
+.donor-document__card .donor-document__brand {
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='68' viewBox='0 0 88 68'%3E%3Cpath d='M19 17v12M13 23h12M69 46v10M64 51h10' stroke='%23ffffff' stroke-opacity='.11' stroke-width='1' stroke-linecap='round'/%3E%3Cellipse cx='63' cy='17' rx='10' ry='6' fill='none' stroke='%23ffffff' stroke-opacity='.07'/%3E%3C/svg%3E"),
+        radial-gradient(circle at 100% 0%, rgba(251, 113, 133, 0.18), transparent 42%),
+        linear-gradient(115deg, #301b2c, #6d2342) !important;
+    background-position: center, center, center !important;
+    background-repeat: repeat, no-repeat, no-repeat !important;
+    background-size: 88px 68px, 100% 100%, 100% 100% !important;
+}
+
+/* Nested form/detail cards get a quieter pattern than primary cards. */
+:where(.request-section, .pdf-info-item, .success-detail) {
+    --card-texture-pattern: var(--card-texture-dots);
+    --card-texture-mesh: radial-gradient(circle at 100% 0%, rgba(225, 29, 72, 0.045), transparent 44%);
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.985), rgba(255, 250, 250, 0.96));
+    background-image:
+        var(--card-texture-pattern),
+        var(--card-texture-mesh),
+        var(--card-texture-surface) !important;
+    background-position: right top, center, center !important;
+    background-repeat: repeat, no-repeat, no-repeat !important;
+    background-size: 104px 85px, 100% 100%, 100% 100% !important;
+}
+
+@media (max-width: 640px) {
+    :where(
+        .stat-card,
+        .recent-card,
+        .home-insight-card,
+        .home-donor-card,
+        .how-card,
+        .search-card,
+        .donor-card,
+        .leaderboard-card,
+        .admin-overview-card,
+        .admin-panel-card,
+        .admin-member-card,
+        .admin-event-card,
+        .profile-hero-card,
+        .profile-form-card,
+        .profile-account-card,
+        .request-card,
+        .track-card,
+        .about-cta-card,
+        .vs-card,
+        .vs-info-card,
+        .pdf-card
+    ) {
+        background-size: 90px 74px, 100% 100%, 100% 100% !important;
+    }
+}
