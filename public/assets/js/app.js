@@ -15,7 +15,7 @@ import { initLanguageSystem, t } from "./modules/language-ui.js?v=7";
 import { createMonthlyReportDownloader } from "./modules/pdf-report.js?v=1";
 
 import state from "./modules/state.js";
-import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js?v=8";
+import { initPreloader, finishPreloader, setPreloaderProgress } from "./modules/preloader.js?v=9";
 import { initHeader, initMobileMenu } from "./modules/header.js?v=17";
 import { initFloatObserver } from "./modules/float-observer.js";
 import { initBackToTop } from "./modules/back-to-top.js?v=11";

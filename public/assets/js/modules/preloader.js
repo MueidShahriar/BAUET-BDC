@@ -87,7 +87,7 @@ export function finishPreloader({ immediately = false } = {}) {
         finishTimer = setTimeout(() => {
             finishTimer = null;
             hidePreloader(pageLoader);
-        }, DATA_PROGRESS_FADE_DELAY_MS);
+        }, isFastAdminPage() ? 180 : DATA_PROGRESS_FADE_DELAY_MS);
         return;
     }
 

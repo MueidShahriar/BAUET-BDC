@@ -420,6 +420,21 @@ body.admin-dashboard-page.admin-mode #admin-panel .admin-section-header {
     margin: 0 0 0.9rem;
 }
 
+/* Blood Requests is nested in the dashboard section view; match the standalone
+   admin pages' breathing room above its title banner. */
+body.admin-dashboard-page.admin-section-view #admin-section-requests > .admin-section-header {
+    margin-top: 0;
+}
+
+/* Remove the public-page top offset only after a dashboard section is selected. */
+body.admin-dashboard-page.admin-mode.admin-section-view :is(.home-main, main.max-w-6xl) {
+    padding-top: calc(var(--header-height, 4rem) + 0.75rem) !important;
+}
+
+body.admin-dashboard-page.admin-mode.admin-section-view #admin-section-requests > .admin-section-header {
+    margin-top: clamp(0.45rem, 1.2vw, 0.8rem);
+}
+
 @media (max-width: 690px) {
     body.admin-section-page.admin-mode #admin-panel .admin-page-heading {
         gap: 0.65rem;
