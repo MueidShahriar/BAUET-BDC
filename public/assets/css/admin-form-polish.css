@@ -1,0 +1,373 @@
+/* Page-scoped polish for Recent Donations and Member Management only. */
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"]) {
+    --admin-form-ink: #342b35;
+    --admin-form-muted: #6f6570;
+    --admin-form-border: #e4dce2;
+    --admin-form-border-strong: #d4c8d1;
+    --admin-form-accent: #be123c;
+    --admin-form-surface: #fffdfd;
+    --admin-form-field: #fff;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel .admin-panel-card {
+    border: 1px solid var(--admin-form-border) !important;
+    background:
+        radial-gradient(circle at 100% 0%, rgba(225, 29, 72, 0.045), transparent 38%),
+        linear-gradient(145deg, #fff 0%, #fffafb 100%) !important;
+    box-shadow: 0 12px 30px rgba(65, 35, 53, 0.07) !important;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form) {
+    border: 1px solid var(--admin-form-border) !important;
+    border-radius: 1rem !important;
+    background: rgba(255, 255, 255, 0.88) !important;
+    box-shadow: 0 8px 22px rgba(65, 35, 53, 0.045) !important;
+}
+
+body.admin-section-page[data-admin-section="recent"] #admin-panel #admin-recent-donor-form {
+    padding: clamp(1rem, 2.2vw, 1.35rem) !important;
+}
+
+body.admin-section-page[data-admin-section="members"] #admin-panel #admin-member-form {
+    margin-top: 1rem !important;
+    padding: clamp(1rem, 2.2vw, 1.35rem) !important;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form) .field-icon-left {
+    min-width: 0;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel)
+    :is(input:not([type="hidden"]), select, textarea) {
+    min-height: 3.25rem !important;
+    border: 1.5px solid var(--admin-form-border-strong) !important;
+    border-radius: 0.78rem !important;
+    background-color: var(--admin-form-field) !important;
+    color: var(--admin-form-ink) !important;
+    box-shadow: 0 2px 7px rgba(52, 43, 53, 0.045) !important;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel)
+    :is(input:not([type="hidden"]), select, textarea):hover {
+    border-color: #bdaeb9 !important;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel)
+    :is(input:not([type="hidden"]), select, textarea):focus {
+    border-color: #e45b7d !important;
+    outline: none !important;
+    box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.11) !important;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel)
+    .field-icon-left > label.absolute,
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel #admin-member-form .input-wrap > label.absolute {
+    width: auto !important;
+    max-width: calc(100% - 4rem);
+    padding-inline: 0.35rem !important;
+    border-radius: 0.35rem;
+    background: #fff !important;
+    color: #a21c42 !important;
+    line-height: 1.2;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel)
+    .field-icon-left:not(.admin-member-select-field) > label:not(.absolute),
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel)
+    .input-wrap + label {
+    display: inline-flex !important;
+    width: fit-content !important;
+    max-width: 100%;
+    margin-bottom: 0.4rem !important;
+    padding: 0 !important;
+    background: transparent !important;
+    color: #514652 !important;
+    font-size: 0.82rem !important;
+    font-weight: 700;
+}
+
+body.admin-section-page[data-admin-section="members"]
+    #admin-panel #admin-member-form .admin-member-select-field > label {
+    display: inline-flex !important;
+    width: auto !important;
+    padding-inline: 0.35rem !important;
+    margin: 0 !important;
+    border-radius: 0.35rem;
+    background: #fff !important;
+    color: #514652 !important;
+    font-size: 0.82rem !important;
+    font-weight: 700;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel) .fi {
+    color: #a899a5 !important;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel)
+    .field-icon-left:focus-within .fi {
+    color: var(--admin-form-accent) !important;
+}
+
+body.admin-section-page[data-admin-section="recent"] #admin-panel .admin-form-section-title {
+    color: #9f1239 !important;
+    font-size: clamp(1rem, 2vw, 1.14rem) !important;
+    font-weight: 800 !important;
+}
+
+body.admin-section-page[data-admin-section="recent"] #admin-panel .admin-form-section-title--donor {
+    margin-top: 0.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eadfe4;
+}
+
+body.admin-section-page[data-admin-section="recent"] #admin-panel .admin-donor-id-hint {
+    margin-top: 0.45rem !important;
+    color: var(--admin-form-muted) !important;
+    font-size: 0.78rem !important;
+    line-height: 1.5 !important;
+}
+
+body.admin-section-page[data-admin-section="recent"] #admin-panel .admin-donor-id-hint strong {
+    color: #9f1239;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel .field-optional {
+    margin-left: 0.28rem;
+    color: #8d8290 !important;
+    font-size: 0.72em !important;
+    font-weight: 700;
+}
+
+body.admin-section-page[data-admin-section="members"] #admin-panel .admin-member-search-panel {
+    border: 1px solid var(--admin-form-border) !important;
+    background:
+        radial-gradient(circle at 100% 0%, rgba(225, 29, 72, 0.05), transparent 40%),
+        linear-gradient(145deg, #fff 0%, #fffafb 100%) !important;
+    box-shadow: 0 8px 22px rgba(65, 35, 53, 0.05) !important;
+}
+
+body.admin-section-page[data-admin-section="members"] #admin-panel .admin-member-search-panel__icon {
+    border: 1px solid #f1d8e0;
+    background: #fff5f7 !important;
+    color: #be123c !important;
+    box-shadow: none !important;
+}
+
+body.admin-section-page[data-admin-section="members"] #admin-panel .admin-member-search-panel__label {
+    color: #9f1239 !important;
+}
+
+body.admin-section-page[data-admin-section="members"] #admin-panel .admin-member-search-panel__hint {
+    color: var(--admin-form-muted) !important;
+}
+
+body.admin-section-page[data-admin-section="members"] #admin-panel .admin-member-search-panel__status {
+    border: 1px solid #cce8dc;
+    background: #edf9f4 !important;
+    color: #08785a !important;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel .admin-list-section {
+    border-top-color: var(--admin-form-border) !important;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel .admin-list-section__title {
+    color: #4a404b !important;
+}
+
+@media (max-width: 768px) {
+    body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+        #admin-panel :is(#admin-recent-donor-form, #admin-member-form) {
+        padding: 0.8rem !important;
+        border-radius: 0.85rem !important;
+    }
+
+    body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+        #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel)
+        :is(input:not([type="hidden"]), select, textarea) {
+        min-height: 3rem !important;
+    }
+
+    body.admin-section-page[data-admin-section="recent"] #admin-panel .admin-donor-id-hint {
+        font-size: 0.73rem !important;
+    }
+}
+
+/* One field rhythm across Recent Donations and Member Management. */
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid) {
+    column-gap: 0.9rem !important;
+    row-gap: 1rem !important;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid)
+    .field-icon-left {
+    position: relative !important;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    overflow: visible;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid)
+    .input-wrap {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-width: 0;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid)
+    .field-icon-left > label,
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid)
+    .input-wrap > label {
+    position: absolute !important;
+    z-index: 10;
+    top: -0.58rem !important;
+    left: 2.55rem !important;
+    display: inline-flex !important;
+    width: auto !important;
+    max-width: calc(100% - 3.4rem);
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0 !important;
+    padding: 0 0.38rem !important;
+    transform: none !important;
+    border-radius: 0.35rem;
+    background: #fff !important;
+    box-shadow: 0 0 0 0.22rem #fff;
+    color: #a21c42 !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid)
+    :is(input:not([type="hidden"]), select, textarea) {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 3.25rem !important;
+    min-height: 3.2rem !important;
+    padding: 0.72rem 2.65rem 0.72rem 2.75rem !important;
+    font-size: 0.88rem !important;
+    line-height: 1.35 !important;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid)
+    :is(input[type="date"], select) {
+    height: 3.25rem !important;
+    min-height: 3.25rem !important;
+    padding-right: 2.75rem !important;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid)
+    .fi {
+    position: absolute !important;
+    z-index: 2;
+    top: 50% !important;
+    left: 0.95rem !important;
+    width: 1rem;
+    transform: translateY(-50%) !important;
+    pointer-events: none;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel .field-optional {
+    margin-left: 0 !important;
+    font-size: 0.68rem !important;
+    line-height: 1 !important;
+    white-space: nowrap;
+}
+
+body.admin-section-page[data-admin-section="recent"]
+    #admin-panel #admin-recent-donor-form .field-icon-left:has(#donor-id) > .fi {
+    top: 1.6rem !important;
+    display: block !important;
+}
+
+body.admin-section-page[data-admin-section="recent"]
+    #admin-panel #admin-recent-donor-form .field-icon-left:has(.admin-donor-id-hint) {
+    align-content: start;
+}
+
+body.admin-section-page[data-admin-section="recent"] #admin-panel .admin-donor-id-hint {
+    width: 100%;
+    margin: 0.42rem 0 0 !important;
+    overflow-wrap: anywhere;
+}
+
+body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+    #admin-panel :is(#admin-recent-donor-form, #admin-member-form) .admin-form-actions {
+    margin: 0 !important;
+    padding-top: 0.1rem !important;
+}
+
+/* Desktop forms stay compact in two balanced columns. */
+@media (min-width: 769px) {
+    body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+        #admin-panel :is(#admin-recent-donor-form, #admin-member-form) {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    body.admin-section-page[data-admin-section="members"]
+        #admin-panel .admin-member-search-panel__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+        #admin-panel :is(.admin-form-section-title, .admin-form-actions) {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+        #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid) {
+        grid-template-columns: minmax(0, 1fr) !important;
+        row-gap: 0.9rem !important;
+    }
+
+    body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+        #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid)
+        :is(input:not([type="hidden"]), select, textarea) {
+        height: 3.25rem !important;
+        min-height: 3.25rem !important;
+        font-size: 0.84rem !important;
+    }
+
+    body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+        #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid)
+        .field-icon-left > label,
+    body.admin-section-page:is([data-admin-section="recent"], [data-admin-section="members"])
+        #admin-panel :is(#admin-recent-donor-form, #admin-member-form, .admin-member-search-panel__grid)
+        .input-wrap > label {
+        font-size: 0.74rem !important;
+    }
+}
+

@@ -25,6 +25,7 @@
     <script type="module" src="../assets/js/modules/header.js?v=17"></script>
     <link rel="stylesheet" href="../assets/css/tailwind.css?v=1">
     <link rel="stylesheet" href="../assets/css/card-textures.css?v=3">
+    <link rel="stylesheet" href="../assets/css/admin-form-polish.css?v=4">
 </head>
 
 <body class="bg-white text-gray-900 loading admin-section-page" data-admin-section="members">
@@ -192,8 +193,6 @@
                                             class="absolute left-4 top-3 text-gray-400 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:-top-3 peer-focus:text-sm peer-focus:text-red-700 peer-valid:-top-3 peer-valid:text-sm peer-valid:text-red-700 pointer-events-none bg-white px-1">Phone number</label>
                                     </div>
                                     <div class="field-icon-left flex flex-col">
-                                        <label for="admin-member-search-blood" class="text-sm text-gray-600 mb-2">Blood
-                                            group</label>
                                         <div class="input-wrap">
                                             <i class="fi fa-solid fa-droplet"></i>
                                             <select id="admin-member-search-blood"
@@ -208,6 +207,8 @@
                                                 <option value="AB+">AB+</option>
                                                 <option value="AB-">AB-</option>
                                             </select>
+                                            <label for="admin-member-search-blood" class="text-sm text-gray-600 mb-2">Blood
+                                                group</label>
                                         </div>
                                     </div>
                                     <div class="admin-member-search-panel__actions">
@@ -252,7 +253,6 @@
                                     </div>
                                 </div>                            
                                 <div class="field-icon-left flex flex-col admin-member-select-field">
-                                    <label for="admin-member-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
                                     <div class="input-wrap">
                                         <i class="fi fa-solid fa-droplet"></i>
                                         <select name="bloodGroup" id="admin-member-bloodGroup" required
@@ -267,10 +267,10 @@
                                             <option>AB+</option>
                                             <option>AB-</option>
                                         </select>
+                                        <label for="admin-member-bloodGroup" class="text-sm text-gray-600 mb-2">Blood group</label>
                                     </div>
                                 </div>
                                 <div class="field-icon-left flex flex-col admin-member-select-field">
-                                    <label for="admin-member-gender" class="text-sm text-gray-600 mb-2">Gender</label>
                                     <div class="input-wrap">
                                         <i class="fi fa-solid fa-venus-mars"></i>
                                         <select name="gender" id="admin-member-gender"
@@ -279,6 +279,7 @@
                                             <option value="Female">Female</option>
                                             <option value="Other">Other</option>
                                         </select>
+                                        <label for="admin-member-gender" class="text-sm text-gray-600 mb-2">Gender</label>
                                     </div>
                                 </div>
                                 <div class="field-icon-left">

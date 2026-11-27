@@ -55,6 +55,17 @@ section#join .join-form-card {
     width: 100%;
     max-width: 32rem;
     padding: clamp(1rem, 4.5vw, 2rem);
+    --join-card-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='104' height='84' viewBox='0 0 104 84'%3E%3Cg fill='none' stroke='%23be123c' stroke-linecap='round'%3E%3Cpath d='M22 18v14M15 25h14M82 57v12M76 63h12' stroke-opacity='.085'/%3E%3Cpath d='M7 70l18-12 15 7 18-20 18 9 22-18' stroke-opacity='.06'/%3E%3Cellipse cx='77' cy='19' rx='12' ry='7' stroke-opacity='.055'/%3E%3C/g%3E%3C/svg%3E");
+    --card-texture-mesh: radial-gradient(circle at 100% 0%, rgba(225, 29, 72, 0.09), transparent 44%);
+    --card-texture-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.99), rgba(255, 242, 246, 0.96));
+    background-color: #fff;
+    background-image:
+        var(--join-card-texture),
+        var(--card-texture-mesh),
+        var(--card-texture-surface) !important;
+    background-position: right top, center, center !important;
+    background-repeat: repeat, no-repeat, no-repeat !important;
+    background-size: 104px 84px, 100% 100%, 100% 100% !important;
 }
 
 #join-form,
